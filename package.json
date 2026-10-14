@@ -51,14 +51,14 @@
 		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.13",
+		"@biomejs/biome": "2.5.15",
 		"@commitlint/cli": "21.2.3",
 		"@commitlint/config-conventional": "21.2.3",
-		"@playwright/test": "1.63.0",
+		"@playwright/test": "1.64.0",
 		"@types/bun": "1.4.2",
 		"husky": "9.1.7",
 		"markdownlint-cli2": "0.23.3",
-		"prettier": "3.9.9",
+		"prettier": "3.9.10",
 		"typescript": "7.0.2"
 	},
 	"patchedDependencies": {
