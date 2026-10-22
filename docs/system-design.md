@@ -72,16 +72,18 @@ separated from an application façade and HTTP port, plus shared types from
 
 **Transactions** (create, list, delete, import, plan quota checks):
 
-1. Add `packages/core` with Result type, ports (`TransactionRepository`,
-   `PlanPolicy` / clock as needed), and use cases extracted from today’s
-   `transaction.service.ts`.
+1. ~~Add `packages/core` with Result, ports (`TransactionRepository`,
+   `PlanQuotaReader`, `Clock`), and use cases extracted from today’s
+   `transaction.service.ts`.~~ **Done (H01–H04).** Import confirm still
+   lives in the backend service until H05 adapters land.
 2. Backend: repository implements port; routes become thin adapters mapping
-   Result → HTTP.
+   Result → HTTP (**H05**).
 3. Bot: call shared use cases instead of the old service module (same DB
-   adapters).
+   adapters) (**H06**).
 4. Web/mobile: keep Eden → API; adopt shared error/code enums from core where
-   it removes duplication.
-5. Prove with existing unit tests moved/rewritten against use cases + fakes.
+   it removes duplication (**H07**).
+5. Prove with unit + integration tests, Playwright / desktop smoke, and
+   `bun run qa` on wiring specs (**H05+**).
 
 Only after this slice is green: migrate `payments`, `users`/`telegram`, then
 dependency upgrades.

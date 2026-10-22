@@ -59,6 +59,9 @@ const fakeQuota: PlanQuotaReader = {
 			transactionCount: 1,
 		});
 	},
+	async recordCreated(_userId, _by = 1) {
+		return ok(undefined);
+	},
 };
 
 const fixedClock: Clock = {

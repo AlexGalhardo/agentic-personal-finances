@@ -81,7 +81,7 @@ files record which gates ran.
 - [x] [H01](./docs/specs/H01-core-package.md) — `packages/core` workspace
 - [x] [H02](./docs/specs/H02-result-and-failures.md) — Result + AppFailure
 - [x] [H03](./docs/specs/H03-transaction-ports.md) — ports
-- [ ] [H04](./docs/specs/H04-transaction-use-cases.md) — use cases
+- [x] [H04](./docs/specs/H04-transaction-use-cases.md) — use cases
 - [ ] [H05](./docs/specs/H05-backend-http-adapters.md) — Prisma + HTTP adapters
 - [ ] [H06](./docs/specs/H06-bot-adapters.md) — bot → core
 - [ ] [H07](./docs/specs/H07-web-mobile-thin-clients.md) — thin clients

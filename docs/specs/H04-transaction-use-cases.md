@@ -3,7 +3,7 @@
 | Field      | Value                                              |
 | ---------- | -------------------------------------------------- |
 | PLAN tasks | H04                                                |
-| Status     | Ready                                              |
+| Status     | Done                                               |
 | Depends on | H03                                                |
 | Risk       | Medium: behavior must match existing service tests |
 
@@ -104,6 +104,9 @@ English messages in new failures.
 bun test packages/core
 bun run --cwd backend test:unit
 bun check --no-script -p packages/core -p backend
+# No production wire yet — still keep the outer rings green on push:
+bun run --cwd backend test          # integration (pre-push)
+# From H05 onward also: playwright, desktop:smoke, bun run qa
 ```
 
 ## 10. Documentation updates
