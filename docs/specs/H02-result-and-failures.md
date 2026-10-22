@@ -3,7 +3,7 @@
 | Field      | Value                                                 |
 | ---------- | ----------------------------------------------------- |
 | PLAN tasks | H02                                                   |
-| Status     | Ready                                                 |
+| Status     | Done                                                  |
 | Depends on | H01                                                   |
 | Risk       | Low: pure types/helpers; unused by adapters until H04 |
 

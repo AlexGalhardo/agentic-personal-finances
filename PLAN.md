@@ -71,7 +71,7 @@ are complete (native rows may be `not run` with reason).
 #### Hexagonal foundation + transactions slice
 
 - [x] [H01](./docs/specs/H01-core-package.md) — `packages/core` workspace
-- [ ] [H02](./docs/specs/H02-result-and-failures.md) — Result + AppFailure
+- [x] [H02](./docs/specs/H02-result-and-failures.md) — Result + AppFailure
 - [ ] [H03](./docs/specs/H03-transaction-ports.md) — ports
 - [ ] [H04](./docs/specs/H04-transaction-use-cases.md) — use cases
 - [ ] [H05](./docs/specs/H05-backend-http-adapters.md) — Prisma + HTTP adapters

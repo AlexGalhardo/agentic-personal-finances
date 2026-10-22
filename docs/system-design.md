@@ -96,8 +96,22 @@ use case → Result<Output, AppFailure>
                 └─ UI adapter   → toast / inline error
 ```
 
-`AppFailure` is a tagged union (validation, not found, plan limit, auth, …).
-Unexpected throws stay bugs; HTTP `onError` remains a safety net.
+`AppFailure` is a tagged union with stable codes (H02 —
+`packages/core/src/failures.ts`):
+
+| Code            | Typical HTTP (H05)                 |
+| --------------- | ---------------------------------- |
+| `invalid_input` | 400                                |
+| `unauthorized`  | 401                                |
+| `forbidden`     | 403                                |
+| `not_found`     | 404                                |
+| `conflict`      | 409                                |
+| `plan_limit`    | 402 or 403 (product choice in H05) |
+| `failed`        | 500 / 502                          |
+
+Helpers: `ok` / `err` / `isOk` / `isErr` / `map` / `mapErr` /
+`failure(...)`. Unexpected throws stay bugs; HTTP `onError` remains a
+safety net until adapters map `Result` (H05).
 
 ## Functional style
 
