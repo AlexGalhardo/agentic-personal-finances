@@ -68,11 +68,19 @@ are complete (native rows may be `not run` with reason).
 
 ### Phase 4 — Implementation (one spec at a time)
 
+**Verification ladder (every wiring / behavior spec):** unit +
+`bun check --no-script` → backend integration (`backend` tests) → surface
+E2E (Playwright web, mobile web E2E, `desktop:smoke`, agent-browser when
+comparing web↔native) → human-like QA (`bun run qa` / `scripts/qa.ts`).
+Compile-only specs (H01–H03) stop at unit + typecheck; H04+ must not
+skip the outer rings that the touched surface can exercise. Evidence
+files record which gates ran.
+
 #### Hexagonal foundation + transactions slice
 
 - [x] [H01](./docs/specs/H01-core-package.md) — `packages/core` workspace
 - [x] [H02](./docs/specs/H02-result-and-failures.md) — Result + AppFailure
-- [ ] [H03](./docs/specs/H03-transaction-ports.md) — ports
+- [x] [H03](./docs/specs/H03-transaction-ports.md) — ports
 - [ ] [H04](./docs/specs/H04-transaction-use-cases.md) — use cases
 - [ ] [H05](./docs/specs/H05-backend-http-adapters.md) — Prisma + HTTP adapters
 - [ ] [H06](./docs/specs/H06-bot-adapters.md) — bot → core

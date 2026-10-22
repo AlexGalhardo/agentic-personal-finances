@@ -21,9 +21,15 @@ description: >
 | Bot / frontend / mobile logic   | `bun run bot:test` / `frontend:test` / `mobile:test`         |
 | Web routes or flows             | `cd frontend && bunx playwright test`                        |
 | Mobile screens                  | `cd mobile && bun run test:e2e:web`                          |
-| Auth, payments, bot, release    | `bun run qa` (see `.agents/skills/qa-pentest`)               |
+| Web↔native parity spot-check    | `agent-browser` snapshot/screenshot vs Expo (see expo-web-to-native) |
+| Desktop packaging               | `bun run desktop:smoke`                                      |
+| Auth, payments, bot, release, H05+ wiring | `bun run qa` (= `scripts/qa.ts --start`; see `qa-pentest`) |
 | Finished H\*/M\* spec           | Evidence in `docs/verification/specs/<ID>.md` + PLAN tick    |
 | Several workspaces / before push | `bun run check` (lint + typecheck + unit tests)             |
+
+Phase 4 ladder: unit → typecheck → backend integration → Playwright /
+mobile E2E / desktop smoke → `bun run qa`. Skip outer rings only when the
+spec is compile-only (H01–H03). Record every gate in the evidence file.
 
 Builds: `bun run --cwd backend build`, `bun run --cwd frontend build`. The
 `pre-push` hook runs the backend/frontend typecheck, tests and builds.

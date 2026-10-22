@@ -3,7 +3,7 @@
 | Field      | Value                               |
 | ---------- | ----------------------------------- |
 | PLAN tasks | H03                                 |
-| Status     | Ready                               |
+| Status     | Done                                |
 | Depends on | H02                                 |
 | Risk       | Low: interfaces only; no wiring yet |
 

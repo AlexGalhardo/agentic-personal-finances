@@ -63,19 +63,19 @@ other layering choice is negotiable; this rule is not.
 
 ### Hexagonal view (pragmatic)
 
-| Side                 | Role in this repo                                                                                                                                                 |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Application core** | Domain rules in `*.service.ts`, `plan.ts`, encryption policy                                                                                                      |
-| **Ports**            | Today mostly **implicit** (repository modules, auth session resolution, payment calls). Formal TypeScript port interfaces are a refactor option, not required yet |
-| **Driving adapters** | Elysia `*.routes.ts`, grammY bot, Eden clients, cron/webhook routes, OpenAPI/Scalar docs                                                                          |
-| **Driven adapters**  | Prisma repositories, better-auth, AbacatePay, Resend, `@galhardoalex/telegram-logger`, `encryption.ts`                                                            |
-| **Composition root** | `backend/src/app.ts` (+ `server.ts` listen), bot entry, `scripts/dev.ts` / `qa.ts`                                                                                |
+| Side                 | Role in this repo                                                                                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Application core** | Growing in `@agentic-personal-finances/core` (`Result` / `AppFailure`, transaction ports); legacy rules still in `*.service.ts` / `plan.ts` until H04–H05            |
+| **Ports**            | Formal TypeScript ports in `packages/core/src/ports/` for the transactions slice (`TransactionRepository`, `PlanQuotaReader`, `Clock`). Other domains still implicit |
+| **Driving adapters** | Elysia `*.routes.ts`, grammY bot, Eden clients, cron/webhook routes, OpenAPI/Scalar docs                                                                             |
+| **Driven adapters**  | Prisma repositories, better-auth, AbacatePay, Resend, `@galhardoalex/telegram-logger`, `encryption.ts` (Prisma adapters for ports land in H05)                       |
+| **Composition root** | `backend/src/app.ts` (+ `server.ts` listen), bot entry, `scripts/dev.ts` / `qa.ts`                                                                                   |
 
 This is **Lemos-lite / hexagonal-lite**: vertical slices by capability
 (`transactions`, `payments`, …), thin HTTP adapters, repositories as the
-only Prisma touchpoint. There is **no** separate `entities/` package or
-`Either`/`Result` error style yet — expected failures use `AppError`
-exceptions mapped once at the edge (ADR 0004).
+only Prisma touchpoint. Shared core already exposes `Result` /
+`AppFailure`; HTTP still maps expected failures through `AppError` at the
+edge (ADR 0004) until H05 bridges `Result` → response.
 
 ### What we deliberately avoid (for now)
 
@@ -119,14 +119,14 @@ Each domain lives under `backend/src/modules/<domain>/`:
 
 ### Target mapping (refactor direction)
 
-| Clean Architecture layer | Current home                                 | Likely next step                                                                                      |
-| ------------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Entities / value objects | Implicit in services                         | Optional shared money/plan types if rules grow                                                        |
-| Use cases                | `*.service.ts`                               | Keep; rename/split for “screaming” use cases where helpful                                            |
-| Ports                    | Concrete repos / gateway calls               | Formal TypeScript ports at real boundaries (DB, payments, mail, clock) — see `system-design.md` / H03 |
-| Interface adapters       | Routes, Zod, error mapper, bot conversations | Keep thin; map DTOs at the boundary                                                                   |
-| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron       | Stay outside the core                                                                                 |
-| Main                     | `app.ts`, bot entry, scripts                 | Explicit wiring; no new DI container unless needed                                                    |
+| Clean Architecture layer | Current home                                 | Likely next step                                                                |
+| ------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------- |
+| Entities / value objects | Implicit in services                         | Optional shared money/plan types if rules grow                                  |
+| Use cases                | `*.service.ts`                               | Keep; rename/split for “screaming” use cases where helpful                      |
+| Ports                    | Transactions: `packages/core/src/ports/`     | Wire Prisma/HTTP in H05; add payments/mail ports later — see `system-design.md` |
+| Interface adapters       | Routes, Zod, error mapper, bot conversations | Keep thin; map DTOs at the boundary                                             |
+| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron       | Stay outside the core                                                           |
+| Main                     | `app.ts`, bot entry, scripts                 | Explicit wiring; no new DI container unless needed                              |
 
 ## How each client reaches the backend
 

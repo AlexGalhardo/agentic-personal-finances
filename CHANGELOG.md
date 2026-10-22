@@ -11,6 +11,8 @@ All notable changes to this project are documented here. The format follows
 - Shared workspace `@agentic-personal-finances/core` (`packages/core`) —
   bootstrap for the hexagonal refactor (H01).
 - `Result` / `AppFailure` helpers in `@agentic-personal-finances/core` (H02).
+- Transaction ports in `@agentic-personal-finances/core`
+  (`TransactionRepository`, `PlanQuotaReader`, `Clock`) — H03.
 - Ops alerts via [`@galhardoalex/telegram-logger`](https://github.com/AlexGalhardo/telegram-logger)
   in `backend`, `bot`, and the frontend production server (`warn` /
   `error` / `fatal`; optional `TELEGRAM_LOGGER_*` env).

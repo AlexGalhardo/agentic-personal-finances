@@ -74,6 +74,7 @@ Add `bot` dependency on `@agentic-personal-finances/core`.
 bun run --cwd bot test
 bun check --no-script -p bot
 bun run --cwd bot build
+bun run qa -- --only bot,api   # or full bun run qa
 ```
 
 ## 10. Documentation updates

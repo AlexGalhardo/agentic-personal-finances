@@ -11,7 +11,11 @@ Step-by-step procedures for recurring work. Each has a matching skill in
    [`specs/`](./specs/) (one H\* or M\* spec). Finish ACs + evidence under
    `docs/verification/specs/<ID>.md` in the same commit that ticks PLAN.
 3. `bun run check` (Bun ≥ 1.4.4; typecheck = `bun check --no-script`), plus
-   the E2E suite for the surfaces you touched.
+   the verification ladder for the surfaces you touched: backend
+   integration tests, Playwright (`frontend` / mobile web E2E),
+   `desktop:smoke`, and — for wiring or security-sensitive work —
+   `bun run qa` (`scripts/qa.ts`). Use `agent-browser` when checking
+   web↔native parity.
 4. Commit in atomic [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
    one concern per commit, lowercase subject, `!` + `BREAKING CHANGE:`
    footer for breaking changes. Stage paths explicitly — `git commit`

@@ -99,9 +99,12 @@ Backend may depend on `@agentic-personal-finances/core` via `workspace:*`.
 
 ```bash
 bun run --cwd backend db:generate   # DATABASE_URL set
-bun run --cwd backend test
+bun run --cwd backend test          # unit + integration
 bun check --no-script -p backend -p frontend -p mobile
 bun run --cwd backend build
+cd frontend && bunx playwright test
+bun run desktop:smoke
+bun run qa                          # scripts/qa.ts --start (api + web + bot; android if SDK)
 ```
 
 ## 10. Documentation updates
