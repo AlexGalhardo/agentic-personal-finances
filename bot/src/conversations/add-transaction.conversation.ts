@@ -3,9 +3,9 @@ import type {
 	TransactionType,
 } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
 import { createTransactionSchema } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
-import { transactionService } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.service";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
+import { botCreateTransaction } from "../adapters/transactions";
 import { categoryLabels, formatCurrencyCents } from "../formatting/format";
 import { categoryKeyboard, parseCategoryCallback } from "../lib/keyboards";
 import { parseAmountToCents } from "../lib/parse-amount";
@@ -85,7 +85,11 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 		}
 
 		const input = { description, amount: amountCents, category, type };
-		await conversation.external(() => transactionService.create(userId, input));
+		const created = await conversation.external(() => botCreateTransaction(userId, input));
+		if (!created.ok) {
+			await confirmation.reply(created.reply);
+			return;
+		}
 
 		await confirmation.reply(`✅ ${type === "expense" ? "Despesa" : "Receita"} registrada com sucesso!`);
 	};

@@ -5,12 +5,11 @@ import { File } from "expo-file-system";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
-
+import { confirmTransactionImport, previewTransactionImport } from "@/application/transactions";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
 import { Screen } from "@/components/ui/screen";
-import { api } from "@/lib/api";
 import { categoryLabels, type TransactionCategory } from "@/lib/categories";
 import { formatBRL } from "@/lib/format";
 import { colors } from "@/theme";
@@ -57,11 +56,7 @@ export default function ImportNubankScreen() {
 		setLoadingPreview(true);
 		try {
 			const csv = await new File(picked.assets[0].uri).text();
-			const { data, error: reqError } = await api.transactions.import.preview.post({ csv });
-			if (reqError || !data || !("rows" in data)) {
-				setError("Não foi possível ler o arquivo CSV. Confira se é um extrato do Nubank.");
-				return;
-			}
+			const data = await previewTransactionImport(csv);
 			setRows(data.rows as PreviewRow[]);
 			setSummary(data.summary);
 		} catch {
@@ -74,21 +69,23 @@ export default function ImportNubankScreen() {
 	async function handleConfirm(): Promise<void> {
 		if (!rows) return;
 		setConfirming(true);
-		const { data, error: reqError } = await api.transactions.import.confirm.post({
-			transactions: rows.map(({ description, amount, category, type, createdAt }) => ({
-				description,
-				amount,
-				category,
-				type,
-				createdAt,
-			})),
-		});
-		setConfirming(false);
-
-		if (reqError || !data || !("created" in data)) {
+		let data: { created: number; skippedDuplicates: number };
+		try {
+			data = await confirmTransactionImport(
+				rows.map(({ description, amount, category, type, createdAt }) => ({
+					description,
+					amount,
+					category,
+					type,
+					createdAt,
+				})),
+			);
+		} catch {
+			setConfirming(false);
 			setError("Não foi possível importar as transações.");
 			return;
 		}
+		setConfirming(false);
 
 		setResult(data);
 		await Promise.all([

@@ -1,17 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import {
+	createTransaction,
+	deleteTransaction,
+	getTransaction,
+	getTransactionStatistics,
+	listTransactions,
+	type TransactionWriteInput,
+	updateTransaction,
+} from "@/application/transactions";
 import type { TransactionCategory } from "@/lib/categories";
 import { normalizeTransaction, type Transaction } from "./normalize";
 
 export type { Transaction };
-
-export type TransactionInput = {
-	description: string;
-	amount: number;
-	category: TransactionCategory;
-	type: "income" | "expense";
-	date: string;
-};
+export type TransactionInput = TransactionWriteInput;
 
 // Same strategy as the web dashboard (frontend/src/lib/queries.ts): fetch up
 // to 1000 transactions already filtered by category/date on the server, then
@@ -22,11 +23,8 @@ export function useTransactionsQuery(filters: { category?: TransactionCategory; 
 	return useQuery({
 		queryKey: ["transactions", filters],
 		queryFn: async () => {
-			const { data, error } = await api.transactions.get({
-				query: { ...filters, page: 1, perPage: FETCH_ALL_PER_PAGE },
-			});
-			if (error || !data || !("transactions" in data)) throw new Error("Falha ao carregar transações");
-			return data.transactions.map(normalizeTransaction);
+			const rows = await listTransactions({ ...filters, page: 1, perPage: FETCH_ALL_PER_PAGE });
+			return rows.map(normalizeTransaction);
 		},
 	});
 }
@@ -34,11 +32,7 @@ export function useTransactionsQuery(filters: { category?: TransactionCategory; 
 export function useTransactionStatistics() {
 	return useQuery({
 		queryKey: ["transactions-statistics"],
-		queryFn: async () => {
-			const { data, error } = await api.transactions.statistics.get();
-			if (error || !data || !("stats" in data)) throw new Error("Falha ao carregar estatísticas");
-			return data.stats;
-		},
+		queryFn: getTransactionStatistics,
 	});
 }
 
@@ -46,11 +40,7 @@ export function useTransactionQuery(id: string, enabled: boolean) {
 	return useQuery({
 		queryKey: ["transaction", id],
 		enabled,
-		queryFn: async () => {
-			const { data, error } = await api.transactions({ id }).get();
-			if (error || !data || !("transaction" in data)) throw new Error("Transação não encontrada");
-			return normalizeTransaction(data.transaction);
-		},
+		queryFn: async () => normalizeTransaction(await getTransaction(id)),
 	});
 }
 
@@ -66,11 +56,7 @@ function useInvalidateTransactions() {
 export function useCreateTransaction() {
 	const invalidate = useInvalidateTransactions();
 	return useMutation({
-		mutationFn: async (input: TransactionInput) => {
-			const { data, error } = await api.transactions.post(input);
-			if (error) throw error;
-			return data;
-		},
+		mutationFn: (input: TransactionInput) => createTransaction(input),
 		onSuccess: invalidate,
 	});
 }
@@ -78,11 +64,7 @@ export function useCreateTransaction() {
 export function useUpdateTransaction() {
 	const invalidate = useInvalidateTransactions();
 	return useMutation({
-		mutationFn: async ({ id, input }: { id: string; input: TransactionInput }) => {
-			const { data, error } = await api.transactions({ id }).put(input);
-			if (error) throw error;
-			return data;
-		},
+		mutationFn: ({ id, input }: { id: string; input: TransactionInput }) => updateTransaction(id, input),
 		onSuccess: invalidate,
 	});
 }
@@ -90,10 +72,7 @@ export function useUpdateTransaction() {
 export function useDeleteTransaction() {
 	const invalidate = useInvalidateTransactions();
 	return useMutation({
-		mutationFn: async (id: string) => {
-			const { error } = await api.transactions({ id }).delete();
-			if (error) throw error;
-		},
+		mutationFn: deleteTransaction,
 		onSuccess: invalidate,
 	});
 }

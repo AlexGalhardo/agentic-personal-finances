@@ -16,6 +16,14 @@ All notable changes to this project are documented here. The format follows
 - Transaction use cases + pure `plan` helpers in
   `@agentic-personal-finances/core` (H04; backend service still wired until
   H05).
+- Backend Prisma ports + `Result`→`AppError` HTTP bridge for transactions
+  (H05).
+- Bot transaction conversations wired to `@agentic-personal-finances/core`
+  use cases via shared Prisma adapters (H06).
+- Web and mobile thin-client layout: Eden in `adapters/http`, screen-facing
+  `application/*` façades (H07).
+- Dependency Rule gate: `bun run check:deps` /
+  `scripts/check-dependency-rule.ts` (H08).
 - Ops alerts via [`@galhardoalex/telegram-logger`](https://github.com/AlexGalhardo/telegram-logger)
   in `backend`, `bot`, and the frontend production server (`warn` /
   `error` / `fatal`; optional `TELEGRAM_LOGGER_*` env).
@@ -24,6 +32,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- App logo (`docs/assets/logo.svg`): green money bag, no outer ring.
+- Frontend and mobile screens import `application/*` instead of the Eden treaty
+  directly; `lib/api.ts` re-exports the HTTP adapter for compatibility (H07).
 - Renamed the project to **Agentic Personal Finances** (repo
   `agentic-personal-finances`); README simplified.
 - Moved agent skills, rules, agents and references from `.claude/` to

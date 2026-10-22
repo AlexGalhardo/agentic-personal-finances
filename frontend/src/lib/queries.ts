@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "./api";
+import { getTransactionStatistics, listTransactions } from "#/application/transactions";
+import { getCurrentUser } from "#/application/users";
 import type { TransactionCategory } from "./categories";
 
 export type Transaction = {
@@ -29,11 +30,7 @@ export const queryKeys = {
 export function useMeQuery() {
 	return useQuery({
 		queryKey: queryKeys.me,
-		queryFn: async () => {
-			const { data, error } = await api.users.me.get();
-			if (error || !data || !("user" in data)) throw error ?? new Error("Falha ao carregar dados da conta");
-			return data.user;
-		},
+		queryFn: getCurrentUser,
 	});
 }
 
@@ -41,22 +38,14 @@ export function useTransactionsQuery(filters: TransactionServerFilters) {
 	const query = { ...filters, page: 1, perPage: FETCH_ALL_PER_PAGE };
 	return useQuery({
 		queryKey: [...queryKeys.transactions, query],
-		queryFn: async () => {
-			const { data, error } = await api.transactions.get({ query });
-			if (error || !("transactions" in data)) throw error ?? new Error("Falha ao carregar transações");
-			return data.transactions as Transaction[];
-		},
+		queryFn: async () => (await listTransactions(query)) as Transaction[],
 	});
 }
 
 export function useStatisticsQuery() {
 	return useQuery({
 		queryKey: queryKeys.statistics,
-		queryFn: async () => {
-			const { data, error } = await api.transactions.statistics.get();
-			if (error || !("stats" in data)) throw error ?? new Error("Falha ao carregar estatísticas");
-			return data.stats;
-		},
+		queryFn: getTransactionStatistics,
 	});
 }
 

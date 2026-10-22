@@ -29,6 +29,8 @@
 		"**/.tanstack/**",
 		"TODO.md",
 		"qa-report.md",
-		"**/.expo/**"
+		"**/.expo/**",
+		"**/test-results/**",
+		"**/playwright-report/**"
 	]
 }

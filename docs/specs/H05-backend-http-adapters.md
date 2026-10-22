@@ -3,7 +3,7 @@
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | PLAN tasks | H05                                                          |
-| Status     | Ready                                                        |
+| Status     | Done                                                         |
 | Depends on | H04                                                          |
 | Risk       | High: production API path; must keep Eden types and statuses |
 

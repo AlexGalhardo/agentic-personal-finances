@@ -61,6 +61,11 @@ Source-code dependencies point **inward**, toward policy. Inner code must
 not import framework request types, ORM row shapes, or UI packages. Every
 other layering choice is negotiable; this rule is not.
 
+Enforced for `packages/core` by `bun run check:deps`
+(`scripts/check-dependency-rule.ts`): no imports of Elysia, Prisma, React,
+React Native, Expo, grammY, or client workspaces. Wired into `bun run lint`
+and the CI `lint` job (H08).
+
 ### Hexagonal view (pragmatic)
 
 | Side                 | Role in this repo                                                                                                                                                    |
@@ -68,7 +73,7 @@ other layering choice is negotiable; this rule is not.
 | **Application core** | Growing in `@agentic-personal-finances/core` (`Result` / `AppFailure`, transaction ports); legacy rules still in `*.service.ts` / `plan.ts` until H04–H05            |
 | **Ports**            | Formal TypeScript ports in `packages/core/src/ports/` for the transactions slice (`TransactionRepository`, `PlanQuotaReader`, `Clock`). Other domains still implicit |
 | **Driving adapters** | Elysia `*.routes.ts`, grammY bot, Eden clients, cron/webhook routes, OpenAPI/Scalar docs                                                                             |
-| **Driven adapters**  | Prisma repositories, better-auth, AbacatePay, Resend, `@galhardoalex/telegram-logger`, `encryption.ts` (Prisma adapters for ports land in H05)                       |
+| **Driven adapters**  | `backend/src/adapters/prisma/*` (transaction ports + encryption), better-auth, AbacatePay, Resend, `@galhardoalex/telegram-logger`                                   |
 | **Composition root** | `backend/src/app.ts` (+ `server.ts` listen), bot entry, `scripts/dev.ts` / `qa.ts`                                                                                   |
 
 This is **Lemos-lite / hexagonal-lite**: vertical slices by capability
@@ -130,13 +135,13 @@ Each domain lives under `backend/src/modules/<domain>/`:
 
 ## How each client reaches the backend
 
-| Client     | Transport                                                                                                 | Auth                                         | Notes                                                                                                                   |
-| ---------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Web        | HTTP via frontend origin — `frontend/server.ts` (prod) and Vite proxy (dev) use `frontend/proxy-paths.ts` | session cookie                               | Proxy makes `Set-Cookie` land on the frontend domain for SSR                                                            |
-| Mobile     | HTTP, Eden treaty (`mobile/src/lib/api.ts`)                                                               | cookie via `@better-auth/expo` + SecureStore | Normalize revived `Date`s at the query layer                                                                            |
-| Bot        | **In-process** imports from `@agent-money-boilerplate/backend`                                            | chat ↔ `user.telegramChatId`                 | Same use cases, alternate driving adapter (ADR 0002). No HTTP rate limits — bot has its own lockouts and Zod validation |
-| Desktop    | Loads the web dashboard URL (`desktop/src/main.ts`)                                                       | same web session                             | No second UI (ADR 0009)                                                                                                 |
-| Developers | OpenAPI 3.1 at `/openapi/json`, Scalar on web `/api`                                                      | `x-api-key`                                  | Documented surface is intentionally narrow today (`/transactions*`)                                                     |
+| Client     | Transport                                                                                                    | Auth                                         | Notes                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Web        | HTTP via frontend origin — `frontend/server.ts` (prod) and Vite proxy (dev) use `frontend/proxy-paths.ts`    | session cookie                               | Proxy makes `Set-Cookie` land on the frontend domain for SSR                                          |
+| Mobile     | HTTP, Eden treaty (`mobile/src/lib/api.ts`)                                                                  | cookie via `@better-auth/expo` + SecureStore | Normalize revived `Date`s at the query layer                                                          |
+| Bot        | **In-process** — `@agentic-personal-finances/core` use cases + backend Prisma adapters (`bot/src/adapters/`) | chat ↔ `user.telegramChatId`                 | Same use cases as HTTP (ADR 0002). No API HTTP for transactions; bot lockouts and Zod at the boundary |
+| Desktop    | Loads the web dashboard URL (`desktop/src/main.ts`)                                                          | same web session                             | No second UI (ADR 0009)                                                                               |
+| Developers | OpenAPI 3.1 at `/openapi/json`, Scalar on web `/api`                                                         | `x-api-key`                                  | Documented surface is intentionally narrow today (`/transactions*`)                                   |
 
 End-to-end types: frontend and mobile import `type App` from
 `backend/src/server.ts`, so a breaking API change fails client typecheck

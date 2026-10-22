@@ -1,5 +1,5 @@
-import { transactionService } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.service";
 import type { Context } from "grammy";
+import { botListTransactions } from "../adapters/transactions";
 import { formatTransactionList } from "../formatting/format";
 import type { BotConversation } from "../types";
 
@@ -30,7 +30,7 @@ export async function listTransactionsConversation(
 		limit = parsed;
 	}
 
-	const result = await conversation.external(() => transactionService.list(userId, { page: 1, perPage: limit }));
+	const result = await conversation.external(() => botListTransactions(userId, { page: 1, perPage: limit }));
 
 	const header =
 		result.total === 0

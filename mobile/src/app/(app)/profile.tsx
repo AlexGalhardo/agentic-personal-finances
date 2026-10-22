@@ -2,13 +2,13 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { unlinkTelegramAccount } from "@/application/telegram";
+import { deleteCurrentUserAccount } from "@/application/users";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { Row, Section, SectionBody } from "@/components/ui/section";
 import { TextField } from "@/components/ui/text-field";
-import { api } from "@/lib/api";
 import { authClient, useSession } from "@/lib/auth-client";
 import { translateAuthError } from "@/lib/auth-errors";
 import { isStrongPassword } from "@/lib/password-rules";
@@ -82,8 +82,9 @@ export default function ProfileScreen() {
 
 	async function onUnlinkTelegram(): Promise<void> {
 		setTelegramFeedback(null);
-		const { error } = await api.telegram.link.delete();
-		if (error) {
+		try {
+			await unlinkTelegramAccount();
+		} catch {
 			setTelegramFeedback({ kind: "error", message: "Não foi possível desvincular o Telegram." });
 			return;
 		}
@@ -120,8 +121,9 @@ export default function ProfileScreen() {
 					text: "Excluir",
 					style: "destructive",
 					onPress: async () => {
-						const { error } = await api.users.me.delete();
-						if (error) {
+						try {
+							await deleteCurrentUserAccount();
+						} catch {
 							Alert.alert("Erro", "Não foi possível excluir sua conta.");
 							return;
 						}

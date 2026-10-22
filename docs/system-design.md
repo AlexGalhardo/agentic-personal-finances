@@ -20,8 +20,8 @@ Target shape after the Clean Architecture refactor. Decisions:
 packages/
   core/                 # @agentic-personal-finances/core — entities, use cases, ports, Result
 backend/                # Elysia routes, Prisma repos, payment/mail adapters, composition
-frontend/               # TanStack UI + Eden/HTTP adapter + composition
-mobile/                 # Expo UI + Eden/HTTP adapter + composition
+frontend/               # TanStack UI → application/* → adapters/http (Eden)
+mobile/                 # Expo UI → application/* → adapters/http (Eden)
 bot/                    # grammY adapter; wires in-process adapters to core use cases
 desktop/                # Electron shell → web URL (unchanged role, ADR 0009)
 ```

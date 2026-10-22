@@ -1,17 +1,41 @@
+import {
+	createTransaction,
+	deleteTransaction,
+	getTransaction,
+	listTransactions,
+	type TransactionRecord,
+	updateTransaction,
+} from "@agentic-personal-finances/core";
 import { Elysia } from "elysia";
 import { authPlugin } from "../../lib/auth.plugin";
+import { transactionPorts, unwrapOrThrow } from "./transaction.deps";
 import {
 	createTransactionSchema,
 	deleteResponseSchema,
 	errorResponseSchema,
 	listTransactionsQuerySchema,
 	statisticsResponseSchema,
+	type TransactionCategory,
+	type TransactionDTO,
 	transactionIdParamSchema,
 	transactionListResponseSchema,
 	transactionResponseSchema,
 	updateTransactionSchema,
 } from "./transaction.schema";
 import { transactionService } from "./transaction.service";
+
+function toDTO(row: TransactionRecord): TransactionDTO {
+	return {
+		id: row.id,
+		description: row.description,
+		amount: row.amount,
+		category: row.category as TransactionCategory,
+		type: row.type,
+		date: row.date.toISOString(),
+		createdAt: row.createdAt.toISOString(),
+		updatedAt: row.updatedAt?.toISOString() ?? null,
+	};
+}
 
 // `detail` feeds the OpenAPI document rendered by Scalar on the frontend's
 // /api page — it is user-facing documentation, hence Portuguese.
@@ -23,7 +47,25 @@ export const transactionRoutes = new Elysia({ prefix: "/transactions", tags: ["T
 	.guard({ auth: true })
 	.get(
 		"/",
-		async ({ user, query }) => ({ success: true as const, ...(await transactionService.list(user.id, query)) }),
+		async ({ user, query }) => {
+			const listed = unwrapOrThrow(
+				await listTransactions(transactionPorts, user.id, {
+					page: query.page,
+					perPage: query.perPage,
+					...(query.search !== undefined ? { search: query.search } : {}),
+					...(query.category !== undefined ? { category: query.category } : {}),
+					...(query.from !== undefined ? { from: new Date(query.from) } : {}),
+					...(query.to !== undefined ? { to: new Date(query.to) } : {}),
+				}),
+			);
+			return {
+				success: true as const,
+				transactions: listed.transactions.map(toDTO),
+				total: listed.total,
+				page: listed.page,
+				perPage: listed.perPage,
+			};
+		},
 		{
 			query: listTransactionsQuerySchema,
 			response: { 200: transactionListResponseSchema, ...unauthorized },
@@ -49,7 +91,7 @@ export const transactionRoutes = new Elysia({ prefix: "/transactions", tags: ["T
 		"/:id",
 		async ({ user, params }) => ({
 			success: true as const,
-			transaction: await transactionService.findById(user.id, params.id),
+			transaction: toDTO(unwrapOrThrow(await getTransaction(transactionPorts, user.id, params.id))),
 		}),
 		{
 			params: transactionIdParamSchema,
@@ -59,8 +101,18 @@ export const transactionRoutes = new Elysia({ prefix: "/transactions", tags: ["T
 	)
 	.post(
 		"/",
-		async ({ user, body, status }) =>
-			status(201, { success: true as const, transaction: await transactionService.create(user.id, body) }),
+		async ({ user, body, status }) => {
+			const created = unwrapOrThrow(
+				await createTransaction(transactionPorts, user.id, {
+					description: body.description,
+					amount: body.amount,
+					category: body.category,
+					type: body.type,
+					...(body.date ? { date: new Date(body.date) } : {}),
+				}),
+			);
+			return status(201, { success: true as const, transaction: toDTO(created) });
+		},
 		{
 			body: createTransactionSchema,
 			response: { 201: transactionResponseSchema, ...unauthorized, 403: errorResponseSchema },
@@ -75,7 +127,17 @@ export const transactionRoutes = new Elysia({ prefix: "/transactions", tags: ["T
 		"/:id",
 		async ({ user, params, body }) => ({
 			success: true as const,
-			transaction: await transactionService.update(user.id, params.id, body),
+			transaction: toDTO(
+				unwrapOrThrow(
+					await updateTransaction(transactionPorts, user.id, params.id, {
+						...(body.description !== undefined ? { description: body.description } : {}),
+						...(body.amount !== undefined ? { amount: body.amount } : {}),
+						...(body.category !== undefined ? { category: body.category } : {}),
+						...(body.type !== undefined ? { type: body.type } : {}),
+						...(body.date !== undefined ? { date: new Date(body.date) } : {}),
+					}),
+				),
+			),
 		}),
 		{
 			params: transactionIdParamSchema,
@@ -87,7 +149,7 @@ export const transactionRoutes = new Elysia({ prefix: "/transactions", tags: ["T
 	.delete(
 		"/:id",
 		async ({ user, params }) => {
-			await transactionService.remove(user.id, params.id);
+			unwrapOrThrow(await deleteTransaction(transactionPorts, user.id, params.id));
 			return { success: true as const, message: "Transação apagada" };
 		},
 		{

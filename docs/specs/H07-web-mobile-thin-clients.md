@@ -3,7 +3,7 @@
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
 | PLAN tasks | H07                                                       |
-| Status     | Ready                                                     |
+| Status     | Done                                                      |
 | Depends on | H05                                                       |
 | Risk       | Low–Medium: UI structure only; network contract unchanged |
 

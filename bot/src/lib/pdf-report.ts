@@ -1,5 +1,5 @@
-import { transactionService } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.service";
 import PDFDocument from "pdfkit";
+import { botListTransactions } from "../adapters/transactions";
 import { formatCurrencyCents, getCategoryLabel } from "../formatting/format";
 
 type CategoryTotal = { category: string; total: number };
@@ -66,7 +66,7 @@ export async function buildPeriodReportPdf(
 	range: { from: Date; to: Date },
 	title: string,
 ): Promise<Buffer> {
-	const result = await transactionService.list(userId, {
+	const result = await botListTransactions(userId, {
 		from: range.from.toISOString(),
 		to: range.to.toISOString(),
 		page: 1,

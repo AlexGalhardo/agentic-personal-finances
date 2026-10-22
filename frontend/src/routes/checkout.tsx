@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { createPixCheckout } from "#/application/payments";
 import { PageLayout } from "../components/page-layout";
 import { PixCheckoutModal } from "../components/pix-checkout-modal";
-import { api } from "../lib/api";
 import { requireNoActivePlan } from "../lib/redirect-if-active-plan";
 import { useAppConfig } from "../lib/use-app-config";
 
@@ -43,15 +43,14 @@ function CheckoutPage() {
 		setError(null);
 		setLoadingPlan(plan);
 
-		const { data, error: requestError } = await api.payments.pix.checkout.post({ plan });
-		setLoadingPlan(null);
-
-		if (requestError || !data || !("id" in data)) {
-			setError((data as { message?: string } | undefined)?.message ?? "Não foi possível gerar o PIX");
-			return;
+		try {
+			const chargeData = await createPixCheckout(plan);
+			setLoadingPlan(null);
+			setCharge(chargeData);
+		} catch (requestError) {
+			setLoadingPlan(null);
+			setError(requestError instanceof Error ? requestError.message : "Não foi possível gerar o PIX");
 		}
-
-		setCharge({ id: data.id, brCode: data.brCode, brCodeBase64: data.brCodeBase64, expiresAt: data.expiresAt });
 	}
 
 	function handlePaid(): void {

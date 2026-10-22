@@ -3,11 +3,10 @@ import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
-
+import { createPixCheckout, getPixPaymentStatus } from "@/application/payments";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { Screen } from "@/components/ui/screen";
-import { api } from "@/lib/api";
 import { hasActivePlan, planRemainingLabel } from "@/lib/plan";
 import { useMeQuery, useRefreshMe } from "@/query/me";
 import { colors } from "@/theme";
@@ -46,14 +45,14 @@ export default function SubscriptionScreen() {
 		if (!charge || status !== "pending") return;
 
 		const interval = setInterval(async () => {
-			const { data } = await api.payments.pix({ id: charge.id }).status.get();
-			if (!data || !("status" in data)) return;
+			const pixStatus = await getPixPaymentStatus(charge.id);
+			if (!pixStatus) return;
 
-			if (data.status === "paid" && !paidRef.current) {
+			if (pixStatus.status === "paid" && !paidRef.current) {
 				paidRef.current = true;
 				setStatus("paid");
 				await refreshMe();
-			} else if (data.status === "expired") {
+			} else if (pixStatus.status === "expired") {
 				setStatus("expired");
 			}
 		}, POLL_INTERVAL_MS);
@@ -64,17 +63,16 @@ export default function SubscriptionScreen() {
 	async function handlePay(plan: PlanId): Promise<void> {
 		setError(null);
 		setLoadingPlan(plan);
-		const { data, error: requestError } = await api.payments.pix.checkout.post({ plan });
-		setLoadingPlan(null);
-
-		if (requestError || !data || !("id" in data)) {
+		try {
+			const chargeData = await createPixCheckout(plan);
+			setLoadingPlan(null);
+			setStatus("pending");
+			paidRef.current = false;
+			setCharge(chargeData);
+		} catch {
+			setLoadingPlan(null);
 			setError("Não foi possível gerar o PIX. Tente novamente em instantes.");
-			return;
 		}
-
-		setStatus("pending");
-		paidRef.current = false;
-		setCharge({ id: data.id, brCode: data.brCode, brCodeBase64: data.brCodeBase64, expiresAt: data.expiresAt });
 	}
 
 	async function handleCopy(): Promise<void> {

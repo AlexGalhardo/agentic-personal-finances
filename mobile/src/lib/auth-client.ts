@@ -8,7 +8,7 @@ import { env } from "../config/env";
 // Mesma sessão/cookie usada pelo frontend web e pelo bot — só o transporte
 // muda: sem cookie jar de navegador no React Native, o plugin do Expo guarda
 // o cookie no SecureStore e o reanexa em cada chamada (ver getCookie() em
-// ./api.ts, usado pelo cliente Eden pra chamar as rotas fora de /auth/*).
+// adapters/http/api.ts, used by Eden for routes outside /auth/*).
 export const authClient = createAuthClient({
 	baseURL: env.apiUrl,
 	basePath: "/auth",

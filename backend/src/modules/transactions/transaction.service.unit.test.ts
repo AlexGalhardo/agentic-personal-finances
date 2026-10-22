@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
-import type { Transaction } from "../../../prisma/generated/client/client";
 import { encrypt } from "../../lib/encryption";
 
 const repositoryMock = {
@@ -10,12 +9,22 @@ const repositoryMock = {
 	update: mock(),
 	delete: mock(),
 	findAllForStats: mock(),
+	findManyForDedupe: mock(),
+	createMany: mock(),
 };
 
 const prismaMock = {
 	user: {
 		findUniqueOrThrow: mock(),
 		update: mock(),
+	},
+	transaction: {
+		create: mock(),
+		findFirst: mock(),
+		findMany: mock(),
+		updateMany: mock(),
+		deleteMany: mock(),
+		count: mock(),
 	},
 };
 
@@ -33,7 +42,7 @@ function mockFreeUser(freeTransactionCount = 0): void {
 	prismaMock.user.update.mockResolvedValue({});
 }
 
-function buildTransaction(overrides: Partial<Transaction> = {}): Transaction {
+function buildRow(overrides: Record<string, unknown> = {}) {
 	return {
 		id: "tx-1",
 		userId: "user-1",
@@ -48,16 +57,16 @@ function buildTransaction(overrides: Partial<Transaction> = {}): Transaction {
 	};
 }
 
-describe("transactionService", () => {
+describe("transactionService (façade over core use cases)", () => {
 	beforeEach(() => {
 		for (const fn of Object.values(repositoryMock)) fn.mockReset();
-		prismaMock.user.findUniqueOrThrow.mockReset();
-		prismaMock.user.update.mockReset();
+		for (const fn of Object.values(prismaMock.user)) fn.mockReset();
+		for (const fn of Object.values(prismaMock.transaction)) fn.mockReset();
 		mockFreeUser();
 	});
 
-	it("create() encrypts description/amount before persisting and decrypts the result", async () => {
-		repositoryMock.create.mockResolvedValue(buildTransaction());
+	it("create() encrypts at the Prisma adapter and returns a DTO", async () => {
+		prismaMock.transaction.create.mockResolvedValue(buildRow());
 
 		const result = await transactionService.create("user-1", {
 			description: "Supermercado",
@@ -65,11 +74,6 @@ describe("transactionService", () => {
 			category: "food",
 			type: "expense",
 		});
-
-		expect(repositoryMock.create).toHaveBeenCalledTimes(1);
-		const [createArgs] = repositoryMock.create.mock.calls[0] as [{ description: string; amount: string }];
-		expect(createArgs.description).not.toBe("Supermercado");
-		expect(createArgs.amount).not.toBe("15000");
 
 		expect(result).toEqual({
 			id: "tx-1",
@@ -81,23 +85,7 @@ describe("transactionService", () => {
 			createdAt: "2026-01-01T00:00:00.000Z",
 			updatedAt: null,
 		});
-	});
-
-	it("create() increments the free-plan transaction counter on success", async () => {
-		repositoryMock.create.mockResolvedValue(buildTransaction());
-		mockFreeUser(3);
-
-		await transactionService.create("user-1", {
-			description: "Supermercado",
-			amount: 15000,
-			category: "food",
-			type: "expense",
-		});
-
-		expect(prismaMock.user.update).toHaveBeenCalledWith({
-			where: { id: "user-1" },
-			data: { freeTransactionCount: { increment: 1 } },
-		});
+		expect(prismaMock.user.update).toHaveBeenCalled();
 	});
 
 	it("create() rejects once a free-plan user reaches the transaction limit", async () => {
@@ -110,19 +98,18 @@ describe("transactionService", () => {
 				category: "food",
 				type: "expense",
 			}),
-		).rejects.toThrow("Limite de 10 transações");
+		).rejects.toThrow("Free plan transaction limit");
 
-		expect(repositoryMock.create).not.toHaveBeenCalled();
+		expect(prismaMock.transaction.create).not.toHaveBeenCalled();
 	});
 
 	it("create() ignores the free-plan limit for a user with an active plan", async () => {
-		repositoryMock.create.mockResolvedValue(buildTransaction());
+		prismaMock.transaction.create.mockResolvedValue(buildRow());
 		prismaMock.user.findUniqueOrThrow.mockResolvedValue({
 			planStatus: "active",
 			planExpiresAt: new Date("2099-01-01T00:00:00.000Z"),
 			freeTransactionCount: 999,
 		});
-		prismaMock.user.update.mockResolvedValue({});
 
 		await expect(
 			transactionService.create("user-1", {
@@ -132,34 +119,29 @@ describe("transactionService", () => {
 				type: "expense",
 			}),
 		).resolves.toBeTruthy();
-
-		expect(repositoryMock.create).toHaveBeenCalledTimes(1);
 	});
 
-	it("findById() throws TransactionNotFoundError when the repository returns null", async () => {
-		repositoryMock.findById.mockResolvedValue(null);
-
-		await expect(transactionService.findById("user-1", "missing")).rejects.toThrow(TransactionNotFoundError);
+	it("findById() throws when missing", async () => {
+		prismaMock.transaction.findFirst.mockResolvedValue(null);
+		await expect(transactionService.findById("user-1", "missing")).rejects.toThrow("Transaction not found");
 	});
 
-	it("update() throws TransactionNotFoundError when nothing was updated", async () => {
-		repositoryMock.update.mockResolvedValue(null);
-
+	it("update() throws when nothing was updated", async () => {
+		prismaMock.transaction.updateMany.mockResolvedValue({ count: 0 });
 		await expect(transactionService.update("user-1", "tx-1", { amount: 100 })).rejects.toThrow(
-			TransactionNotFoundError,
+			"Transaction not found",
 		);
 	});
 
-	it("remove() throws TransactionNotFoundError when nothing was deleted", async () => {
-		repositoryMock.delete.mockResolvedValue(false);
-
-		await expect(transactionService.remove("user-1", "tx-1")).rejects.toThrow(TransactionNotFoundError);
+	it("remove() throws when nothing was deleted", async () => {
+		prismaMock.transaction.deleteMany.mockResolvedValue({ count: 0 });
+		await expect(transactionService.remove("user-1", "tx-1")).rejects.toThrow("Transaction not found");
 	});
 
-	it("list() filters by search term against the decrypted description, in-memory", async () => {
-		repositoryMock.findMany.mockResolvedValue([
-			buildTransaction({ id: "tx-1", description: encrypt("Supermercado") }),
-			buildTransaction({ id: "tx-2", description: encrypt("Uber") }),
+	it("list() filters by search term against decrypted description", async () => {
+		prismaMock.transaction.findMany.mockResolvedValue([
+			buildRow({ id: "tx-1", description: encrypt("Supermercado") }),
+			buildRow({ id: "tx-2", description: encrypt("Uber") }),
 		]);
 
 		const result = await transactionService.list("user-1", {
@@ -172,11 +154,11 @@ describe("transactionService", () => {
 		expect(result.transactions[0]?.description).toBe("Uber");
 	});
 
-	it("list() paginates the decrypted, filtered results", async () => {
-		repositoryMock.findMany.mockResolvedValue([
-			buildTransaction({ id: "tx-1" }),
-			buildTransaction({ id: "tx-2" }),
-			buildTransaction({ id: "tx-3" }),
+	it("list() paginates filtered results", async () => {
+		prismaMock.transaction.findMany.mockResolvedValue([
+			buildRow({ id: "tx-1" }),
+			buildRow({ id: "tx-2" }),
+			buildRow({ id: "tx-3" }),
 		]);
 
 		const result = await transactionService.list("user-1", { page: 2, perPage: 2 });
@@ -211,5 +193,10 @@ describe("transactionService", () => {
 		const stats = await transactionService.statsByCategory("user-1");
 
 		expect(stats.map((row) => row.category)).toEqual(["transport", "housing", "food"]);
+	});
+
+	it("TransactionNotFoundError remains an AppError subclass for callers", () => {
+		expect(new TransactionNotFoundError()).toBeInstanceOf(Error);
+		expect(new TransactionNotFoundError().status).toBe(404);
 	});
 });

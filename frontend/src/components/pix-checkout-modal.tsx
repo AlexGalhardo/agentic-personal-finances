@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { api } from "../lib/api";
+import { getPixPaymentStatus, simulatePixPayment } from "#/application/payments";
 import { Modal } from "./modal";
 
 const CLOSE_COOLDOWN_SECONDS = 60;
@@ -50,15 +50,15 @@ export function PixCheckoutModal({
 		if (status !== "pending") return;
 
 		const interval = setInterval(async () => {
-			const { data } = await api.payments.pix({ id: charge.id }).status.get();
-			if (!data || !("status" in data)) return;
+			const pixStatus = await getPixPaymentStatus(charge.id);
+			if (!pixStatus) return;
 
-			if (data.status === "paid" && !paidRef.current) {
+			if (pixStatus.status === "paid" && !paidRef.current) {
 				paidRef.current = true;
-				setPaidMonths(data.months);
+				setPaidMonths(pixStatus.months);
 				setStatus("paid");
-				onPaid(data.planExpiresAt ?? "");
-			} else if (data.status === "expired") {
+				onPaid(pixStatus.planExpiresAt ?? "");
+			} else if (pixStatus.status === "expired") {
 				setStatus("expired");
 			}
 		}, POLL_INTERVAL_MS);
@@ -82,21 +82,21 @@ export function PixCheckoutModal({
 		setSimulating(true);
 		setSimulateMessage("Esse PIX será pago em 10 segundos...");
 
-		const { error } = await api.payments.pix({ id: charge.id }).simulate.post();
-
-		if (error) {
+		try {
+			await simulatePixPayment(charge.id);
+		} catch {
 			setSimulateMessage("Não foi possível simular o pagamento");
 			setSimulating(false);
 			return;
 		}
 
 		setTimeout(async () => {
-			const { data } = await api.payments.pix({ id: charge.id }).status.get();
-			if (data && "status" in data && data.status === "paid") {
+			const pixStatus = await getPixPaymentStatus(charge.id);
+			if (pixStatus?.status === "paid") {
 				paidRef.current = true;
-				setPaidMonths(data.months);
+				setPaidMonths(pixStatus.months);
 				setStatus("paid");
-				onPaid(data.planExpiresAt ?? "");
+				onPaid(pixStatus.planExpiresAt ?? "");
 			}
 			setSimulating(false);
 		}, TEST_MODE_PAYMENT_DELAY_MS);

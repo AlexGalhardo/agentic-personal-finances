@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { deleteCurrentUserAccount } from "#/application/users";
 import { ChangePasswordSection } from "../components/account/change-password-section";
 import { PlanSection } from "../components/account/plan-section";
 import { ProfileSection } from "../components/account/profile-section";
@@ -6,7 +7,6 @@ import { DeleteAccountSection } from "../components/delete-account-section";
 import { PageLayout } from "../components/page-layout";
 import { TelegramLinkSection } from "../components/telegram-link-section";
 import { TwoFactorSettings } from "../components/two-factor-settings";
-import { api } from "../lib/api";
 import { apiErrorMessage } from "../lib/api-error";
 import { signOut, useSession } from "../lib/auth-client";
 import { hasActivePlan } from "../lib/plan";
@@ -30,8 +30,11 @@ function ProfilePage() {
 	const me = meQuery.data;
 
 	async function handleDeleteAccount(): Promise<void> {
-		const { error } = await api.users.me.delete();
-		if (error) throw new Error(apiErrorMessage(error, "Não foi possível excluir sua conta"));
+		try {
+			await deleteCurrentUserAccount();
+		} catch (error) {
+			throw new Error(apiErrorMessage(error, "Não foi possível excluir sua conta"));
+		}
 
 		await signOut();
 		await navigate({ to: "/" });

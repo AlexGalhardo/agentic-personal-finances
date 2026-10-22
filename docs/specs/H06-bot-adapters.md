@@ -3,7 +3,7 @@
 | Field      | Value                                      |
 | ---------- | ------------------------------------------ |
 | PLAN tasks | H06                                        |
-| Status     | Ready                                      |
+| Status     | Done                                       |
 | Depends on | H05                                        |
 | Risk       | Medium: bot UX copy and lockouts must stay |
 

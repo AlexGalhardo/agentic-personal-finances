@@ -3,7 +3,7 @@
 | Field      | Value                                                            |
 | ---------- | ---------------------------------------------------------------- |
 | PLAN tasks | H08                                                              |
-| Status     | Ready                                                            |
+| Status     | Done                                                             |
 | Depends on | H05, H06, H07                                                    |
 | Risk       | Medium: may reveal accidental imports; fix or exempt with reason |
 

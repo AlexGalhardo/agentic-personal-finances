@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { api } from "../lib/api";
+import { confirmTransactionImport, previewTransactionImport } from "#/application/transactions";
 import { apiErrorMessage } from "../lib/api-error";
 import type { TransactionCategory } from "../lib/categories";
 import { categoryLabels, categoryOptions, formatCurrencyCents } from "../lib/categories";
@@ -29,11 +29,11 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 
 	const previewMutation = useMutation({
 		mutationFn: async (csv: string) => {
-			const { data, error: reqError } = await api.transactions.import.preview.post({ csv });
-			if (reqError || !data || !("rows" in data)) {
+			try {
+				return await previewTransactionImport(csv);
+			} catch (reqError) {
 				throw new Error(apiErrorMessage(reqError, "Não foi possível ler o arquivo CSV"));
 			}
-			return data;
 		},
 		onSuccess: (data) => {
 			setRows(data.rows as PreviewRow[]);
@@ -50,19 +50,19 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 	const confirmMutation = useMutation({
 		mutationFn: async () => {
 			if (!rows) return;
-			const { data, error: reqError } = await api.transactions.import.confirm.post({
-				transactions: rows.map((row) => ({
-					description: row.description,
-					amount: row.amount,
-					category: row.category,
-					type: row.type,
-					createdAt: row.createdAt,
-				})),
-			});
-			if (reqError || !data || !("created" in data)) {
+			try {
+				return await confirmTransactionImport(
+					rows.map((row) => ({
+						description: row.description,
+						amount: row.amount,
+						category: row.category,
+						type: row.type,
+						createdAt: row.createdAt,
+					})),
+				);
+			} catch (reqError) {
 				throw new Error(apiErrorMessage(reqError, "Não foi possível importar as transações"));
 			}
-			return data;
 		},
 		onSuccess: (data) => {
 			if (!data) return;

@@ -1,6 +1,6 @@
-import { transactionService } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.service";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
+import { botDeleteTransaction, botListTransactions } from "../adapters/transactions";
 import { formatCurrencyCents, formatDate, getCategoryLabel } from "../formatting/format";
 import type { BotConversation } from "../types";
 
@@ -29,7 +29,7 @@ export async function deleteTransactionConversation(
 		}
 
 		const result = await conversation.external(() =>
-			transactionService.list(userId, { search: text, page: 1, perPage: 10 }),
+			botListTransactions(userId, { search: text, page: 1, perPage: 10 }),
 		);
 
 		if (result.transactions.length === 0) {
@@ -79,6 +79,6 @@ export async function deleteTransactionConversation(
 		return;
 	}
 
-	await conversation.external(() => transactionService.remove(userId, candidate.id));
+	await conversation.external(() => botDeleteTransaction(userId, candidate.id));
 	await confirmation.reply("✅ Transação apagada com sucesso.");
 }

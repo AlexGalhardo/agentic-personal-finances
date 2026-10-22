@@ -12,8 +12,9 @@ What checks the code, where it's configured, and the traps each tool has.
 | [EditorConfig](https://editorconfig.org)                                  | Editors           | `.editorconfig` — tabs width 4; spaces (2) for `*.md`/`*.yml` |
 
 ```bash
-bun run lint        # biome check + markdownlint + prettier --check (what CI and pre-commit run)
+bun run lint        # biome + markdown + prettier + Dependency Rule (`check:deps`)
 bun run lint:fix    # biome --write + markdownlint --fix + prettier --write
+bun run check:deps  # packages/core must not import outer rings (H08)
 bun run format      # formatters only
 ```
 

@@ -64,7 +64,7 @@ are complete (native rows may be `not run` with reason).
 - [x] [`docs/specs/README.md`](./docs/specs/README.md) + template/QGs/index
 - [x] H01–H08 hexagonal specs
 - [x] M01–M03 stack upgrade specs
-- [ ] Human review of specs (spot-check H04/H05) before implementation
+- [x] Human review of specs (spot-check H04/H05) before implementation
 
 ### Phase 4 — Implementation (one spec at a time)
 
@@ -82,10 +82,10 @@ files record which gates ran.
 - [x] [H02](./docs/specs/H02-result-and-failures.md) — Result + AppFailure
 - [x] [H03](./docs/specs/H03-transaction-ports.md) — ports
 - [x] [H04](./docs/specs/H04-transaction-use-cases.md) — use cases
-- [ ] [H05](./docs/specs/H05-backend-http-adapters.md) — Prisma + HTTP adapters
-- [ ] [H06](./docs/specs/H06-bot-adapters.md) — bot → core
-- [ ] [H07](./docs/specs/H07-web-mobile-thin-clients.md) — thin clients
-- [ ] [H08](./docs/specs/H08-dependency-rule.md) — enforce Dependency Rule
+- [x] [H05](./docs/specs/H05-backend-http-adapters.md) — Prisma + HTTP adapters
+- [x] [H06](./docs/specs/H06-bot-adapters.md) — bot → core
+- [x] [H07](./docs/specs/H07-web-mobile-thin-clients.md) — thin clients
+- [x] [H08](./docs/specs/H08-dependency-rule.md) — enforce Dependency Rule
 
 #### Later domain migrations (specs TBD after H08)
 
@@ -111,7 +111,7 @@ files record which gates ran.
 ### Carry-over from 2026-09 check-up
 
 - [ ] `mobile-build.yml` EAS quota — re-run when Free plan resets
-- [ ] Revoke/delete untracked `scripts/test.ts` if it still exists (never commit)
+- [x] Revoke/delete untracked `scripts/test.ts` if it still exists (never commit)
 
 ## Skills (load when relevant)
 

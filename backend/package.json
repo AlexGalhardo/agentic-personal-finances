@@ -27,6 +27,7 @@
 		"start:e2e": "bun --env-file=.env.e2e run src/server.ts"
 	},
 	"dependencies": {
+		"@agentic-personal-finances/core": "workspace:*",
 		"@better-auth/api-key": "1.7.5",
 		"@better-auth/expo": "1.7.4",
 		"@elysiajs/bearer": "1.4.4",

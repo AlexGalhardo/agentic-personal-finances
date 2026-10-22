@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
+import { createTransaction, deleteTransaction, updateTransaction } from "#/application/transactions";
 import { AccordionCard } from "../../components/accordion-card";
 import { BalanceCard } from "../../components/balance-card";
 import { CategoryPieChart } from "../../components/category-pie-chart";
@@ -15,7 +16,6 @@ import { Modal } from "../../components/modal";
 import { PageLayout } from "../../components/page-layout";
 import type { TransactionFormSubmitValues } from "../../components/transaction-form";
 import { TransactionForm } from "../../components/transaction-form";
-import { api } from "../../lib/api";
 import { apiErrorMessage } from "../../lib/api-error";
 import { useSession } from "../../lib/auth-client";
 import type { TransactionCategory } from "../../lib/categories";
@@ -88,8 +88,8 @@ function DashboardPage() {
 
 	const saveMutation = useMutation({
 		mutationFn: async ({ id, values }: { id?: string; values: TransactionFormSubmitValues }) => {
-			const { error } = id ? await api.transactions({ id }).put(values) : await api.transactions.post(values);
-			if (error) throw error;
+			if (id) await updateTransaction(id, values);
+			else await createTransaction(values);
 		},
 		onSuccess: () => {
 			closeForm();
@@ -99,10 +99,7 @@ function DashboardPage() {
 	});
 
 	const deleteMutation = useMutation({
-		mutationFn: async (id: string) => {
-			const { error } = await api.transactions({ id }).delete();
-			if (error) throw error;
-		},
+		mutationFn: deleteTransaction,
 		onSuccess: () => {
 			setDeleting(null);
 			invalidateFinanceData();

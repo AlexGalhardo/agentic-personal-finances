@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { api } from "../lib/api";
+import { unlinkTelegramAccount } from "#/application/telegram";
 import { apiErrorMessage } from "../lib/api-error";
 import { queryKeys } from "../lib/queries";
 
@@ -17,13 +17,14 @@ export function TelegramLinkSection({ telegramChatId }: { telegramChatId: string
 	async function handleUnlink(): Promise<void> {
 		setError(null);
 		setUnlinking(true);
-		const { error: requestError } = await api.telegram.link.delete();
-		setUnlinking(false);
-
-		if (requestError) {
+		try {
+			await unlinkTelegramAccount();
+		} catch (requestError) {
 			setError(apiErrorMessage(requestError, "Não foi possível desvincular o Telegram"));
+			setUnlinking(false);
 			return;
 		}
+		setUnlinking(false);
 		await queryClient.invalidateQueries({ queryKey: queryKeys.me });
 	}
 

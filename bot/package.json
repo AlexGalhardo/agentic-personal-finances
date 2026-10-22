@@ -14,6 +14,7 @@
 		"hash-password": "bun run scripts/hash-password.ts"
 	},
 	"dependencies": {
+		"@agentic-personal-finances/core": "workspace:*",
 		"@agent-money-boilerplate/backend": "workspace:*",
 		"@galhardoalex/telegram-logger": "1.0.1",
 		"@grammyjs/conversations": "2.1.1",

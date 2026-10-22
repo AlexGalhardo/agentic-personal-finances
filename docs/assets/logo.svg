@@ -1,7 +1,40 @@
 <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Money bag logo">
-	<circle cx="60" cy="60" r="58" fill="#facc15" stroke="#a16207" stroke-width="3" />
-	<path d="M60 30 C40 30 28 48 28 68 C28 90 42 100 60 100 C78 100 92 90 92 68 C92 48 80 30 60 30 Z" fill="#eab308" stroke="#854d0e" stroke-width="3" stroke-linejoin="round" />
-	<path d="M48 30 L52 18 L68 18 L72 30" fill="none" stroke="#854d0e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
-	<circle cx="60" cy="20" r="6" fill="#eab308" stroke="#854d0e" stroke-width="3" />
-	<text x="60" y="76" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="bold" fill="#854d0e" text-anchor="middle">$</text>
+	<!-- Money bag body -->
+	<path
+		d="M60 28 C38 28 26 48 26 70 C26 94 42 106 60 106 C78 106 94 94 94 70 C94 48 82 28 60 28 Z"
+		fill="#16a34a"
+		stroke="#14532d"
+		stroke-width="3"
+		stroke-linejoin="round"
+	/>
+	<!-- Bag highlight -->
+	<path
+		d="M42 58 C44 44 52 36 60 34 C54 42 48 52 46 68"
+		fill="none"
+		stroke="#4ade80"
+		stroke-width="4"
+		stroke-linecap="round"
+		opacity="0.55"
+	/>
+	<!-- Drawstring / neck -->
+	<path
+		d="M46 30 L50 16 L70 16 L74 30"
+		fill="none"
+		stroke="#14532d"
+		stroke-width="3"
+		stroke-linejoin="round"
+		stroke-linecap="round"
+	/>
+	<!-- Knot -->
+	<ellipse cx="60" cy="18" rx="8" ry="7" fill="#22c55e" stroke="#14532d" stroke-width="3" />
+	<!-- Dollar sign -->
+	<text
+		x="60"
+		y="80"
+		font-family="Georgia, 'Times New Roman', serif"
+		font-size="38"
+		font-weight="bold"
+		fill="#ecfdf5"
+		text-anchor="middle"
+	>$</text>
 </svg>

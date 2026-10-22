@@ -1,7 +1,7 @@
 import type { TransactionCategory } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
-import { transactionService } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.service";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
+import { botListTransactions } from "../adapters/transactions";
 import {
 	customRange,
 	InvalidDateRangeError,
@@ -42,7 +42,7 @@ async function runSearch(
 	query: { search?: string; category?: TransactionCategory; from?: string; to?: string },
 ): Promise<void> {
 	const result = await conversation.external(() =>
-		transactionService.list(userId, { ...query, page: 1, perPage: PER_PAGE }),
+		botListTransactions(userId, { ...query, page: 1, perPage: PER_PAGE }),
 	);
 
 	const truncated = result.total > PER_PAGE;

@@ -1,8 +1,14 @@
-import type { Prisma, Transaction } from "../../../prisma/generated/client/client";
-import { decrypt, encrypt } from "../../lib/encryption";
+import {
+	createTransaction,
+	deleteTransaction,
+	getTransaction,
+	listTransactions,
+	type TransactionRecord,
+	updateTransaction,
+} from "@agentic-personal-finances/core";
+import { decrypt } from "../../lib/encryption";
 import { AppError } from "../../lib/errors";
-import { FreeLimitReachedError, transactionAllowance } from "../../lib/plan";
-import { userRepository } from "../users/user.repository";
+import { transactionPorts, unwrapOrThrow } from "./transaction.deps";
 import { transactionRepository } from "./transaction.repository";
 import type {
 	CreateTransactionInput,
@@ -13,116 +19,76 @@ import type {
 	UpdateTransactionInput,
 } from "./transaction.schema";
 
-function toDTO(transaction: Transaction): TransactionDTO {
+function toDTO(row: TransactionRecord): TransactionDTO {
 	return {
-		id: transaction.id,
-		description: decrypt(transaction.description),
-		amount: Number(decrypt(transaction.amount)),
-		category: transaction.category as TransactionCategory,
-		type: transaction.type as TransactionType,
-		date: transaction.date.toISOString(),
-		createdAt: transaction.createdAt.toISOString(),
-		updatedAt: transaction.updatedAt?.toISOString() ?? null,
+		id: row.id,
+		description: row.description,
+		amount: row.amount,
+		category: row.category as TransactionCategory,
+		type: row.type,
+		date: row.date.toISOString(),
+		createdAt: row.createdAt.toISOString(),
+		updatedAt: row.updatedAt?.toISOString() ?? null,
 	};
 }
 
+/** @deprecated Prefer core use cases + ports; kept as a thin façade for bot until H06. */
 export class TransactionNotFoundError extends AppError {
 	constructor() {
-		super("Transação não encontrada", 404);
+		super("Transaction not found", 404);
 	}
 }
 
 export const transactionService = {
 	async create(userId: string, input: CreateTransactionInput): Promise<TransactionDTO> {
-		const quota = await userRepository.findPlanQuota(userId);
-
-		if (transactionAllowance(quota) < 1) {
-			throw new FreeLimitReachedError();
-		}
-
-		const created = await transactionRepository.create({
-			userId,
-			description: encrypt(input.description),
-			amount: encrypt(String(input.amount)),
+		const result = await createTransaction(transactionPorts, userId, {
+			description: input.description,
+			amount: input.amount,
 			category: input.category,
 			type: input.type,
 			...(input.date ? { date: new Date(input.date) } : {}),
 		});
-
-		await userRepository.incrementFreeTransactionCount(userId, 1);
-
-		return toDTO(created);
+		return toDTO(unwrapOrThrow(result));
 	},
 
 	async list(
 		userId: string,
 		query: ListTransactionsQuery,
 	): Promise<{ transactions: TransactionDTO[]; total: number; page: number; perPage: number }> {
-		const where: Prisma.TransactionWhereInput = {
-			...(query.category ? { category: query.category } : {}),
-			...(query.from || query.to
-				? {
-						date: {
-							...(query.from ? { gte: new Date(query.from) } : {}),
-							...(query.to ? { lte: new Date(query.to) } : {}),
-						},
-					}
-				: {}),
+		const result = await listTransactions(transactionPorts, userId, {
+			page: query.page,
+			perPage: query.perPage,
+			...(query.search !== undefined ? { search: query.search } : {}),
+			...(query.category !== undefined ? { category: query.category } : {}),
+			...(query.from !== undefined ? { from: new Date(query.from) } : {}),
+			...(query.to !== undefined ? { to: new Date(query.to) } : {}),
+		});
+		const listed = unwrapOrThrow(result);
+		return {
+			transactions: listed.transactions.map(toDTO),
+			total: listed.total,
+			page: listed.page,
+			perPage: listed.perPage,
 		};
-
-		// description and amount are encrypted at rest, so text search and
-		// pagination happen in memory after decrypting. Fine at this app's
-		// volume (hundreds of transactions per user); a larger volume needs a
-		// dedicated search index that doesn't expose plaintext.
-		const all = await transactionRepository.findMany(userId, where, 0, Number.MAX_SAFE_INTEGER);
-		const decrypted = all.map(toDTO);
-
-		const search = query.search?.toLowerCase();
-		const filtered = search
-			? decrypted.filter((transaction) => transaction.description.toLowerCase().includes(search))
-			: decrypted;
-
-		const start = (query.page - 1) * query.perPage;
-		const page = filtered.slice(start, start + query.perPage);
-
-		return { transactions: page, total: filtered.length, page: query.page, perPage: query.perPage };
 	},
 
 	async findById(userId: string, id: string): Promise<TransactionDTO> {
-		const transaction = await transactionRepository.findById(id, userId);
-
-		if (!transaction) {
-			throw new TransactionNotFoundError();
-		}
-
-		return toDTO(transaction);
+		return toDTO(unwrapOrThrow(await getTransaction(transactionPorts, userId, id)));
 	},
 
 	async update(userId: string, id: string, input: UpdateTransactionInput): Promise<TransactionDTO> {
-		const data: Prisma.TransactionUncheckedUpdateInput = {
-			...(input.description !== undefined ? { description: encrypt(input.description) } : {}),
-			...(input.amount !== undefined ? { amount: encrypt(String(input.amount)) } : {}),
+		const result = await updateTransaction(transactionPorts, userId, id, {
+			...(input.description !== undefined ? { description: input.description } : {}),
+			...(input.amount !== undefined ? { amount: input.amount } : {}),
 			...(input.category !== undefined ? { category: input.category } : {}),
 			...(input.type !== undefined ? { type: input.type } : {}),
 			...(input.date !== undefined ? { date: new Date(input.date) } : {}),
-			updatedAt: new Date(),
-		};
-
-		const updated = await transactionRepository.update(id, userId, data);
-
-		if (!updated) {
-			throw new TransactionNotFoundError();
-		}
-
-		return toDTO(updated);
+		});
+		return toDTO(unwrapOrThrow(result));
 	},
 
 	async remove(userId: string, id: string): Promise<void> {
-		const deleted = await transactionRepository.delete(id, userId);
-
-		if (!deleted) {
-			throw new TransactionNotFoundError();
-		}
+		unwrapOrThrow(await deleteTransaction(transactionPorts, userId, id));
 	},
 
 	async statsByCategory(

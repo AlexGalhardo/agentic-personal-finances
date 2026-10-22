@@ -2,9 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { z } from "zod";
+import { linkTelegramAccount } from "#/application/telegram";
 import { AuthCard } from "../components/auth-card";
 import { GoogleButton } from "../components/google-button";
-import { api } from "../lib/api";
 import { apiErrorMessage } from "../lib/api-error";
 import { useSession } from "../lib/auth-client";
 
@@ -28,11 +28,7 @@ function TelegramLinkPage() {
 	const attempted = useRef(false);
 
 	const linkMutation = useMutation({
-		mutationFn: async (linkToken: string) => {
-			const { data, error } = await api.telegram.link.post({ token: linkToken });
-			if (error) throw error;
-			return data;
-		},
+		mutationFn: linkTelegramAccount,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: linkMutation is left out on purpose — it must fire once when token and session become available, not on every re-render.

@@ -25,6 +25,8 @@ jobs:
           bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - run: bun run lint
+      - name: Dependency Rule (packages/core)
+        run: bun run check:deps && bun run test:scripts
       - name: Typecheck scripts (dev.ts, qa.ts)
         run: bun run --cwd backend db:generate && bun run typecheck:scripts
         env:

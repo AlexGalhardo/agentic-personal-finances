@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { api } from "../../lib/api";
+import { getPaymentHistory } from "#/application/payments";
 import { FREE_TRANSACTION_LIMIT, hasActivePlan } from "../../lib/plan";
 import { useAppConfig } from "../../lib/use-app-config";
 import { AccordionCard } from "../accordion-card";
@@ -19,11 +19,7 @@ type Props = {
 function usePaymentHistory() {
 	return useQuery({
 		queryKey: ["payment-history"],
-		queryFn: async () => {
-			const { data, error } = await api.payments.history.get();
-			if (error || !data || !("logs" in data)) throw error ?? new Error("Falha ao carregar histórico");
-			return data.logs;
-		},
+		queryFn: getPaymentHistory,
 	});
 }
 
