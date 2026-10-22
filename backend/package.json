@@ -28,32 +28,32 @@
 	},
 	"dependencies": {
 		"@agentic-personal-finances/core": "workspace:*",
-		"@better-auth/api-key": "1.7.5",
-		"@better-auth/expo": "1.7.4",
+		"@better-auth/api-key": "1.7.11",
+		"@better-auth/expo": "1.7.11",
 		"@elysiajs/bearer": "1.4.4",
 		"@elysiajs/cors": "1.4.2",
 		"@elysiajs/eden": "1.4.9",
 		"@elysiajs/openapi": "1.4.16",
 		"@galhardoalex/telegram-logger": "1.0.1",
 		"@libsql/client": "0.18.0",
-		"@prisma/adapter-libsql": "7.10.0",
-		"@prisma/adapter-pg": "7.10.0",
-		"@prisma/client": "7.10.0",
+		"@prisma/adapter-libsql": "7.10.1",
+		"@prisma/adapter-pg": "7.10.1",
+		"@prisma/client": "7.10.1",
 		"@react-email/components": "1.0.12",
-		"@react-email/render": "2.1.0",
-		"better-auth": "1.7.4",
+		"@react-email/render": "2.1.1",
+		"better-auth": "1.7.11",
 		"elysia": "1.4.30",
-		"pg": "8.23.0",
-		"react": "19.2.3",
-		"react-dom": "19.2.3",
-		"react-email": "6.9.5",
-		"resend": "6.28.0",
-		"zod": "4.6.2"
+		"pg": "8.23.1",
+		"react": "19.3.1",
+		"react-dom": "19.3.1",
+		"react-email": "6.11.3",
+		"resend": "6.34.1",
+		"zod": "4.6.7"
 	},
 	"devDependencies": {
 		"@types/bun": "1.4.3",
 		"@types/pg": "8.23.1",
-		"@types/react": "19.2.18",
-		"prisma": "7.10.0"
+		"@types/react": "19.3.0",
+		"prisma": "7.10.1"
 	}
 }
