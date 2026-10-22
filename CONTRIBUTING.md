@@ -1,4 +1,4 @@
-# Contributing to Agent Money Boilerplate
+# Contributing to Agentic Personal Finances
 
 Thanks for your interest in contributing. This document summarizes the
 expected workflow for any change to this repository — human or AI agent.
@@ -24,12 +24,17 @@ full rules, and why each one exists, are in
 [`.agents/skills/git-branch-workflow/SKILL.md`](./.agents/skills/git-branch-workflow/SKILL.md).
 Summary:
 
-1. Branch off an up-to-date `main`.
-2. Make your changes and commits there.
-3. Run locally what the `pre-push` hook runs (see "Before opening a PR"
-   below) — only open the PR once everything passes.
-4. Open a Pull Request against `main`. Never commit directly to `main`,
-   never force-push `main`.
+1. Branch off an up-to-date `main` onto `dev` (reuse or recreate).
+2. Prefer implementing the next Ready slice in [`PLAN.md`](./PLAN.md) /
+   [`docs/specs/`](./docs/specs/) (one H\* or M\* spec at a time).
+3. Make Conventional Commits on `dev`; keep `CHANGELOG.md` `[Unreleased]`
+   current; for finished specs, tick PLAN and add
+   `docs/verification/specs/<ID>.md`.
+4. Run locally what the `pre-push` hook runs (see "Before opening a PR"
+   below) — only push once everything passes.
+5. Push `dev`, wait for `.github/workflows/ci.yml` green, then merge into
+   `main` (`merge: <summary> (dev -> main)`). Never commit directly to
+   `main`, never force-push `main`.
 
 ## Commit messages — Conventional Commits
 
@@ -99,9 +104,14 @@ categories, better-auth error maps, password rules).
 Run what the `pre-push` hook runs:
 
 ```bash
-(cd backend && bunx --bun tsc --noEmit && bun run test:setup && bun run test && bun run build)
-(cd frontend && bunx --bun tsc --noEmit && bun run build)
+bun run check   # lint + typecheck (all workspaces incl. packages/core) + unit tests
+(cd backend && bun check --no-script && bun run test:setup && bun run test && bun run build)
+(cd frontend && bun check --no-script && bun run build)
 ```
+
+Requires **Bun ≥ 1.4.4** (`packageManager` in the root `package.json`).
+Typecheck uses Bun's built-in checker: `bun check --no-script` (not
+`tsc` / the npm script named `check`).
 
 And, if your change touched `frontend/e2e/`, `frontend/playwright.config.ts`
 or routes the E2E suite covers, also run the end-to-end tests:

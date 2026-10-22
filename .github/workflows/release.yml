@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       # Release binaries target PostgreSQL (production); SQLite is for local dev.
       - name: Generate Prisma Client (PostgreSQL)
@@ -89,10 +89,10 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Package
-        working-directory: desktop-electronjs
+        working-directory: desktop
         shell: bash
         run: |
           bun run build
@@ -105,7 +105,7 @@ jobs:
       # Developer ID (and notarization) is set up.
       - name: Ad hoc sign and zip (macOS)
         if: runner.os == 'macOS'
-        working-directory: desktop-electronjs/release
+        working-directory: desktop/release
         run: |
           app=$(find . -maxdepth 2 -name '*.app' -print -quit)
           [ -n "$app" ] || { find . -maxdepth 3; exit 1; }
@@ -113,14 +113,14 @@ jobs:
           ditto -c -k --keepParent "$app" agent-money-desktop-macos-arm64.zip
           echo "MAC_APP_BIN=release/${app#./}/Contents/MacOS/$(ls "$app/Contents/MacOS")" >> "$GITHUB_ENV"
       - name: Smoke test the packaged app
-        working-directory: desktop-electronjs
+        working-directory: desktop
         shell: bash
         run: ${{ matrix.smoke }} --smoke
       - name: Collect
         shell: bash
         run: |
           mkdir -p dist-desktop
-          cd desktop-electronjs/release
+          cd desktop/release
           case "$RUNNER_OS" in
             Windows) cp "Agent Money Setup"*.exe ../../dist-desktop/agent-money-desktop-windows-x64-setup.exe ;;
             Linux) cp *.AppImage ../../dist-desktop/agent-money-desktop-linux-x64.AppImage ;;
@@ -142,7 +142,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -177,7 +177,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Generate Prisma Client
         working-directory: backend

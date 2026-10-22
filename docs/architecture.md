@@ -1,118 +1,231 @@
 # Architecture
 
-## What this is
+## Purpose and scope
 
-**Agent Money Boilerplate** — a forkable personal-finance boilerplate
-(transactions, categories, reports, PIX subscriptions) that shows one
-backend serving five clients: a REST API with a public developer API, a
-web dashboard, a Telegram bot, a mobile app and a desktop app — same auth,
-same business rules, same database.
+**Agentic Personal Finances** is a forkable personal-finance monorepo
+(transactions, categories, reports, PIX subscriptions). It demonstrates one
+policy core serving five clients — REST API, web dashboard, Telegram bot,
+mobile app, and desktop shell — with shared auth, business rules, and
+database.
 
-```text
-backend/    ElysiaJS API — auth, transactions, payments, cron, OpenAPI spec
-frontend/   TanStack Start (SSR) web dashboard; proxies API paths through its origin
-bot/        Telegram bot (grammY) — calls backend services in-process, no HTTP
-mobile/     Expo + React Native app — talks to the API over HTTP (Eden)
-desktop-electronjs/  Electron shell that loads the web dashboard (ADR 0009)
-scripts/    dev.ts (whole local stack), qa.ts (QA/pentest pass over every app)
-infra/      Dockerfiles, docker-compose files, Caddyfiles, PM2 configs
-setups/     setup and deploy shell scripts (scripts/common.sh = shared functions)
-docs/       this knowledge base
-```
+This document describes the **current** system and a **target** Clean
+Architecture / hexagonal mapping for the upcoming refactor. Implementation
+choices that change behavior belong in [`decisions/`](./decisions/). Agent
+guidance for Lemos-style Clean Architecture:
+[`.agents/skills/clean-architecture-in-practice`](../.agents/skills/clean-architecture-in-practice/SKILL.md).
 
-## Stack
-
-| Layer    | Technology                                                                                             |
-| -------- | ------------------------------------------------------------------------------------------------------ |
-| Runtime  | Bun ≥ 1.4 (lockfile generated with bun 1.3.14 — see `tooling.md`)                                      |
-| API      | ElysiaJS + Zod (validation, response schemas, OpenAPI via `@elysiajs/openapi`)                         |
-| Auth     | better-auth — cookie sessions, optional 2FA, API keys (`x-api-key`), Expo plugin                       |
-| Database | Prisma 7 with two schemas (`schema.sqlite.prisma` / `schema.postgresql.prisma`)                        |
-| Web      | TanStack Start + TanStack Query + Tailwind CSS v4; Scalar for the API reference                        |
-| Mobile   | Expo SDK 57, Expo Router, NativeWind v4 (dark-only token system)                                       |
-| Bot      | grammY + @grammyjs/conversations, pdfkit reports                                                       |
-| Desktop  | Electron 44 + electron-builder (NSIS, AppImage, ad hoc signed macOS .app)                              |
-| Payments | AbacatePay PIX (transparent checkout v2)                                                               |
-| E-mail   | Resend + react-email                                                                                   |
-| Tests    | `bun:test` (backend, bot, frontend unit), Jest (mobile), Playwright (web + Expo web), Maestro (native) |
-| Tooling  | Biome (TS/JS/JSON/CSS), Prettier + markdownlint (Markdown), commitlint, Husky                          |
-
-## Backend layering
-
-Each domain lives in `backend/src/modules/<domain>/`:
+## System context
 
 ```text
-<domain>.schema.ts      Zod request/response schemas + DTO types (the contract)
-<domain>.routes.ts      Elysia routes: validation, auth guard, OpenAPI `detail`; no logic
-<domain>.service.ts     business rules; throws AppError subclasses; testable in isolation
-<domain>.repository.ts  the only layer that touches Prisma
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│ Web (Start)  │  │ Mobile       │  │ Desktop      │  │ Telegram bot │
+│ + API proxy  │  │ (Expo/Eden)  │  │ (Electron)   │  │ (grammY)     │
+└──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘
+       │ HTTP            │ HTTP            │ loads web       │ in-process
+       └─────────────────┴─────────────────┘                 │
+                         │                                   │
+                    ┌────▼────┐                              │
+                    │ Backend │◄─────────────────────────────┘
+                    │ Elysia  │
+                    └────┬────┘
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+    Prisma/DB      better-auth      AbacatePay / Resend
 ```
+
+Primary actors (driving): web, mobile, bot, cron/webhooks, developers with
+API keys. Secondary actors (driven): database, auth store, payment gateway,
+e-mail, encryption library.
+
+## Workspace map
+
+```text
+packages/core/  Shared application core (`@agentic-personal-finances/core`) — H01+
+backend/        ElysiaJS API — auth, transactions, payments, cron, OpenAPI
+frontend/       TanStack Start (SSR) dashboard; proxies API paths through its origin
+bot/            Telegram bot — calls backend services in-process (no HTTP)
+mobile/         Expo + React Native — HTTP + Eden treaty
+desktop/        Electron shell that loads the web dashboard (ADR 0009)
+scripts/        dev.ts (local stack), qa.ts (QA/pentest pass)
+infra/          Docker, compose, Caddy, PM2
+setups/         setup/deploy shell scripts
+docs/           knowledge base (this file, ADRs, deploy guides)
+.agents/        skills, rules, agents, references
+```
+
+## Architectural style
+
+### Dependency rule
+
+Source-code dependencies point **inward**, toward policy. Inner code must
+not import framework request types, ORM row shapes, or UI packages. Every
+other layering choice is negotiable; this rule is not.
+
+### Hexagonal view (pragmatic)
+
+| Side                 | Role in this repo                                                                                                                                                 |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Application core** | Domain rules in `*.service.ts`, `plan.ts`, encryption policy                                                                                                      |
+| **Ports**            | Today mostly **implicit** (repository modules, auth session resolution, payment calls). Formal TypeScript port interfaces are a refactor option, not required yet |
+| **Driving adapters** | Elysia `*.routes.ts`, grammY bot, Eden clients, cron/webhook routes, OpenAPI/Scalar docs                                                                          |
+| **Driven adapters**  | Prisma repositories, better-auth, AbacatePay, Resend, `encryption.ts`                                                                                             |
+| **Composition root** | `backend/src/app.ts` (+ `server.ts` listen), bot entry, `scripts/dev.ts` / `qa.ts`                                                                                |
+
+This is **Lemos-lite / hexagonal-lite**: vertical slices by capability
+(`transactions`, `payments`, …), thin HTTP adapters, repositories as the
+only Prisma touchpoint. There is **no** separate `entities/` package or
+`Either`/`Result` error style yet — expected failures use `AppError`
+exceptions mapped once at the edge (ADR 0004).
+
+### What we deliberately avoid (for now)
+
+- Kind-only top-level folders (`services/`, `repositories/` across domains)
+- Interfaces “for mocking” with a single implementation
+- One type used as JSON DTO + SQL row + domain model
+- Business rules in Elysia handlers or grammY conversations
+- Premature CQRS / Unit of Work / full entity-VO layer at this size
+
+## Backend structure
+
+Each domain lives under `backend/src/modules/<domain>/`:
+
+```text
+<domain>.schema.ts      Zod request/response schemas + DTO types (contract)
+<domain>.routes.ts      Elysia: validation, auth guard, OpenAPI detail; no logic
+<domain>.service.ts     business rules; throws AppError; unit-testable
+<domain>.repository.ts  the only layer that touches Prisma (when needed)
+```
+
+| Domain         | Notes                                                                                    |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `users`        | Full four-file module                                                                    |
+| `transactions` | Plus `transaction-import.*` (schema/routes/service); reuses `transaction.repository`     |
+| `payments`     | Full module + unit tests on the service                                                  |
+| `telegram`     | schema/routes/service; **no** repository — orchestrates `userRepository` and link tokens |
 
 - `src/app.ts` builds the app (CORS, OpenAPI, global error mapper, routes)
-  without listening; `src/server.ts` only calls `listen()` and re-exports
-  the `App` type for Eden. Tests and tools import `app.ts`.
-- **Errors**: expected failures extend `AppError` (`src/lib/errors.ts`) with
-  an HTTP status; one `onError` in `app.ts` turns them into
-  `{ success: false, message }`. Validation errors answer
-  `{ success: false, message: "Dados inválidos", errors: [...] }` without
-  echoing schemas; anything else is logged and answered with a generic 500.
-- **Auth**: the `auth` macro (`src/lib/auth.plugin.ts`) resolves the
-  better-auth session from the cookie **or** an `x-api-key` header; invalid
-  credentials → 401.
-- **Encryption at rest**: transaction `description`/`amount` and
-  `user.autoGeneratedPassword` are AES-256-GCM encrypted with
-  `ENCRYPTION_KEY` (`src/lib/encryption.ts`). Text search therefore happens
-  in memory after decrypting (fine at this app's volume).
-- **Plans**: the free plan allows 10 transactions (`src/lib/plan.ts`,
-  `transactionAllowance`); PIX payments extend `planExpiresAt`.
+  without listening; `src/server.ts` calls `listen()` and re-exports the
+  `App` type for Eden. Tests import `app.ts`.
+- **Errors**: expected failures extend `AppError` (`src/lib/errors.ts`);
+  one `onError` maps to `{ success: false, message }`. Validation failures
+  return a generic invalid-input message plus field errors without echoing
+  schemas; unexpected errors are logged and answered with a generic 500.
+- **Auth**: the `auth` macro (`src/lib/auth.plugin.ts`) resolves a
+  better-auth session from the cookie **or** an `x-api-key` header.
+- **Encryption at rest**: sensitive transaction fields and
+  `user.autoGeneratedPassword` use AES-256-GCM (`ENCRYPTION_KEY`).
+- **Plans**: free plan allows a fixed transaction quota (`src/lib/plan.ts`);
+  PIX payments extend `planExpiresAt`.
+
+### Target mapping (refactor direction)
+
+| Clean Architecture layer | Current home                                 | Likely next step                                                            |
+| ------------------------ | -------------------------------------------- | --------------------------------------------------------------------------- |
+| Entities / value objects | Implicit in services                         | Optional shared money/plan types if rules grow                              |
+| Use cases                | `*.service.ts`                               | Keep; rename/split for “screaming” use cases where helpful                  |
+| Ports                    | Concrete repos / gateway calls               | Introduce interfaces only when a second adapter appears or tests need fakes |
+| Interface adapters       | Routes, Zod, error mapper, bot conversations | Keep thin; map DTOs at the boundary                                         |
+| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron       | Stay outside the core                                                       |
+| Main                     | `app.ts`, bot entry, scripts                 | Explicit wiring; no new DI container unless needed                          |
 
 ## How each client reaches the backend
 
-| Client     | Transport                                                                                                                       | Auth                                                                                                              | Notes                                                                                                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Web        | HTTP through its own origin — `frontend/server.ts` (prod) and Vite's proxy (dev) forward the paths in `frontend/proxy-paths.ts` | session cookie                                                                                                    | Frontend and API are different Railway domains; proxying makes the API's `Set-Cookie` land on the frontend domain so SSR (`getServerSession`) sees it                 |
-| Mobile     | HTTP, Eden treaty (`mobile/src/lib/api.ts`)                                                                                     | cookie stored by `@better-auth/expo` in SecureStore, re-attached by a custom fetcher (web build: browser cookies) | Eden revives ISO dates into `Date` objects — normalize at the query layer (`mobile/src/query/normalize.ts`)                                                           |
-| Bot        | **in-process** imports from `@agent-money-boilerplate/backend`                                                                  | chat ↔ account link (`user.telegramChatId`)                                                                       | No HTTP layer: route validation and better-auth's HTTP rate limiting don't apply — the bot validates with the backend's Zod schemas and has its own per-chat lockouts |
-| Desktop    | Loads the web dashboard's URL in a sandboxed window (`desktop-electronjs/src/main.ts`)                                          | same session cookie as the web (same origin)                                                                      | No client code of its own; foreign origins open in the system browser, so Google login finishes in the browser — use e-mail/password in the app                       |
-| Developers | HTTP, OpenAPI 3.1 at `/openapi/json`, rendered by Scalar on the web's `/api` page                                               | `x-api-key`                                                                                                       | Only `/transactions*` is documented                                                                                                                                   |
+| Client     | Transport                                                                                                 | Auth                                         | Notes                                                                                                                   |
+| ---------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Web        | HTTP via frontend origin — `frontend/server.ts` (prod) and Vite proxy (dev) use `frontend/proxy-paths.ts` | session cookie                               | Proxy makes `Set-Cookie` land on the frontend domain for SSR                                                            |
+| Mobile     | HTTP, Eden treaty (`mobile/src/lib/api.ts`)                                                               | cookie via `@better-auth/expo` + SecureStore | Normalize revived `Date`s at the query layer                                                                            |
+| Bot        | **In-process** imports from `@agent-money-boilerplate/backend`                                            | chat ↔ `user.telegramChatId`                 | Same use cases, alternate driving adapter (ADR 0002). No HTTP rate limits — bot has its own lockouts and Zod validation |
+| Desktop    | Loads the web dashboard URL (`desktop/src/main.ts`)                                                       | same web session                             | No second UI (ADR 0009)                                                                                                 |
+| Developers | OpenAPI 3.1 at `/openapi/json`, Scalar on web `/api`                                                      | `x-api-key`                                  | Documented surface is intentionally narrow today (`/transactions*`)                                                     |
 
-End-to-end types: `frontend/src/lib/api.ts` and `mobile/src/lib/api.ts`
-import `type App` from `backend/src/server.ts`, so a breaking API change
-fails the clients' typecheck.
+End-to-end types: frontend and mobile import `type App` from
+`backend/src/server.ts`, so a breaking API change fails client typecheck
+(`bun check --no-script`).
 
 ## Telegram linking
 
-A chat can only be linked by proving control of the account: the bot's
-e-mail/password login (rate-limited per chat), or a single-use 15-minute
-token the bot sends as a link to the web page `/telegram-vincular`, which
-redeems it for the logged-in account (works for Google and 2FA accounts).
-Linking by typing an ID was removed in the 2026-09-27 security audit.
-Unlinking: `DELETE /telegram/link` (web/mobile) or "Trocar de conta" in the bot.
+A chat links only by proving account control: bot e-mail/password login
+(rate-limited per chat), or a single-use 15-minute token redeemed on the
+web (`/telegram-vincular`). Linking by pasting an account ID was removed
+(ADR 0003). Unlink: `DELETE /telegram/link` or the bot’s switch-account flow.
 
-## Monorepo quirks (don't undo without reading)
+## Stack (current pins)
 
-- **`bunfig.toml` → `install.linker = "hoisted"`** — Metro (Expo) can't walk
-  bun's isolated `node_modules/.bun` symlinks. Side effect: `nativewind`
-  resolves the frontend's Tailwind v4 instead of its v3; patched in
-  `mobile/metro.config.js` plus `patches/nativewind@4.2.7.patch` (hence
-  every Dockerfile must `COPY patches`).
-- **`bun.lock` must stay `lockfileVersion: 1`** — EAS build images ship bun
-  1.3.14. Regenerate only with `npx bun@1.3.14 install`; the pre-commit hook
-  enforces it.
-- **Two Prisma schemas** — Prisma can't switch providers dynamically; keep
-  both files identical except the provider. `DATABASE_PROVIDER` selects one
-  in `backend/prisma7.config.ts`; the generated client must match the
-  active provider (`bun run db:generate[:postgres]`).
-- **Mobile `EXPO_PUBLIC_*`** — inlined at transform time; exporting with a
-  different value needs `--clear`.
+| Layer         | Technology                                                                   |
+| ------------- | ---------------------------------------------------------------------------- |
+| Runtime       | **Bun 1.4.4** (`packageManager` / CI); typecheck via `bun check --no-script` |
+| API           | ElysiaJS 1.4.x + Zod + `@elysiajs/openapi`                                   |
+| Auth          | better-auth (cookies, optional 2FA, API keys, Expo plugin)                   |
+| Database      | Prisma 7 — dual schemas SQLite / PostgreSQL                                  |
+| Web           | TanStack Start + Query + Tailwind CSS v4; Scalar API reference               |
+| Mobile        | Expo SDK 57, Expo Router, NativeWind v4 (dark-only tokens)                   |
+| Bot           | grammY + conversations, pdfkit reports                                       |
+| Desktop       | Electron + electron-builder                                                  |
+| Payments      | AbacatePay PIX                                                               |
+| E-mail        | Resend + react-email                                                         |
+| Tests         | `bun:test`, Jest (mobile), Playwright, Maestro                               |
+| Agent tooling | `.agents/skills/` (incl. clean-architecture-in-practice)                     |
 
-## Mobile UI
+Planned upgrades (see `PLAN.md` / project prompt): Elysia 2 RC, Prisma 8 RC,
+TanStack Start 1.0 stable — treat each as its own migration, not a drive-by
+bump inside a CA refactor.
 
-Dark-only, NativeWind classes generated from `mobile/src/theme/palette.js`.
-Full rules: [`design-system.md`](./design-system.md).
+## Monorepo and runtime constraints
 
-## Deployment topology
+- **`bunfig.toml` → `install.linker = "hoisted"`** — Metro cannot walk bun’s
+  isolated linker layout. Side effect: NativeWind/Tailwind resolution needs
+  the `mobile/metro.config.js` patch and `patches/nativewind@4.2.7.patch`
+  (Dockerfiles must `COPY patches`).
+- **Lockfile**: Bun 1.4.4 writes `lockfileVersion: 1` here; pre-commit
+  rejects other versions. Install with Bun 1.4.4 only.
+- **Two Prisma schemas** — keep both identical except provider;
+  `DATABASE_PROVIDER` selects one; regenerate the client to match.
+- **Mobile `EXPO_PUBLIC_*`** — inlined at transform time; change values with
+  `--clear`.
 
-Production: Railway (three services from `infra/Dockerfile` + Postgres),
-gated by CI. Alternatives: VPS (Docker or PM2 + Caddy), Vercel + Fly.io.
-Mobile: EAS Build. See [`deploy/`](./deploy).
+## Testing (architecture level)
+
+| Layer       | Where                                                                      |
+| ----------- | -------------------------------------------------------------------------- |
+| Unit        | Service / pure helpers (`*.unit.test.ts`); bot formatting                  |
+| Integration | Backend with reset `test.db`; bot with `.env.test`                         |
+| Contract    | Eden `App` type across frontend/mobile                                     |
+| E2E         | Playwright (web + Expo web), Maestro (native), desktop smoke, `bun run qa` |
+
+Prefer fakes at the **repository / gateway** boundary over mocking Elysia
+internals. Bot tests exercise real services when the rule is shared policy.
+
+## Deployment topology (summary)
+
+Production default: Railway (API, web, bot) + Postgres, gated by CI.
+Alternatives: VPS (Docker or PM2 + Caddy). Mobile: EAS Build. Details:
+[`deploy/`](./deploy).
+
+## Related docs
+
+| Doc                                                                                                          | Role                                                             |
+| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| [`decisions/`](./decisions/)                                                                                 | Normative ADRs (Prisma dual schema, bot in-process, AppError, …) |
+| [`security.md`](./security.md)                                                                               | Threat notes and deferred risks                                  |
+| [`tooling.md`](./tooling.md)                                                                                 | Bun, Biome, hooks, lockfile                                      |
+| [`design-system.md`](./design-system.md)                                                                     | Mobile (and evolving web) tokens                                 |
+| [`workflows.md`](./workflows.md)                                                                             | Agent/human workflows                                            |
+| [`.agents/skills/clean-architecture-in-practice`](../.agents/skills/clean-architecture-in-practice/SKILL.md) | Lemos frameworks for the refactor                                |
+
+## Research baseline (Phase 1)
+
+Sources used for this rewrite:
+
+- Current codebase + ADRs 0001–0009
+- Otávio Lemos, _Arquitetura Limpa na Prática_ (skill vendored from
+  [kali-tools](https://github.com/AlexGalhardo/kali-tools/tree/main/.agents/skills/clean-architecture-in-practice))
+- kali-tools `docs/architecture.md` / `architecture-research.md` (hexagon
+  vocabulary, anti-patterns, boundary testing — adapted away from that
+  product’s Go/Wails domain)
+- Bun 1.4.4 tooling: built-in `bun check` as the monorepo typechecker
+
+**Open questions deferred to brainstorming (Phase 2):** formal ports vs
+concrete repos; shared `domain/` package yes/no; eslint boundary rules;
+bot documented as first-class adapter forever; import use-case naming;
+exceptions vs `Result`; how far CA applies on frontend/mobile; OpenAPI
+surface breadth.

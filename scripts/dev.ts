@@ -113,7 +113,7 @@ console.log(`[dev] backend ready: ${BACKEND_URL}  (web dashboard: ${FRONTEND_URL
 
 if (!skip.has("desktop")) {
 	void waitFor(FRONTEND_URL).then((ready) => {
-		if (ready) start("desktop", ["bun", "run", "start"], { cwd: "desktop-electronjs" });
+		if (ready) start("desktop", ["bun", "run", "start"], { cwd: "desktop" });
 		else console.error(`[dev] ${FRONTEND_URL} never answered; desktop app not started.`);
 	});
 }

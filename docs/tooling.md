@@ -17,7 +17,7 @@ bun run lint:fix    # biome --write + markdownlint --fix + prettier --write
 bun run format      # formatters only
 ```
 
-- Vendored skills (`.claude/skills`, `.claude/agents`, `.claude/references`,
+- Vendored skills (`.agents/skills`, `.agents/agents`, `.agents/references`,
   `.agents/skills`) are excluded from every tool — they mirror upstream.
 - Prettier owns Markdown layout; markdownlint rules that fight it
   (`MD013` line length, `MD060` table style, emphasis/list markers) are off.
@@ -30,7 +30,7 @@ bun run format      # formatters only
 | ------------ | -------------------------------------------------------------------------------------------------------------------------- |
 | `pre-commit` | blocks staged `*.exe` and `*.csv`, blocks a `bun.lock` that isn't `lockfileVersion: 1`, `bun run lint`                     |
 | `commit-msg` | [commitlint](https://commitlint.js.org) with `@commitlint/config-conventional` + the `merge` type (`commitlint.config.js`) |
-| `pre-push`   | backend typecheck + tests + build, frontend typecheck + build                                                              |
+| `pre-push`   | backend `bun check --no-script` + tests + build; frontend `bun check --no-script` + build                                  |
 
 commitlint traps worth knowing (see the `agent-money-ship` skill):
 
@@ -43,16 +43,18 @@ Never bypass hooks with `--no-verify` without the maintainer's explicit OK.
 
 ## Package management
 
-- **Bun** runs everything; `bunfig.toml` pins the hoisted linker (Metro
-  needs it).
-- **Lockfile v1**: EAS images use bun 1.3.14, which can't read v2. Add or
-  update dependencies only with `npx bun@1.3.14 add --exact <pkg>@<version>`
-  (or `npx bun@1.3.14 install`). The pre-commit hook rejects v2.
+- **Bun 1.4.4** is the pinned runtime (`packageManager` / `engines` in the
+  root `package.json`, CI `bun-version: 1.4.4`). `bunfig.toml` pins the
+  hoisted linker (Metro needs it).
+- **Lockfile**: keep `lockfileVersion: 1` (what Bun 1.4.4 writes here).
+  Install and add packages with Bun 1.4.4 (`bun install`,
+  `bun add --exact <pkg>@<version>`). The pre-commit hook rejects other
+  lockfile versions.
 - **Exact stable versions** — no `^`/`~`, no `latest`/`next`/`beta`. Look
   up the current stable with `npm view <pkg> version dist-tags`.
 - **Moved the repo?** Workspace links in `node_modules/@agent-money-boilerplate/*`
-  are absolute symlinks — after moving the folder, `npx bun@1.3.14 install`
-  again or typecheck fails with "Cannot find module" /
+  are absolute symlinks — after moving the folder, `bun install` again or
+  typecheck fails with "Cannot find module" /
   "Please install Elysia before using Eden".
 - Audit: `bun audit`; triage by reachability and record deferrals in
   [`security.md`](./security.md#accepted--deferred).
@@ -60,9 +62,10 @@ Never bypass hooks with `--no-verify` without the maintainer's explicit OK.
 ## TypeScript
 
 Each workspace has its own `tsconfig.json` (`strict`, and
-`noUncheckedIndexedAccess` in the backend). `bun run typecheck` checks all
-four. The backend and bot need a generated Prisma Client first
-(`cd backend && bun run db:generate`).
+`noUncheckedIndexedAccess` in the backend). Typechecking uses Bun's built-in
+checker: `bun run typecheck` → `bun check --no-script` across workspaces
+(see [Bun check](https://bun.com/docs/runtime/check)). The backend and bot
+need a generated Prisma Client first (`cd backend && bun run db:generate`).
 
 ## Tests
 

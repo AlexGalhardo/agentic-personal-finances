@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "1.0.0-rc",
 	"engines": {
-		"bun": ">=1.4.0"
+		"bun": ">=1.4.4"
 	},
 	"scripts": {
 		"dev": "bun run --watch src/server.ts",
@@ -49,7 +49,7 @@
 		"zod": "4.6.2"
 	},
 	"devDependencies": {
-		"@types/bun": "1.4.2",
+		"@types/bun": "1.4.3",
 		"@types/pg": "8.23.1",
 		"@types/react": "19.2.18",
 		"prisma": "7.10.0"

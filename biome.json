@@ -18,9 +18,8 @@
 			"!**/bun.lock",
 			"!.vscode",
 			"!.agents/skills",
-			"!.claude/skills",
-			"!.claude/agents",
-			"!.claude/references"
+			"!.agents/agents",
+			"!.agents/references"
 		]
 	},
 	"formatter": {

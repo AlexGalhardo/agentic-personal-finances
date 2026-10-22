@@ -21,7 +21,7 @@
   reason next to it, no casts that hide a runtime mismatch (the Eden `Date`
   bug hid behind `as Transaction[]`).
 - New dependencies: exact stable versions (no `^`, no `latest`/`next`/
-  pre-release), installed with `npx bun@1.3.14 add --exact <pkg>@<version>`.
+  pre-release), installed with `bun add --exact <pkg>@<version>` (Bun ≥ 1.4.4).
 
 ## Backend
 

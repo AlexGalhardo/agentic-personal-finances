@@ -5,7 +5,7 @@ Run from the repository root unless noted.
 ## Everyday
 
 ```bash
-npx bun@1.3.14 install      # install all workspaces (keeps bun.lock at v1)
+bun install                  # Bun ≥ 1.4.4 (see packageManager in package.json)
 bun run backend:dev         # API        http://localhost:4000 (spec at /openapi/json)
 bun run frontend:dev        # web        http://localhost:4001 (API reference at /api)
 bun run bot:dev             # Telegram bot (needs bot/.env)
@@ -17,10 +17,11 @@ bun run dev:all             # all of the above except the bot, Expo pointed at t
 ## Verify
 
 ```bash
-bun run check               # lint + typecheck (5 workspaces + scripts/) + unit tests — run before every commit
+bun run check               # lint + bun check (typecheck) + unit tests — before every commit
 bun run lint                # Biome + markdownlint + Prettier check
 bun run lint:fix            # apply fixes
-bun run typecheck           # or typecheck:backend | :frontend | :bot | :mobile
+bun run typecheck           # bun check --no-script across workspaces (+ typecheck:<name>)
+bun check --no-script -p backend   # Bun's built-in typechecker (one workspace)
 bun run test                # backend + bot + frontend + mobile unit/integration tests
 cd frontend && bunx playwright test      # web E2E
 cd mobile && bun run test:e2e:web        # mobile E2E on the Expo web build
@@ -32,9 +33,12 @@ bun scripts/qa.ts --only api,web --report qa-report.md --shots qa-shots   # agai
 What `pre-push` runs (and CI mirrors):
 
 ```bash
-(cd backend && bunx --bun tsc --noEmit && bun run test:setup && bun run test && bun run build)
-(cd frontend && bunx --bun tsc --noEmit && bun run build)
+(cd backend && bun check --no-script && bun run test:setup && bun run test && bun run build)
+(cd frontend && bun check --no-script && bun run build)
 ```
+
+> The root `check` script is the full quality gate. Bun's built-in typechecker
+> is invoked as `bun check --no-script` so it is not shadowed by that script.
 
 ## Backend
 
@@ -57,7 +61,7 @@ curl localhost:4000/openapi/json      # generated OpenAPI spec
 ```bash
 cd mobile
 bun run test                                                    # Jest
-bunx tsc --noEmit                                               # typecheck
+bun check --no-script                                           # typecheck
 EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo export --platform android --clear   # prove the native bundle compiles
 bun run build:apk | build:aab | submit:play-store               # EAS (paid/quota) — see docs/deploy/android.md
 ```
@@ -67,7 +71,7 @@ bun run build:apk | build:aab | submit:play-store               # EAS (paid/quot
 ```bash
 bun run desktop:dev                   # build main process + open the window
 bun run desktop:smoke                 # CI-style boot check
-bun run desktop:dist                  # installer for the current OS in desktop-electronjs/release/
+bun run desktop:dist                  # installer for the current OS in desktop/release/
 DESKTOP_APP_URL=https://… bun run desktop:dev   # or --url; default package.json "appUrl"
 ```
 

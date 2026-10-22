@@ -9,6 +9,19 @@ The web dashboard (`frontend/`) has its own light/dark theme in
 `frontend/src/styles.css`; the two share only the brand green and the
 categorical chart palette.
 
+## Refactor scope (2026)
+
+Per [`brainstorming.md`](./brainstorming.md) / [`system-design.md`](./system-design.md):
+
+- **Evolve, don’t replace.** Keep this mobile dark-only token system.
+- Use **Impeccable** to polish the web UI against these principles and the
+  shared brand green / chart palette — not a greenfield PRODUCT/DESIGN world.
+- Prefer converging web tokens toward the same names/roles (`canvas`,
+  `surface`, `brand`, `income`, `expense`, …) where it doesn’t break
+  existing light/dark web theming.
+- Architecture work (shared `packages/core`) must not invent a second visual
+  language.
+
 ## Principles
 
 1. **Dark only.** There is no light theme and no toggle (`app.json` →
@@ -27,7 +40,7 @@ categorical chart palette.
    native `Alert` only for rare irreversible actions, pressed feedback on
    every touchable, safe areas respected.
 
-These follow the Expo skills vendored in `.claude/skills/`
+These follow the Expo skills vendored in `.agents/skills/`
 (`expo-design-system`, `expo-native-ui`) — read their "native slop" list
 before adding a screen.
 

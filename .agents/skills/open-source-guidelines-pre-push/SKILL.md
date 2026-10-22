@@ -62,15 +62,15 @@ as an open source repo.
 6. **Tests and build pass locally** — what the `pre-push` hook runs:
 
    ```bash
-   (cd backend && bunx --bun tsc --noEmit && bun run test:setup && bun run test && bun run build)
-   (cd frontend && bunx --bun tsc --noEmit && bun run build)
+   (cd backend && bun check --no-script && bun run test:setup && bun run test && bun run build)
+   (cd frontend && bun check --no-script && bun run build)
    ```
 
    And the E2E tests (`cd frontend && bunx playwright test`) if the
    change touched routes, forms or flows that `frontend/e2e/` covers.
 7. **New dependencies use an exact stable version**, never
    `latest`/`next`/`canary`/`alpha`/`beta`/pre-release tags, and the
-   lockfile was regenerated with `npx bun@1.3.14 install` (not the
+   lockfile was regenerated with Bun 1.4.4 (`bun install`) (not the
    global bun) — see the global `CLAUDE.md`'s "Dependencies" section and
    [`docs/architecture.md`](../../../docs/architecture.md)'s `bun.lock` note.
 

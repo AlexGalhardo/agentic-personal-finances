@@ -1,0 +1,13 @@
+{
+	"name": "@agentic-personal-finances/core",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"test": "bun test",
+		"typecheck": "bun check --no-script"
+	}
+}

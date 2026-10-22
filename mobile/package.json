@@ -57,7 +57,7 @@
 		"ios": "expo start --ios",
 		"web": "expo start --web",
 		"lint": "expo lint",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun check --no-script",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:e2e": "maestro test maestro/",

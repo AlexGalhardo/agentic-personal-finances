@@ -694,7 +694,7 @@ await group("web", async () => {
 
 await group("desktop", async () => {
 	const g = "desktop";
-	const build = Bun.spawnSync(["bun", "run", "build"], { cwd: join(ROOT, "desktop-electronjs") });
+	const build = Bun.spawnSync(["bun", "run", "build"], { cwd: join(ROOT, "desktop") });
 	if (
 		!check(
 			g,
@@ -706,7 +706,7 @@ await group("desktop", async () => {
 		return;
 	const executablePath = (await import("electron")).default as unknown as string;
 	const launch = (url: string) =>
-		_electron.launch({ executablePath, args: [join(ROOT, "desktop-electronjs"), "--url", url], cwd: ROOT });
+		_electron.launch({ executablePath, args: [join(ROOT, "desktop"), "--url", url], cwd: ROOT });
 
 	const electronApp = await launch(WEB);
 	const appWindow = await electronApp.firstWindow();

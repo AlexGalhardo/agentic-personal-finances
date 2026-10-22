@@ -91,3 +91,6 @@ TODO.md
 
 # Playwright suite for the Expo web build (e2e-web/)
 mobile/dist-e2e/
+
+# Session prompts (may contain non-English drafts)
+.claude/PROMPT.md

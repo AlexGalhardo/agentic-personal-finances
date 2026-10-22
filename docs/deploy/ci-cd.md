@@ -26,6 +26,7 @@ manual    ─── release.yml ──────► same builds as workflow ar
 | `e2e`        | Playwright on the web app against a seeded API (needs backend, frontend)       |
 | `mobile-e2e` | Playwright on the Expo web build against a seeded API (needs backend, mobile)  |
 | `desktop`    | Typecheck, package the Linux app unpacked, smoke-boot it under `xvfb`          |
+| `core`       | Typecheck + unit tests for `packages/core` (`@agentic-personal-finances/core`) |
 | `qa`         | `scripts/qa.ts` (API, web, desktop, bot) on a seeded stack; uploads the report |
 
 `lint` also typechecks `scripts/` (`dev.ts`, `qa.ts`). Cross-platform

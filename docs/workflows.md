@@ -1,31 +1,46 @@
 # Workflows
 
 Step-by-step procedures for recurring work. Each has a matching skill in
-`.claude/skills/agent-money-*` that agents load automatically.
+`.agents/skills/agent-money-*` that agents load automatically.
 
 ## Shipping a change
 
 1. Work on `dev` (never directly on `main`) — `.agents/skills/git-branch-workflow`.
-2. `bun run check`, plus the E2E suite for the surfaces you touched.
-3. Commit in atomic [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
+2. Prefer the next Ready item in [`PLAN.md`](../PLAN.md) /
+   [`specs/`](./specs/) (one H\* or M\* spec). Finish ACs + evidence under
+   `docs/verification/specs/<ID>.md` in the same commit that ticks PLAN.
+3. `bun run check` (Bun ≥ 1.4.4; typecheck = `bun check --no-script`), plus
+   the E2E suite for the surfaces you touched.
+4. Commit in atomic [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
    one concern per commit, lowercase subject, `!` + `BREAKING CHANGE:`
    footer for breaking changes. Stage paths explicitly — `git commit`
    takes the whole index, including anything staged earlier.
-4. Add an entry under `## [Unreleased]` in `CHANGELOG.md`.
-5. Before pushing: the `open-source-guidelines-pre-push` checklist
+5. Add an entry under `## [Unreleased]` in `CHANGELOG.md`.
+6. Before pushing: the `open-source-guidelines-pre-push` checklist
    (`.agents/skills/`) — no secrets in the diff, no `*.csv`/`*.env`.
-6. `git push` → wait for `ci.yml` on `dev` to be green
+7. `git push` → wait for `ci.yml` on `dev` to be green
    (`gh run watch <id> --exit-status`).
-7. `git checkout main && git merge --no-ff dev -m "merge: <summary> (dev -> main)" && git push origin main`.
-   CI on `main` gates the Railway production deploy, and the push queues an
-   EAS production build.
+8. `git checkout main && git merge --no-ff dev -m "merge: <summary> (dev -> main)" && git push origin main`.
+   CI on `main` gates the Railway production deploy. Release APKs come from
+   `release.yml` on `v*` tags (not an automatic EAS production build on every
+   `main` push — see `mobile-build.yml`).
 
 Skill: `agent-money-ship`.
 
+## Spec-driven implementation (hexagonal / stack upgrades)
+
+1. Read locked design: [`brainstorming.md`](./brainstorming.md),
+   [`system-design.md`](./system-design.md), [`architecture.md`](./architecture.md).
+2. Open [`specs/README.md`](./specs/README.md) — pick the first Ready spec
+   whose dependencies are Done (order: H01…H08, then M01–M03).
+3. Load `clean-architecture-in-practice` for any core/ports/use-case work.
+4. Implement → verify gates from the spec → evidence file → PLAN checkbox.
+5. Do not mix stack upgrades (M\*) into unfinished hexagonal slices (H\*).
+
 ## Releasing
 
-Versions follow [SemVer](https://semver.org/) (0.x: breaking changes bump
-the minor). After merging to `main`:
+Versions follow [SemVer](https://semver.org/). Project is at `1.0.0-rc`
+until the final `1.0.0`. After merging to `main`:
 
 1. Move `## [Unreleased]` in `CHANGELOG.md` to `## [x.y.z] - YYYY-MM-DD`,
    update the compare links at the bottom ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)).
@@ -34,8 +49,11 @@ the minor). After merging to `main`:
    `git tag vX.Y.Z && git push origin vX.Y.Z` — `release.yml` builds every
    downloadable (Bun executables, Electron installers, Android APK, iOS
    simulator app) and attaches them, with `SHA256SUMS.txt`, to the GitHub
-   Release. Run it manually (Actions → Release → Run workflow) to build
-   the same files as workflow artifacts without releasing.
+   Release. Create the GitHub Release notes from the CHANGELOG section
+   (style reference:
+   <https://github.com/AlexGalhardo/vukem/releases>). Run Actions →
+   Release → Run workflow to build the same files as artifacts without
+   publishing a tag.
 
 ## QA / pentest pass
 
@@ -61,7 +79,7 @@ Android group. A new screen or endpoint gets a check in the matching group.
 ## Security-sensitive change
 
 Anything touching auth, the Telegram link, payments, webhooks, secrets or
-user input: follow `security-and-hardening` (`.claude/skills/`), write the
+user input: follow `security-and-hardening` (`.agents/skills/`), write the
 abuse case as a test first, and record findings/decisions in
 [`security.md`](./security.md). Skill: `agent-money-security`.
 
@@ -99,6 +117,6 @@ Skill: `agent-money-mobile-ui`.
 
 ## Updating vendored skills
 
-`.claude/skills/SOURCES.md` lists each upstream repo and commit. Replace the
+`.agents/skills/SOURCES.md` lists each upstream repo and commit. Replace the
 folder from a fresh clone at the new commit, update the commit hash, and
 never hand-edit vendored files.

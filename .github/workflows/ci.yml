@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - name: Typecheck scripts (dev.ts, qa.ts)
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Generate Prisma Client
         working-directory: backend
@@ -45,7 +45,7 @@ jobs:
           DATABASE_URL: file:./ci.db
       - name: Typecheck
         working-directory: backend
-        run: bunx tsc --noEmit
+        run: bun check --no-script
       - name: Test
         working-directory: backend
         run: bun run test:setup && bun test
@@ -61,7 +61,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Generate Prisma Client
         working-directory: backend
@@ -70,7 +70,7 @@ jobs:
           DATABASE_URL: file:./ci.db
       - name: Typecheck
         working-directory: bot
-        run: bunx tsc --noEmit
+        run: bun check --no-script
       - name: Test
         working-directory: bot
         run: bun run test:unit
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Generate Prisma Client
         working-directory: backend
@@ -94,7 +94,7 @@ jobs:
           DATABASE_URL: file:./ci.db
       - name: Typecheck
         working-directory: frontend
-        run: bunx tsc --noEmit
+        run: bun check --no-script
       - name: Unit tests
         working-directory: frontend
         run: bun run test
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       # Eden types in mobile/src/lib/api.ts import the backend app type.
       - name: Generate Prisma Client
@@ -118,7 +118,7 @@ jobs:
           DATABASE_URL: file:./ci.db
       - name: Typecheck
         working-directory: mobile
-        run: bunx tsc --noEmit
+        run: bun check --no-script
       - name: Unit tests
         working-directory: mobile
         run: bun run test
@@ -129,20 +129,34 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Typecheck
-        working-directory: desktop-electronjs
-        run: bunx tsc --noEmit
+        working-directory: desktop
+        run: bun check --no-script
       - name: Package (unpacked, Linux)
-        working-directory: desktop-electronjs
+        working-directory: desktop
         run: bun run build && bunx electron-builder --dir
       # No server runs here, so the smoke test proves the packaged app boots
       # and renders its offline screen. CI runners cannot use Chromium's SUID
       # sandbox helper, hence --no-sandbox.
       - name: Smoke test the packaged app
-        working-directory: desktop-electronjs
+        working-directory: desktop
         run: xvfb-run -a ./release/linux-unpacked/agent-money --smoke --no-sandbox
+
+  # Shared hexagonal core (packages/core). Keep this job light — no Prisma.
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun check --no-script -p packages/core
+      - name: Unit tests
+        run: bun test packages/core
 
   mobile-e2e:
     runs-on: ubuntu-latest
@@ -151,7 +165,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Install Playwright browsers
         working-directory: mobile
@@ -171,7 +185,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Install Playwright browsers
         working-directory: frontend
@@ -191,7 +205,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.4
       - run: bun install --frozen-lockfile
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium

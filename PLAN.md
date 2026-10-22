@@ -1,273 +1,126 @@
-# PLAN.md — Full check-up (2026-09-27)
+# PLAN.md — Agentic Personal Finances roadmap
 
-Single source of truth for the check-up/refactor started on 2026-09-27 with
-Claude Opus 5.5. Every micro-task has a checkbox — tick it in the same commit
-that does the work, so any future session/agent can resume from here without
-re-deriving context.
+Single source of truth for onboarding agents and humans after the 2026-10
+refactor initiative. Tick a checkbox in the **same commit** that completes
+the work. Evidence for specs lives under `docs/verification/specs/`.
 
-Branch: `dev` (see `.agents/skills/git-branch-workflow`). Nothing lands on
-`main` until the final checkpoint is green.
+**Branch:** use `dev` for implementation PRs (see
+`.agents/skills/git-branch-workflow`). Do not land unfinished slices on
+`main`.
 
-## Session status (2026-09-30, end of session 3)
-
-- [x] `release.yml` run manually on `dev`: all 9 build jobs green after
-      fixing the hardcoded macOS `.app` path (run 36782414236).
-- [x] Maestro flows run on an Android emulator for the first time (2/2);
-      fixed a real amount-field bug and three flow selector bugs.
-- [x] QA web group flake (cold Vite dev server) fixed.
-- [x] Root `CHANGELOG.md`, `agent-money-*` skills, infra/setup comments in
-      English; `bun run check`, builds and E2E green; merged `dev` → `main`.
-- [ ] `mobile-build.yml` (EAS) is red on `dev` only because the EAS Free
-      plan ran out of Android builds this month — re-run it after the quota
-      resets; not a code issue.
-- [ ] Untracked `scripts/test.ts` holds a real production API key — revoke
-      it at /api and delete the file (never commit it).
-
-## Session status (2026-09-29, end of session 2)
-
-Delivered on `dev` (not merged — the new release jobs have never run on
-GitHub):
-
-- [x] `desktop-electronjs/` — fifth workspace, Electron shell around the web
-      dashboard (ADR 0009); packaged + smoke-tested locally on Windows.
-- [x] `ci.yml` — `desktop` (Linux package + smoke) and `qa` jobs, bot binary
-      build, `scripts/` typecheck, actions bumped to `checkout@v7`, bun 1.4.2.
-- [x] `release.yml` — Bun executables (4 targets), Electron (3 OS), Android
-      APK (prebuild + Gradle), iOS simulator app, checksums, GitHub Release.
-- [x] `scripts/qa.ts` — QA/pentest pass (API, web, desktop, bot, Android
-      emulator); all groups green locally. Skill `.agents/skills/qa-pentest`.
-- [x] `scripts/dev.ts` — `bun run dev:all` (API + web + Expo on the LAN IP +
-      desktop).
-- [x] Bug found by QA and fixed: bot `/cancelar` was swallowed by an active
-      conversation (handler registered after `createConversation`).
-- [x] `.claude/rules/karpathy.md`; docs updated (README, CLAUDE/AGENTS,
-      architecture, commands, tooling, workflows, local-setup, ci-cd).
-- [x] Run `release.yml` manually on `dev` and fix whatever the Android/iOS/
-      macOS/Windows jobs report; then merge `dev` → `main` once `ci.yml`
-      (new `desktop` and `qa` jobs) is green.
-- [x] (tracked in session 3 above)
-
-## Session status (2026-09-27, end of session 1)
-
-- `main` = `34eec35`, CI green, deployed by Railway after CI. `dev` is ahead
-  with the docs restructure and the new CI jobs (`mobile`, `mobile-e2e`,
-  frontend unit tests) — **merge `dev` → `main` only after `ci.yml` on
-  `dev` is green** (the new jobs have not run on GitHub yet).
-- Next up, in order: CHANGELOG.md (Keep a Changelog, from git history
-  v0.0.1 → v0.1.0 + Unreleased, delete `mobile/CHANGELOG.md`, then update
-  rule 5 in CLAUDE.md/AGENTS.md) → project skills `agent-money-*`
-  (ship, verify, sync-points, mobile-ui, security) referenced by
-  `docs/workflows.md` → dedupe the local-setup rows in README's docs table
-  → translate `setups/railway-entrypoint.sh`, `setups/deploy-android-*.sh`,
-  `infra/*` comments → Group 9 final verification.
+**Runtime:** Bun **1.4.4** (`packageManager`). Typecheck:
+`bun check --no-script`. Full gate: `bun run check`.
 
 ## How to resume
 
-1. Read this file top to bottom, then `CLAUDE.md`.
-2. Find the first unchecked box — that's where work stopped.
-3. Run the baseline (`bun run check` — lint + typecheck + tests, see
-   `docs/commands.md`) before changing anything, so you know what was
-   already red.
+1. Read [`AGENTS.md`](./AGENTS.md), then this file.
+2. Read locked decisions: [`docs/brainstorming.md`](./docs/brainstorming.md),
+   [`docs/system-design.md`](./docs/system-design.md),
+   [`docs/architecture.md`](./docs/architecture.md).
+3. Open [`docs/specs/README.md`](./docs/specs/README.md) — implement the
+   **first Ready spec** whose dependencies are Done.
+4. Run baseline: `bun run check` (generate Prisma first if needed).
 
-## Skills used (mandatory, from `.claude/skills/`)
+## Quality and delivery assertions (global)
 
-Each group lists the skills that drive it. They are not decoration — open
-the `SKILL.md` before starting the group.
+| ID  | Assertion                                  | How we know                            |
+| --- | ------------------------------------------ | -------------------------------------- |
+| G1  | Lint clean                                 | `bun run lint`                         |
+| G2  | Types clean                                | `bun run typecheck`                    |
+| G3  | Unit tests green                           | `bun run test`                         |
+| G4  | Spec evidence exists for each Done ID      | `docs/verification/specs/<ID>.md`      |
+| G5  | English-only product/docs in touched files | reviewer                               |
+| G6  | Conventional Commits + Keep a Changelog    | hooks + `CHANGELOG.md`                 |
+| G7  | Dependency Rule after H08                  | `bun scripts/check-dependency-rule.ts` |
+| G8  | No secrets / `*.csv` bank files committed  | pre-commit hooks                       |
 
-| Skill                                                                                    | Where it applies                                                |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `using-agent-skills`                                                                     | Session start: pick the right skill per phase                   |
-| `planning-and-task-breakdown`                                                            | This file (structure, checkpoints, task sizing)                 |
-| `context-engineering`                                                                    | CLAUDE.md/AGENTS.md slimming, `docs/` layout, project skills    |
-| `security-and-hardening` (+ `.claude/references/security-checklist.md`)                  | Group 2 — OWASP Top 10 audit and fixes                          |
-| `doubt-driven-development`                                                               | Group 2 — every security fix that changes behavior              |
-| `code-review-and-quality`                                                                | Groups 3–6 — five-axis review of each workspace                 |
-| `code-simplification` / `ponytail`                                                       | Groups 3–6 — KISS/DRY/YAGNI, deleting dead code                 |
-| `api-and-interface-design`                                                               | Group 3 — backend error contract, module boundaries             |
-| `test-driven-development`                                                                | Groups 2–5 — regression test first for every bug/security fix   |
-| `incremental-implementation`                                                             | Every group — one slice, verify, commit                         |
-| `frontend-ui-engineering` / `impeccable` / `minimalist-ui`                               | Group 6 — mobile dark redesign                                  |
-| `browser-testing-with-devtools`                                                          | Groups 5–7 — runtime verification of web flows                  |
-| `ci-cd-and-automation`                                                                   | Group 1 — hooks, lint/format pipeline, CI                       |
-| `git-workflow-and-versioning`                                                            | Every commit — Conventional Commits, SemVer, changelog          |
-| `documentation-and-adrs`                                                                 | Group 8 — `docs/` rewrite, ADRs in `docs/decisions/`            |
-| `source-driven-development`                                                              | Library choices (Prettier, markdownlint, Expo) — verify on docs |
-| Project skills (`.agents/skills/git-branch-workflow`, `open-source-guidelines-pre-push`) | Before every commit / push                                      |
+A spec is **Done** only when its ACs, applicable QGs/DAs, and evidence file
+are complete (native rows may be `not run` with reason).
 
-## Architecture decisions taken in this check-up
+## Phase status
 
-- **Markdown formatting**: Prettier (formats `*.md`) + markdownlint-cli2
-  (lints). Biome keeps owning TS/JS/JSON/CSS. YAML/Markdown use spaces
-  (YAML forbids tabs); everything else tabs, width 4 (`.editorconfig`).
-- **Telegram linking** only through authenticated flows (bot login with
-  credentials, or the single-use web token). Linking by pasting an account
-  ID (bot) or a chat ID (web) is removed — both were unauthenticated
-  account takeovers (see `docs/security.md`).
-- **Backend errors**: domain errors extend one `AppError` (with an HTTP
-  status) and a single `onError` maps them — no per-route try/catch.
-- **Mobile theme**: dark-only, design tokens in `tailwind.config.js`,
-  pure NativeWind primitives (the light/dark toggle is removed).
-- **CHANGELOG.md** at the root follows Keep a Changelog 1.1.0; the stale
-  `mobile/CHANGELOG.md` (described a pre-monorepo architecture that no
-  longer exists) is removed — its history lives in git.
+### Phase 0 — Agent layout & mechanical rename
 
----
+- [x] Skills/rules/agents/references under `.agents/`
+- [x] Skill `clean-architecture-in-practice` vendored
+- [x] `desktop-electronjs` → `desktop`
+- [x] Remote → `agentic-personal-finances`
+- [x] Minimalist README
+- [x] Bun 1.4.4 pin + `bun check --no-script` typecheck
+- [x] Commit Phase 0+1+docs on `dev`
 
-## Group 0 — Context and baseline
+### Phase 1 — Research
 
-Skills: `using-agent-skills`, `context-engineering`
+- [x] Rewrite [`docs/architecture.md`](./docs/architecture.md) (hexagonal mapping)
 
-- [x] Read CLAUDE.md, AGENTS.md, docs/, project skills, every workspace
-- [x] Record baseline: lint had 181 errors (vendored `.claude/skills`), frontend/bot/mobile typecheck red (stale `node_modules` symlinks pointing at the old project path), backend tests 76/76, bot 55/56, mobile 21/21
-- [x] Branch `dev` reset onto `main`
-- [x] Flag untracked `scripts/test.ts`: hardcoded production API key (never commit; rotate the key)
+### Phase 2 — Brainstorming / design
 
-## Group 1 — Tooling (formatter, linter, hooks)
+- [x] [`docs/brainstorming.md`](./docs/brainstorming.md) — 9 decisions locked
+- [x] [`docs/system-design.md`](./docs/system-design.md)
+- [x] [`docs/design-system.md`](./docs/design-system.md) — evolve + Impeccable scope
+- [x] Design approved (2026-10-22)
 
-Skills: `ci-cd-and-automation`, `source-driven-development`, `git-workflow-and-versioning`
+### Phase 3 — Spec driven development
 
-- [x] Reinstall deps with `npx bun@1.3.14 install` (fixes workspace symlinks; lockfile stays v1)
-- [x] Biome: exclude vendored `.claude/skills`, `.claude/agents`, `.claude/references`; confirm tab + width 4 matches `.editorconfig`
-- [x] `.editorconfig`: spaces for `*.md`/`*.yml` (YAML forbids tabs)
-- [x] Add Prettier (markdown only) + markdownlint-cli2, wire into `lint`, `lint:fix`, `format`
-- [x] commitlint: add `@commitlint/cli` + `config-conventional` devDeps (the hook calls them), keep the `merge` type used by this repo
-- [x] Root `check` script (lint + typecheck all + unit tests)
-- [x] Translate hook messages (`.husky/pre-commit`) to English
-- [x] Verify: `bun run lint` green, all 4 `typecheck:*` green
+- [x] [`docs/specs/README.md`](./docs/specs/README.md) + template/QGs/index
+- [x] H01–H08 hexagonal specs
+- [x] M01–M03 stack upgrade specs
+- [ ] Human review of specs (spot-check H04/H05) before implementation
 
-## Group 2 — Security (OWASP Top 10 2021)
+### Phase 4 — Implementation (one spec at a time)
 
-Skills: `security-and-hardening`, `doubt-driven-development`, `test-driven-development`
+#### Hexagonal foundation + transactions slice
 
-- [x] **A01** Bot "link by account ID" lets anyone who knows an account ID take over that account from Telegram → remove
-- [x] **A01** `PUT /users/me` accepts any `telegramChatId` → only allow unlinking (`""`); web UI shows link status + unlink only
-- [x] **A07** Bot e-mail/password login calls `auth.api` directly (no HTTP rate limit) → per-chat lockout on failed logins
-- [x] **A02** `user.autoGeneratedPassword` stored in plaintext → encrypt at rest (AES-256-GCM, same key as transactions)
-- [x] **A01/A02** `GET /users/me` returns the whole user row → explicit DTO
-- [x] **A02** Webhook/cron secrets compared with `!==` → constant-time compare
-- [x] **A08** Webhook body trusted via cast → Zod schema
-- [x] **A04** Unbounded inputs: CSV preview size, search length, bot description length (bot bypassed route validation) → limits + shared schema
-- [x] **A04** Telegram link token redeem is check-then-delete (race) → atomic delete
-- [x] **A03** User-controlled names interpolated into Telegram `Markdown` messages → escape
-- [x] **A05** Frontend server sends no security headers → CSP-lite, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, HSTS
-- [x] **A05** `image` accepts any URL scheme → http(s) only
-- [x] **A06** `xlsx@0.18.5` (abandoned on npm, known CVEs) → replace
-- [x] **A09** Recipient e-mail removed from logs; upstream errors logged server-side only
-- [x] **A07** Real personal credentials hardcoded in `backend/prisma/seed.ts` → env vars (rotation pending, see `docs/security.md`)
-- [x] **A03** CSV/XLSX export formula injection → neutralized cells
-- [x] Write `docs/security.md` (audit report: finding, severity, fix, status)
-- [x] Verify: regression tests for each behavior change, full backend suite green
+- [x] [H01](./docs/specs/H01-core-package.md) — `packages/core` workspace
+- [ ] [H02](./docs/specs/H02-result-and-failures.md) — Result + AppFailure
+- [ ] [H03](./docs/specs/H03-transaction-ports.md) — ports
+- [ ] [H04](./docs/specs/H04-transaction-use-cases.md) — use cases
+- [ ] [H05](./docs/specs/H05-backend-http-adapters.md) — Prisma + HTTP adapters
+- [ ] [H06](./docs/specs/H06-bot-adapters.md) — bot → core
+- [ ] [H07](./docs/specs/H07-web-mobile-thin-clients.md) — thin clients
+- [ ] [H08](./docs/specs/H08-dependency-rule.md) — enforce Dependency Rule
 
-### Checkpoint A (after Groups 1–2)
+#### Later domain migrations (specs TBD after H08)
 
-- [x] lint + typecheck + backend/bot/mobile tests green
-- [x] Commit(s) on `dev`
+- [ ] Payments → core ports/use cases
+- [ ] Identity / telegram → core
+- [ ] Translate remaining Portuguese API/UI strings to English
 
-## Group 3 — Backend refactor
+#### Stack upgrades
 
-Skills: `code-review-and-quality`, `api-and-interface-design`, `code-simplification`
+- [ ] [M01](./docs/specs/M01-prisma-8.md) — Prisma 8 RC
+- [ ] [M02](./docs/specs/M02-elysia-2.md) — Elysia 2 RC + Eden
+- [ ] [M03](./docs/specs/M03-tanstack-1.md) — TanStack Start 1.0 stable
+- [ ] Remaining deps: exact latest stable (no RC/beta) outside M01/M02 pins
 
-- [x] `AppError` hierarchy + single error mapper in `server.ts`; delete per-route try/catch
-- [x] Separate `app` construction from `.listen()` (tests/bot import without binding a port)
-- [x] `userRepository` / plan quota logic in one place (DRY: free-limit check duplicated in create + import)
-- [x] Payments: services go through a repository instead of raw `prisma` in routes
-- [x] Validate route params (`/payments/pix/:id`)
-- [x] Translate Portuguese comments/messages in code to English (user-facing API messages stay pt-BR only where shown to end users)
-- [x] Fix stale `backend/.env.example` (FRONTEND_URL missing, dead vars)
-- [x] Verify: `bun run test`, `bun run build`
+#### Product / OSS polish
 
-## Group 4 — Bot refactor
+- [ ] Impeccable pass on web (evolve tokens; no new brand world)
+- [ ] Rename npm scope `@agent-money-boilerplate/*` → new name (dedicated spec)
+- [x] Retroactive GitHub Releases (Keep a Changelog / SemVer / Conventional
+      Commits) — pattern:
+      <https://github.com/AlexGalhardo/vukem/releases>
 
-Skills: `code-review-and-quality`, `code-simplification`
+### Carry-over from 2026-09 check-up
 
-- [x] `withAuthorizedUser` wrapper replaces the ensureUserReady + requirePassword preamble repeated in 6 conversations
-- [x] Shared `categoryKeyboard` (duplicated in add + search)
-- [x] Validate bot input with the backend Zod schema before calling services
-- [x] Translate comments to English; fix the failing test
-- [x] Verify: `bun run bot:test`, `typecheck:bot`
+- [ ] `mobile-build.yml` EAS quota — re-run when Free plan resets
+- [ ] Revoke/delete untracked `scripts/test.ts` if it still exists (never commit)
 
-## Group 5 — Frontend refactor
+## Skills (load when relevant)
 
-Skills: `code-review-and-quality`, `frontend-ui-engineering`, `vercel-react-best-practices`
+| Skill                                    | When                         |
+| ---------------------------------------- | ---------------------------- |
+| `clean-architecture-in-practice`         | Any core/ports/use-case work |
+| `spec-driven-development`                | Before starting a spec       |
+| `git-branch-workflow`                    | Branch/commit/PR             |
+| `open-source-guidelines-pre-push`        | Before `git push`            |
+| `agent-money-verify`                     | Definition of done           |
+| `tdd` / `test-driven-development`        | H02–H05 especially           |
+| `impeccable`                             | UI polish after H07          |
+| `karpathy` (`.agents/rules/karpathy.md`) | Every coding task            |
 
-- [x] Split `dashboard/index.tsx` (627 lines) and `minha-conta.tsx` into focused components
-- [x] Minha conta: replace chat-ID input with link status + unlink (Group 2)
-- [x] Translate comments to English
-- [x] Shared query hooks (`lib/queries.ts`), pure search/pagination helpers with unit tests, router error boundary
-- [x] Verify: `typecheck:frontend`, `frontend:build`, Playwright E2E (21/21)
+## Out of scope for this PLAN
 
-### Checkpoint B (after Groups 3–5)
-
-- [x] Everything green, E2E green, commit
-
-## Group 6 — Mobile: dark-only professional redesign
-
-Skills: `impeccable`, `frontend-ui-engineering`, `minimalist-ui`, `expo` skills (`.claude/skills/expo-*`), `vercel-react-native-skills`
-
-- [x] Design tokens (dark palette, type scale, radii) in `tailwind.config.js`
-- [x] Remove light theme + toggle (`lib/theme.ts`, `dark:` variants), `userInterfaceStyle: "dark"`
-- [x] Rebuild UI primitives with pure NativeWind (Button, TextField, Chip, DateField, Card, Screen)
-- [x] Redesign auth screens (login, signup, forgot, reset)
-- [x] Redesign app screens (dashboard, search, transaction form, profile, subscription, 2FA, import)
-- [x] Remove unused reacticx copies once nothing imports them
-- [x] Keep every `testID`/`accessibilityLabel` used by `mobile/maestro/*.yaml`
-- [x] Verify: `typecheck:mobile`, `mobile:test`, `expo export` bundles, screenshots via Expo web
-
-## Group 7 — Mobile E2E
-
-Skills: `test-driven-development`, `browser-testing-with-devtools`
-
-- [x] Keep Maestro as the native E2E runner (flows in `mobile/maestro/`, updated for the redesign, stable `nav-*` testIDs)
-- [x] Playwright suite on the Expo web build (`mobile/e2e-web/`, `bun run test:e2e:web`) — 6 flows passing against the real API
-- [x] Run flows on an emulator — Maestro 2.11.0 on a local release APK, 2/2 green (2026-09-30); found and fixed the amount-field caret bug and three flow selector bugs
-- [x] ~~Add CI job that runs Maestro on an Android emulator~~ — declined by the user (2026-09-30); run locally, see `mobile/maestro/README.md`
-
-## Group 8 — Docs, changelog, skills
-
-Skills: `documentation-and-adrs`, `context-engineering`, `git-workflow-and-versioning`
-
-- [x] Vendor Expo skills (`github.com/expo/skills`) into `.claude/skills/`, record commit in `SOURCES.md`
-- [x] Translate `.claude/skills/SOURCES.md` to English (`respondeae-*` kept, flagged as another project's examples)
-- [x] Write project skills for repeated workflows (verify-all, monorepo install/lockfile, add-category sync points, security fix)
-- [x] `CHANGELOG.md` (Keep a Changelog) from git history v0.0.1 → v0.1.0 + Unreleased; delete `mobile/CHANGELOG.md`
-- [x] `docs/` reorganized: `README.md` index, `tooling.md`, `architecture.md`, `workflows.md`, `security.md`, `decisions/` (ADRs), `deploy/` (setup/deploy guides)
-- [x] Update CLAUDE.md + AGENTS.md deeper-docs section (rule 5 now points at the root CHANGELOG.md)
-
-## Group 10 — Requests added during the session
-
-- [x] `docs/design-system.md` — mobile design system source of truth (tokens, components, patterns, testing hooks)
-- [x] `/api` page renders the API reference with Scalar (`@scalar/api-reference-react`) from an OpenAPI spec generated by `@elysiajs/openapi` out of the routes' Zod schemas
-- [x] Fix found on the way: invalid `x-api-key` answered 500 → 401
-- [x] Commit the user's LICENSE / VS Code settings changes, gitignore `TODO.md`
-- [x] Push `dev` and merge to `main` mid-session so no work is lost
-
-## Group 11 — Infra and setup scripts (found during the docs review)
-
-- [x] Per-service Dockerfiles never copied `patches/` → `docker build` failed ("Couldn't find patch file"); fixed and verified with real builds of all three images
-- [x] Docker setup waited on a nonexistent `/docs` endpoint and silently skipped seeding → waits on `/`
-- [x] PM2 + Postgres setup called `docker compose` without `-f infra/...` → fixed
-- [x] AbacatePay dev key hardcoded in `scripts/common.sh` → prompted at setup (rotation pending)
-- [x] Four near-identical setup scripts consolidated into `setups/setup-docker.sh` and `setups/setup-pm2.sh` (WSL/Git Bash detection), translated to English
-- [x] Translate `setups/railway-entrypoint.sh`, `setups/deploy-android-*.sh`, `infra/*` comments
-
-## Group 9 — Final verification and handoff
-
-Skills: `code-review-and-quality`, `shipping-and-launch`, `open-source-guidelines-pre-push`
-
-- [x] `bun run check` green; backend build; frontend build; Playwright E2E
-- [x] Commits follow Conventional Commits; no secrets staged (`git diff --cached`)
-- [x] Summary + open questions reported to the user (merge to `main`/push only after user confirmation)
-
-## Risks
-
-| Risk                                                            | Impact           | Mitigation                                                                               |
-| --------------------------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------- |
-| Removing "link by ID" breaks users who relied on it             | Med              | Token/Google flow and e-mail login still link; documented in CHANGELOG as a security fix |
-| Encrypting `autoGeneratedPassword` needs existing rows migrated | Low              | Decrypt falls back to treating legacy plaintext values as plaintext                      |
-| Mobile redesign can't be run on a device here                   | Med              | Typecheck + Metro export + Expo web screenshots; Maestro selectors preserved             |
-| `bun.lock` rewritten to v2 by a newer bun                       | High (EAS build) | Only regenerate with `npx bun@1.3.14 install`; pre-commit guard                          |
-
-## Open questions (for the user)
-
-- Rotate the API key hardcoded in the untracked `scripts/test.ts` and delete the file?
-- The bot's `BOT_PASSWORD_HASH_BASE64` is one global password shared by every user of a multi-tenant bot — keep, or remove the feature?
+- Greenfield brand redesign
+- Expanding public OpenAPI beyond the narrow transactions surface
+- Full CA rings duplicated inside each client (shared core + thin adapters only)

@@ -1,4 +1,4 @@
 set -e
 
-(cd backend && bunx --bun tsc --noEmit && bun run test:setup && bun run test && bun run build)
-(cd frontend && bunx --bun tsc --noEmit && bun run build)
+(cd backend && bun check --no-script && bun run test:setup && bun run test && bun run build)
+(cd frontend && bun check --no-script && bun run build)

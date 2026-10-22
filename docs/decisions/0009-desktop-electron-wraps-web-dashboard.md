@@ -9,7 +9,7 @@ A desktop app for Windows, Linux and macOS was requested as a fifth workspace. T
 
 ## Decision
 
-`desktop-electronjs/` is a sandboxed Electron window that loads the web dashboard URL (`--url`, `DESKTOP_APP_URL`, or `package.json` `appUrl`, which the release workflow sets to production). The renderer has no Node.js, no preload and no IPC; navigation to other origins and `window.open` go to the system browser; every permission except clipboard writes is denied; a data: page with auto-retry replaces a failed load. electron-builder packages NSIS (Windows), AppImage (Linux) and an ad hoc signed `.app` zip (macOS).
+`desktop/` is a sandboxed Electron window that loads the web dashboard URL (`--url`, `DESKTOP_APP_URL`, or `package.json` `appUrl`, which the release workflow sets to production). The renderer has no Node.js, no preload and no IPC; navigation to other origins and `window.open` go to the system browser; every permission except clipboard writes is denied; a data: page with auto-retry replaces a failed load. electron-builder packages NSIS (Windows), AppImage (Linux) and an ad hoc signed `.app` zip (macOS).
 
 ## Consequences
 

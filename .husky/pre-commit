@@ -20,8 +20,8 @@ fi
 if git diff --cached --name-only | grep -qx "bun.lock"; then
 	lockfile_version=$(grep -m1 '"lockfileVersion"' bun.lock | grep -o '[0-9]\+')
 	if [ "$lockfile_version" != "1" ]; then
-		echo "bun.lock has lockfileVersion $lockfile_version, but the EAS mobile build uses bun 1.3.14, which only reads lockfileVersion 1." >&2
-		echo "Regenerate the lockfile with a compatible bun: npx bun@1.3.14 install" >&2
+		echo "bun.lock has lockfileVersion $lockfile_version; this repo pins Bun 1.4.4 and expects lockfileVersion 1." >&2
+		echo "Regenerate with: bun@1.4.4 install (see packageManager in package.json)" >&2
 		exit 1
 	fi
 fi

@@ -6,6 +6,30 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Shared workspace `@agentic-personal-finances/core` (`packages/core`) —
+  bootstrap for the hexagonal refactor (H01).
+
+### Changed
+
+- Renamed the project to **Agentic Personal Finances** (repo
+  `agentic-personal-finances`); README simplified.
+- Moved agent skills, rules, agents and references from `.claude/` to
+  `.agents/` (`.claude/settings.json` remains for Claude Code plugins).
+- Renamed workspace `desktop-electronjs/` → `desktop/`.
+- Added skill `clean-architecture-in-practice` (from kali-tools).
+- Pinned **Bun 1.4.4** (`packageManager`, `engines`, CI) and switched
+  typechecking to Bun's built-in `bun check --no-script`.
+- Rewrote `docs/architecture.md` (hexagonal / Clean Architecture mapping
+  for this monorepo; research baseline for the upcoming refactor).
+- Added SDD suite (`docs/specs/` H01–H08, M01–M03), `docs/system-design.md`,
+  `docs/brainstorming.md`, and replaced `PLAN.md` with the new roadmap.
+- Documented the agent/human working workflow (PLAN → one Ready spec →
+  evidence → `dev` → CI → merge `main`) in `AGENTS.md` / `CLAUDE.md`,
+  `CONTRIBUTING.md`, and `docs/workflows.md`; CI job `core` for
+  `packages/core`.
+
 ### Fixed
 
 - QA web group aborted (`net::ERR_ABORTED`) on CI: a cold Vite dev server
@@ -16,7 +40,7 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- Electron desktop app (`desktop-electronjs/`), the fifth workspace, wrapping
+- Electron desktop app (`desktop/`), the fifth workspace, wrapping
   the web dashboard (ADR 0009).
 - `bun run dev:all` starts the whole local stack (API, web, Expo on the LAN
   IP, desktop).
@@ -30,7 +54,7 @@ All notable changes to this project are documented here. The format follows
   and a Playwright suite on the Expo web build; Maestro flows for native E2E.
 - Prettier + markdownlint for Markdown, commitlint, root `bun run check`.
 - `docs/` knowledge base (architecture, conventions, workflows, ADRs, deploy
-  guides) and vendored agent skills in `.claude/skills/`.
+  guides) and vendored agent skills in `.agents/skills/`.
 
 ### Changed
 
@@ -151,6 +175,6 @@ recorded from the commit history.
 - Initial application: auth, dashboard, transactions, PIX payments, Telegram
   bot.
 
-[Unreleased]: https://github.com/AlexGalhardo/agent-money-boilerplate/compare/v1.0.0-rc...HEAD
-[1.0.0-rc]: https://github.com/AlexGalhardo/agent-money-boilerplate/compare/v0.1.0...v1.0.0-rc
-[0.1.0]: https://github.com/AlexGalhardo/agent-money-boilerplate/releases/tag/v0.1.0
+[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.0.0-rc...HEAD
+[1.0.0-rc]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.1.0...v1.0.0-rc
+[0.1.0]: https://github.com/AlexGalhardo/agentic-personal-finances/releases/tag/v0.1.0
