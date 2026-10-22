@@ -16,8 +16,9 @@
 # Path" must point at infra/Dockerfile explicitly.
 #
 # Local use (outside Railway, run from the repo root):
-#   docker build -f infra/Dockerfile -t agent-money-boilerplate .
-#   docker run -p 4000:4000 -e RAILWAY_SERVICE_TARGET=backend --env-file backend/.env agent-money-boilerplate
+#   docker build -f infra/Dockerfile -t agentic-personal-finances .
+#   docker run -p 4000:4000 -e RAILWAY_SERVICE_TARGET=backend --env-file backend/.env agentic-personal-finances
+# Full docs: docs/deploy/docker.md and docs/deploy/railway.md.
 #
 # For local development with Docker, prefer infra/docker-compose.yml /
 # infra/docker-compose.sqlite.yml — they build each service from its own
@@ -31,6 +32,9 @@ COPY package.json bun.lock ./
 COPY backend/package.json ./backend/package.json
 COPY frontend/package.json ./frontend/package.json
 COPY bot/package.json ./bot/package.json
+COPY mobile/package.json ./mobile/package.json
+COPY desktop/package.json ./desktop/package.json
+COPY packages/core/package.json ./packages/core/package.json
 # root package.json's patchedDependencies (nativewind, only actually used by
 # mobile/) applies to every `bun install` in this workspace regardless of
 # which workspaces are on disk - without the patch file present, install
@@ -58,6 +62,7 @@ RUN bunx tsr generate && bun run build
 FROM install AS runtime
 COPY --chown=bun:bun backend ./backend
 COPY --chown=bun:bun bot ./bot
+COPY --chown=bun:bun packages/core ./packages/core
 COPY --chown=bun:bun frontend/package.json frontend/server.ts frontend/proxy-paths.ts ./frontend/
 COPY --from=frontend-build --chown=bun:bun /repo/frontend/dist ./frontend/dist
 COPY --chown=bun:bun setups/railway-entrypoint.sh ./railway-entrypoint.sh

@@ -2,10 +2,10 @@
 
 Two scripts bring the whole stack up locally — pick one:
 
-| Script                     | Runs the apps as            | Needs                                |
-| -------------------------- | --------------------------- | ------------------------------------ |
-| `./setups/setup-docker.sh` | Docker Compose containers   | Docker (Docker Desktop on Windows)   |
-| `./setups/setup-pm2.sh`    | PM2 processes in watch mode | Bun ≥ 1.4 (Docker only for Postgres) |
+| Script                     | Runs the apps as            | Needs                                  |
+| -------------------------- | --------------------------- | -------------------------------------- |
+| `./setups/setup-docker.sh` | Docker Compose containers   | Docker (Docker Desktop on Windows)     |
+| `./setups/setup-pm2.sh`    | PM2 processes in watch mode | Bun ≥ 1.4.4 (Docker only for Postgres) |
 
 Both work on Linux, macOS and Windows 11. On Windows, run them from a
 **WSL2** terminal (recommended) or **Git Bash** — not PowerShell or
@@ -33,10 +33,13 @@ through the firewall for private networks if the phone cannot connect.
 ## Run with Docker or PM2
 
 ```bash
-git clone git@github.com:AlexGalhardo/galhardo-money-bot.git
-cd galhardo-money-bot
+git clone git@github.com:AlexGalhardo/agentic-personal-finances.git
+cd agentic-personal-finances
 ./setups/setup-docker.sh            # or ./setups/setup-pm2.sh
 ```
+
+Compose file reference: [`docker.md`](./docker.md). Production cloud:
+[`railway.md`](./railway.md).
 
 Each script asks two questions (pass the database as an argument to skip
 the first: `./setups/setup-docker.sh postgres`):

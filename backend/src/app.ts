@@ -5,6 +5,7 @@ import { z } from "zod";
 import { env } from "./config/env";
 import { authPlugin } from "./lib/auth.plugin";
 import { AppError } from "./lib/errors";
+import { telegramLogger } from "./lib/telegram-logger";
 import { cronRoutes, paymentRoutes, paymentWebhookRoutes } from "./modules/payments/payment.routes";
 import { telegramRoutes } from "./modules/telegram/telegram.routes";
 import { transactionRoutes } from "./modules/transactions/transaction.routes";
@@ -58,10 +59,11 @@ export const app = new Elysia()
 		}
 
 		console.error(error);
+		void telegramLogger.error(error, { code });
 		set.status = 500;
 		return { success: false, message: "Erro interno do servidor" };
 	})
-	.get("/", () => ({ success: true, message: "Agent Money Boilerplate API" }))
+	.get("/", () => ({ success: true, message: "Agentic Personal Finances API" }))
 	.get("/config", () => ({
 		success: true,
 		config: {

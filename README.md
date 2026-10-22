@@ -16,13 +16,14 @@ built for personal use, open-source practice, and agent-assisted development.
 
 ## Stack
 
-| Workspace  | Role                                    |
-| ---------- | --------------------------------------- |
-| `backend`  | Bun + ElysiaJS API, Prisma, better-auth |
-| `frontend` | TanStack Start web dashboard            |
-| `bot`      | Telegram bot (grammY)                   |
-| `mobile`   | Expo + React Native                     |
-| `desktop`  | Electron shell around the web app       |
+| Workspace       | Role                                                      |
+| --------------- | --------------------------------------------------------- |
+| `packages/core` | Shared hexagonal core (`@agentic-personal-finances/core`) |
+| `backend`       | Bun + ElysiaJS API, Prisma, better-auth                   |
+| `frontend`      | TanStack Start web dashboard                              |
+| `bot`           | Telegram bot (grammY)                                     |
+| `mobile`        | Expo + React Native                                       |
+| `desktop`       | Electron shell around the web app                         |
 
 ## Quick start
 
@@ -36,6 +37,7 @@ bun run check      # lint + typecheck + unit tests
 ## Docs
 
 - [`docs/README.md`](./docs/README.md) — knowledge base index
+- [`docs/specs/`](./docs/specs/) — Spec Driven Development (H01–H08, M01–M03)
 - [`PLAN.md`](./PLAN.md) — roadmap / session checklist
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — branches, commits, PRs
 - [`.agents/skills/`](./.agents/skills/) — agent skills (see `SOURCES.md`)

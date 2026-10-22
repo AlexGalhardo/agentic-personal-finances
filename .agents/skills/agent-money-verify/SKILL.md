@@ -1,26 +1,28 @@
 ---
 name: agent-money-verify
 description: >
-  Verify a change in the Agent Money monorepo and manage dependencies without
-  breaking the bun lockfile. Use before calling any task done, before a commit
-  or push, when adding/updating a dependency, or when `bun.lock` shows up in a
-  diff.
+  Verify a change in the Agentic Personal Finances monorepo and manage
+  dependencies without breaking the bun lockfile. Use before calling any task
+  done, before a commit or push, when adding/updating a dependency, or when
+  `bun.lock` shows up in a diff.
 ---
 
-# Verify a change (Agent Money)
+# Verify a change (Agentic Personal Finances)
 
 ## Pick the smallest check that proves the change
 
 | Touched                         | Run                                                          |
 | ------------------------------- | ------------------------------------------------------------ |
 | Anything                        | `bun run lint`                                               |
-| One workspace                   | `bun run typecheck:<backend\|frontend\|bot\|mobile\|desktop>` (Bun `check --no-script`) |
+| One workspace                   | `bun run typecheck:<backend\|frontend\|bot\|mobile\|desktop\|core>` (Bun `check --no-script`) |
+| `packages/core`                 | `bun run typecheck:core` and `bun test packages/core`        |
 | `scripts/`                      | `bun run typecheck:scripts`                                  |
 | Backend logic                   | `bun run backend:test` (integration needs `test:setup`)      |
 | Bot / frontend / mobile logic   | `bun run bot:test` / `frontend:test` / `mobile:test`         |
 | Web routes or flows             | `cd frontend && bunx playwright test`                        |
 | Mobile screens                  | `cd mobile && bun run test:e2e:web`                          |
 | Auth, payments, bot, release    | `bun run qa` (see `.agents/skills/qa-pentest`)               |
+| Finished H\*/M\* spec           | Evidence in `docs/verification/specs/<ID>.md` + PLAN tick    |
 | Several workspaces / before push | `bun run check` (lint + typecheck + unit tests)             |
 
 Builds: `bun run --cwd backend build`, `bun run --cwd frontend build`. The

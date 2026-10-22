@@ -17,7 +17,7 @@ no EAS build — its sideload APK is attached to each `v*` GitHub Release by
 
 ## Prerequisites
 
-- Bun ≥ 1.4 and an [Expo](https://expo.dev) account — `bunx eas-cli@24.7.0 login` in `mobile/`.
+- Bun ≥ 1.4.4 and an [Expo](https://expo.dev) account — `bunx eas-cli@24.7.0 login` in `mobile/`.
 - `mobile/.env` (copy `mobile/.env.example`) with `EXPO_PUBLIC_API_URL`
   pointing at an API reachable from the phone / Expo's cloud — never `localhost`.
 

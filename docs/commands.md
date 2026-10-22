@@ -21,6 +21,7 @@ bun run check               # lint + bun check (typecheck) + unit tests — befo
 bun run lint                # Biome + markdownlint + Prettier check
 bun run lint:fix            # apply fixes
 bun run typecheck           # bun check --no-script across workspaces (+ typecheck:<name>)
+bun run typecheck:core      # packages/core only
 bun check --no-script -p backend   # Bun's built-in typechecker (one workspace)
 bun run test                # backend + bot + frontend + mobile unit/integration tests
 cd frontend && bunx playwright test      # web E2E

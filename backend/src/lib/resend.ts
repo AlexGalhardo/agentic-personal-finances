@@ -1,11 +1,13 @@
 import { Resend } from "resend";
 import { env } from "../config/env";
+import { telegramLogger } from "./telegram-logger";
 
 export const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 export async function sendEmail(params: { to: string; subject: string; html: string; text?: string }): Promise<void> {
 	if (!resend || !env.RESEND_FROM_EMAIL) {
 		console.warn(`[email] Resend is not configured — "${params.subject}" was not sent.`);
+		void telegramLogger.warn(`Resend is not configured — email skipped`, { subject: params.subject });
 		return;
 	}
 

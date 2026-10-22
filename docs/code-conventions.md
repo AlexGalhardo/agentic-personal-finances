@@ -25,13 +25,17 @@
 
 ## Backend
 
-- Domain modules follow `schema → routes → service → repository` (see
-  [`architecture.md`](./architecture.md#backend-layering)); only
-  repositories import `prisma`.
+- Today: domain modules follow `schema → routes → service → repository`
+  (see [`architecture.md`](./architecture.md#backend-structure)); only
+  repositories import `prisma`. Target: use cases + ports in
+  `@agentic-personal-finances/core` ([`system-design.md`](./system-design.md),
+  [`specs/`](./specs/)).
 - Validate every input at the route with Zod (body, query, params) and give
   public routes a `response` schema and OpenAPI `detail`.
-- Expected failures: throw an `AppError` subclass with the right status —
-  never `try/catch` in a route just to map errors.
+- Expected failures today: throw an `AppError` subclass with the right
+  status — never `try/catch` in a route just to map errors. Target (H02+):
+  `Result` / `AppFailure` in use cases; HTTP mapper remains the edge safety
+  net.
 - Compare secrets with `secureCompare`; never log secrets, tokens or
   personal data.
 - Anything that grants access (linking a Telegram chat, activating a plan)
@@ -76,6 +80,11 @@ map, so these are duplicated — change them together:
    `frontend/src/components/password-strength-input.tsx`,
    `bot/src/lib/password-rules.ts`, `mobile/src/lib/password-rules.ts`.
 4. **Plan rules** (`FREE_TRANSACTION_LIMIT`, `hasActivePlan`) —
-   `backend/src/lib/plan.ts`, `frontend/src/lib/plan.ts`, `mobile/src/lib/plan.ts`.
+   `backend/src/lib/plan.ts`, `frontend/src/lib/plan.ts`, `mobile/src/lib/plan.ts`
+   (after H04, enforcement moves into `packages/core`; clients keep display
+   copies until then).
 
 The `agent-money-sync-points` skill walks through a change to any of them.
+
+Refactor entry points: [`../PLAN.md`](../PLAN.md),
+[`brainstorming.md`](./brainstorming.md), [`specs/`](./specs/).

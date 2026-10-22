@@ -18,23 +18,21 @@ expected workflow for any change to this repository — human or AI agent.
 
 ## Branch workflow
 
-This repository follows a strict two-branch flow — `main` (the only
-long-lived branch) and `dev` (a disposable, per-task working branch). The
-full rules, and why each one exists, are in
+This repository pushes **directly to `main`** (the only long-lived
+branch). Full rules:
 [`.agents/skills/git-branch-workflow/SKILL.md`](./.agents/skills/git-branch-workflow/SKILL.md).
 Summary:
 
-1. Branch off an up-to-date `main` onto `dev` (reuse or recreate).
+1. Update `main` (`git pull --ff-only`).
 2. Prefer implementing the next Ready slice in [`PLAN.md`](./PLAN.md) /
    [`docs/specs/`](./docs/specs/) (one H\* or M\* spec at a time).
-3. Make Conventional Commits on `dev`; keep `CHANGELOG.md` `[Unreleased]`
+3. Make Conventional Commits on `main`; keep `CHANGELOG.md` `[Unreleased]`
    current; for finished specs, tick PLAN and add
    `docs/verification/specs/<ID>.md`.
 4. Run locally what the `pre-push` hook runs (see "Before opening a PR"
    below) — only push once everything passes.
-5. Push `dev`, wait for `.github/workflows/ci.yml` green, then merge into
-   `main` (`merge: <summary> (dev -> main)`). Never commit directly to
-   `main`, never force-push `main`.
+5. `git push origin main`. CI on `main` gates Railway production. Never
+   force-push `main`.
 
 ## Commit messages — Conventional Commits
 
@@ -51,8 +49,7 @@ Every commit message **is validated automatically** by the
 ```
 
 Accepted types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
-`build`, `ci`, `chore`, `revert` — plus `merge`, used only for the commit
-that merges `dev` into `main` (e.g. `merge: auth fix (dev -> main)`).
+`build`, `ci`, `chore`, `revert`.
 
 Examples:
 

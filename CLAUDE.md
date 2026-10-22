@@ -51,8 +51,9 @@ app wraps the web dashboard).
 
 ## Working workflow (agents and humans)
 
-1. **Branch:** create/reuse `dev` from `main` — never commit on `main`
+1. **Branch:** work and push on **`main`**
    ([`git-branch-workflow`](./.agents/skills/git-branch-workflow/SKILL.md)).
+   No standing `dev` branch.
 2. **Resume work:** read [`PLAN.md`](./PLAN.md), then the first Ready spec
    under [`docs/specs/`](./docs/specs/) whose dependencies are Done.
 3. **Design gates:** locked decisions live in
@@ -65,8 +66,8 @@ app wraps the web dashboard).
 5. **Verify:** `bun run check` (Bun **≥ 1.4.4**; typecheck is
    `bun check --no-script`). Pre-push runs backend/frontend build+tests —
    see [`open-source-guidelines-pre-push`](./.agents/skills/open-source-guidelines-pre-push/SKILL.md).
-6. **Ship:** push `dev` → wait for CI green → merge `dev` into `main` →
-   push `main`. Releases: tag `vX.Y.Z` + GitHub Release from
+6. **Ship:** `git push origin main` → wait for CI green → Railway
+   production. Releases: tag `vX.Y.Z` + GitHub Release from
    `CHANGELOG.md` ([`docs/workflows.md`](./docs/workflows.md)).
 
 ## Deeper docs

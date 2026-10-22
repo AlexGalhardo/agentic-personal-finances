@@ -1,13 +1,9 @@
 name: Mobile Build
 
+# Preview EAS builds are manual — there is no standing `dev` branch. Store /
+# release APKs come from `release.yml` on `v*` tags (Gradle, no EAS quota).
 on:
-  push:
-    branches: [dev]
-    paths:
-      - "mobile/**"
-      - "backend/**"
-      - "bun.lock"
-      - ".github/workflows/mobile-build.yml"
+  workflow_dispatch:
 
 jobs:
   eas-build:
@@ -27,9 +23,6 @@ jobs:
         with:
           eas-version: 24.7.0
           token: ${{ secrets.EXPO_TOKEN }}
-      # `dev` only: `preview` profile (.apk for sideloading). `main` builds no
-      # EAS binary — its APK comes from release.yml (Gradle, no EAS quota) and
-      # store builds (`production`, .aab) are queued by hand.
       - name: EAS Build (preview)
         working-directory: mobile
         run: eas build --platform android --profile preview --non-interactive --no-wait

@@ -30,7 +30,7 @@ guidance for Lemos-style Clean Architecture:
                     └────┬────┘
          ┌───────────────┼───────────────┐
          ▼               ▼               ▼
-    Prisma/DB      better-auth      AbacatePay / Resend
+    Prisma/DB      better-auth      AbacatePay / Resend / telegram-logger
 ```
 
 Primary actors (driving): web, mobile, bot, cron/webhooks, developers with
@@ -68,7 +68,7 @@ other layering choice is negotiable; this rule is not.
 | **Application core** | Domain rules in `*.service.ts`, `plan.ts`, encryption policy                                                                                                      |
 | **Ports**            | Today mostly **implicit** (repository modules, auth session resolution, payment calls). Formal TypeScript port interfaces are a refactor option, not required yet |
 | **Driving adapters** | Elysia `*.routes.ts`, grammY bot, Eden clients, cron/webhook routes, OpenAPI/Scalar docs                                                                          |
-| **Driven adapters**  | Prisma repositories, better-auth, AbacatePay, Resend, `encryption.ts`                                                                                             |
+| **Driven adapters**  | Prisma repositories, better-auth, AbacatePay, Resend, `@galhardoalex/telegram-logger`, `encryption.ts`                                                            |
 | **Composition root** | `backend/src/app.ts` (+ `server.ts` listen), bot entry, `scripts/dev.ts` / `qa.ts`                                                                                |
 
 This is **Lemos-lite / hexagonal-lite**: vertical slices by capability
@@ -119,14 +119,14 @@ Each domain lives under `backend/src/modules/<domain>/`:
 
 ### Target mapping (refactor direction)
 
-| Clean Architecture layer | Current home                                 | Likely next step                                                            |
-| ------------------------ | -------------------------------------------- | --------------------------------------------------------------------------- |
-| Entities / value objects | Implicit in services                         | Optional shared money/plan types if rules grow                              |
-| Use cases                | `*.service.ts`                               | Keep; rename/split for “screaming” use cases where helpful                  |
-| Ports                    | Concrete repos / gateway calls               | Introduce interfaces only when a second adapter appears or tests need fakes |
-| Interface adapters       | Routes, Zod, error mapper, bot conversations | Keep thin; map DTOs at the boundary                                         |
-| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron       | Stay outside the core                                                       |
-| Main                     | `app.ts`, bot entry, scripts                 | Explicit wiring; no new DI container unless needed                          |
+| Clean Architecture layer | Current home                                 | Likely next step                                                                                      |
+| ------------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Entities / value objects | Implicit in services                         | Optional shared money/plan types if rules grow                                                        |
+| Use cases                | `*.service.ts`                               | Keep; rename/split for “screaming” use cases where helpful                                            |
+| Ports                    | Concrete repos / gateway calls               | Formal TypeScript ports at real boundaries (DB, payments, mail, clock) — see `system-design.md` / H03 |
+| Interface adapters       | Routes, Zod, error mapper, bot conversations | Keep thin; map DTOs at the boundary                                                                   |
+| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron       | Stay outside the core                                                                                 |
+| Main                     | `app.ts`, bot entry, scripts                 | Explicit wiring; no new DI container unless needed                                                    |
 
 ## How each client reaches the backend
 
@@ -163,6 +163,7 @@ web (`/telegram-vincular`). Linking by pasting an account ID was removed
 | Desktop       | Electron + electron-builder                                                  |
 | Payments      | AbacatePay PIX                                                               |
 | E-mail        | Resend + react-email                                                         |
+| Ops alerts    | `@galhardoalex/telegram-logger` (API, bot, web server; optional env)         |
 | Tests         | `bun:test`, Jest (mobile), Playwright, Maestro                               |
 | Agent tooling | `.agents/skills/` (incl. clean-architecture-in-practice)                     |
 
@@ -205,11 +206,16 @@ Alternatives: VPS (Docker or PM2 + Caddy). Mobile: EAS Build. Details:
 
 | Doc                                                                                                          | Role                                                             |
 | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| [`brainstorming.md`](./brainstorming.md)                                                                     | Locked refactor decisions                                        |
+| [`system-design.md`](./system-design.md)                                                                     | Target CA layout (`packages/core`, adapters, upgrade order)      |
+| [`specs/`](./specs/)                                                                                         | SDD contracts H01–H08 / M01–M03                                  |
+| [`../PLAN.md`](../PLAN.md)                                                                                   | Roadmap / session checklist                                      |
 | [`decisions/`](./decisions/)                                                                                 | Normative ADRs (Prisma dual schema, bot in-process, AppError, …) |
 | [`security.md`](./security.md)                                                                               | Threat notes and deferred risks                                  |
-| [`tooling.md`](./tooling.md)                                                                                 | Bun, Biome, hooks, lockfile                                      |
+| [`tooling.md`](./tooling.md)                                                                                 | Bun, Biome, hooks, lockfile, telegram-logger                     |
 | [`design-system.md`](./design-system.md)                                                                     | Mobile (and evolving web) tokens                                 |
 | [`workflows.md`](./workflows.md)                                                                             | Agent/human workflows                                            |
+| [`deploy/`](./deploy/)                                                                                       | Railway, Docker/Compose, CI/CD, VPS                              |
 | [`.agents/skills/clean-architecture-in-practice`](../.agents/skills/clean-architecture-in-practice/SKILL.md) | Lemos frameworks for the refactor                                |
 
 ## Research baseline (Phase 1)
@@ -224,8 +230,6 @@ Sources used for this rewrite:
   product’s Go/Wails domain)
 - Bun 1.4.4 tooling: built-in `bun check` as the monorepo typechecker
 
-**Open questions deferred to brainstorming (Phase 2):** formal ports vs
-concrete repos; shared `domain/` package yes/no; eslint boundary rules;
-bot documented as first-class adapter forever; import use-case naming;
-exceptions vs `Result`; how far CA applies on frontend/mobile; OpenAPI
-surface breadth.
+Phase 2 brainstorming is **locked** — see [`brainstorming.md`](./brainstorming.md)
+(shared core, Result in use cases, ports at real boundaries, CA before RC
+upgrades). Remaining delivery work is tracked in [`../PLAN.md`](../PLAN.md).

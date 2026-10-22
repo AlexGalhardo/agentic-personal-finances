@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"@agent-money-boilerplate/backend": "workspace:*",
+		"@galhardoalex/telegram-logger": "1.0.1",
 		"@grammyjs/conversations": "2.1.1",
 		"bcryptjs": "3.0.3",
 		"better-auth": "1.7.4",

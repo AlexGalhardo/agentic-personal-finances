@@ -1,5 +1,6 @@
 import { env } from "../config/env";
 import { AppError } from "./errors";
+import { telegramLogger } from "./telegram-logger";
 
 const BASE_URL = "https://api.abacatepay.com/v2";
 
@@ -51,6 +52,10 @@ async function request<T>(path: string, init: RequestInit): Promise<T> {
 
 	if (!response.ok || !body?.success) {
 		console.error(`[abacatepay] ${path} failed with ${response.status}: ${body?.error ?? "no body"}`);
+		void telegramLogger.error(`AbacatePay ${path} failed`, {
+			status: response.status,
+			error: body?.error ?? "no body",
+		});
 		throw new AbacatePayRequestError(response.status, "Falha ao comunicar com o provedor de pagamentos");
 	}
 

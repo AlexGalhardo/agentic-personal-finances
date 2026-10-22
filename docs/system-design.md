@@ -18,7 +18,7 @@ Target shape after the Clean Architecture refactor. Decisions:
 
 ```text
 packages/
-  core/                 # name TBD — entities, use cases, ports, Result
+  core/                 # @agentic-personal-finances/core — entities, use cases, ports, Result
 backend/                # Elysia routes, Prisma repos, payment/mail adapters, composition
 frontend/               # TanStack UI + Eden/HTTP adapter + composition
 mobile/                 # Expo UI + Eden/HTTP adapter + composition
@@ -26,8 +26,8 @@ bot/                    # grammY adapter; wires in-process adapters to core use 
 desktop/                # Electron shell → web URL (unchanged role, ADR 0009)
 ```
 
-Exact package name (`@agentic-personal-finances/core` vs `domain`) is fixed
-in Phase 3 specs. Root `package.json` workspaces will include `packages/*`.
+Package name is `@agentic-personal-finances/core` (H01). Root workspaces
+include `packages/*`.
 
 ## Hexagon
 
@@ -51,7 +51,8 @@ in Phase 3 specs. Root `package.json` workspaces will include `packages/*`.
 - **Driving adapters:** Elysia routes, grammY conversations, React screens
   (via a small application façade or direct use-case calls through an HTTP
   port implementation on clients).
-- **Driven adapters:** Prisma, AbacatePay, Resend, encryption, system clock.
+- **Driven adapters:** Prisma, AbacatePay, Resend, `@galhardoalex/telegram-logger`
+  (ops alerts), encryption, system clock.
 - **Desktop:** not a domain client — loads the web adapter (ADR 0009).
 
 ### Client access to use cases

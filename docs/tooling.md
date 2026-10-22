@@ -67,6 +67,18 @@ checker: `bun run typecheck` → `bun check --no-script` across workspaces
 (see [Bun check](https://bun.com/docs/runtime/check)). The backend and bot
 need a generated Prisma Client first (`cd backend && bun run db:generate`).
 
+## Ops logging (Telegram)
+
+Server workspaces (`backend`, `bot`, `frontend` production server) depend on
+[`@galhardoalex/telegram-logger`](https://github.com/AlexGalhardo/telegram-logger)
+and export `telegramLogger` from each workspace's `src/lib/telegram-logger.ts`.
+Levels: `debug` / `info` / `success` / `warn` / `error` / `fatal` (treat
+"critical" as `fatal`). Delivery is a no-op when
+`TELEGRAM_LOGGER_BOT_TOKEN` + `TELEGRAM_LOGGER_CHAT_ID` (or the
+`TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` fallbacks) are unset, and always
+off in `NODE_ENV=test`. Never put these secrets in `EXPO_PUBLIC_*` or other
+client bundles.
+
 ## Tests
 
 | Workspace  | Runner           | Command                               | Notes                                         |

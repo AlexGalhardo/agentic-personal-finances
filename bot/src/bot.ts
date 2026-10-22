@@ -16,6 +16,7 @@ import { startConversation } from "./conversations/start.conversation";
 import { categoryLabels } from "./formatting/format";
 import { withAuthorizedUser } from "./lib/authorized";
 import { buildMenu, withMainMenu } from "./lib/menu";
+import { telegramLogger } from "./lib/telegram-logger";
 import type { BotContext } from "./types";
 
 function confirmLogoutKeyboard(): InlineKeyboard {
@@ -131,6 +132,7 @@ export function createBot(): Bot<BotContext> {
 
 	bot.catch(({ error, ctx }) => {
 		console.error(`Unhandled error for update ${ctx.update.update_id}:`, error);
+		void telegramLogger.error(error, { updateId: ctx.update.update_id, chatId: ctx.chat?.id });
 		buildMenu(ctx.chat?.id)
 			.then(({ keyboard }) =>
 				ctx.reply("⚠️ Ocorreu um erro inesperado. Toque em um botão abaixo para continuar:", {

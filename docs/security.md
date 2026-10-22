@@ -72,8 +72,8 @@ DTO, image scheme, CSV cap, validation leak, cron secret),
 A `bun build --compile` output (`backend/server.exe`) was committed several
 times across ~19 pushed commits. Fixed with `git filter-repo` + force push.
 **Guardrails:** `.gitignore` blocks `*.exe`; `.husky/pre-commit` hard-blocks
-staged `.exe`; the `git-branch-workflow` skill routes all work through a
-disposable `dev` branch.
+staged `.exe`; the `git-branch-workflow` skill requires verify-before-push
+on `main` (pre-commit / pre-push hooks + CI).
 
 ### 2026-09-20 — real secrets committed to `.env.example` and deploy docs
 

@@ -5,7 +5,8 @@ Step-by-step procedures for recurring work. Each has a matching skill in
 
 ## Shipping a change
 
-1. Work on `dev` (never directly on `main`) — `.agents/skills/git-branch-workflow`.
+1. Work on **`main`** — `.agents/skills/git-branch-workflow` (direct push;
+   no standing `dev` branch).
 2. Prefer the next Ready item in [`PLAN.md`](../PLAN.md) /
    [`specs/`](./specs/) (one H\* or M\* spec). Finish ACs + evidence under
    `docs/verification/specs/<ID>.md` in the same commit that ticks PLAN.
@@ -18,12 +19,10 @@ Step-by-step procedures for recurring work. Each has a matching skill in
 5. Add an entry under `## [Unreleased]` in `CHANGELOG.md`.
 6. Before pushing: the `open-source-guidelines-pre-push` checklist
    (`.agents/skills/`) — no secrets in the diff, no `*.csv`/`*.env`.
-7. `git push` → wait for `ci.yml` on `dev` to be green
-   (`gh run watch <id> --exit-status`).
-8. `git checkout main && git merge --no-ff dev -m "merge: <summary> (dev -> main)" && git push origin main`.
-   CI on `main` gates the Railway production deploy. Release APKs come from
-   `release.yml` on `v*` tags (not an automatic EAS production build on every
-   `main` push — see `mobile-build.yml`).
+7. `git push origin main` → wait for `ci.yml` on `main` to be green
+   (`gh run watch <id> --exit-status`). CI gates the Railway production
+   deploy. Release APKs come from `release.yml` on `v*` tags (not an
+   automatic EAS production build on every push — see `mobile-build.yml`).
 
 Skill: `agent-money-ship`.
 
@@ -40,17 +39,17 @@ Skill: `agent-money-ship`.
 ## Releasing
 
 Versions follow [SemVer](https://semver.org/). Project is at `1.0.0-rc`
-until the final `1.0.0`. After merging to `main`:
+until the final `1.0.0`. On `main`:
 
 1. Move `## [Unreleased]` in `CHANGELOG.md` to `## [x.y.z] - YYYY-MM-DD`,
    update the compare links at the bottom ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)).
 2. Bump `version` in the root and workspace `package.json` files.
-3. `chore(release): vX.Y.Z` commit on `dev`, merge to `main`, then
-   `git tag vX.Y.Z && git push origin vX.Y.Z` — `release.yml` builds every
-   downloadable (Bun executables, Electron installers, Android APK, iOS
-   simulator app) and attaches them, with `SHA256SUMS.txt`, to the GitHub
-   Release. Create the GitHub Release notes from the CHANGELOG section
-   (style reference:
+3. `chore(release): vX.Y.Z` commit on `main`, then
+   `git tag vX.Y.Z && git push origin main && git push origin vX.Y.Z` —
+   `release.yml` builds every downloadable (Bun executables, Electron
+   installers, Android APK, iOS simulator app) and attaches them, with
+   `SHA256SUMS.txt`, to the GitHub Release. Create the GitHub Release
+   notes from the CHANGELOG section (style reference:
    <https://github.com/AlexGalhardo/vukem/releases>). Run Actions →
    Release → Run workflow to build the same files as artifacts without
    publishing a tag.

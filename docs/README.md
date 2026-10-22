@@ -16,7 +16,7 @@ with the project's `CLAUDE.md` / `AGENTS.md`, then open what the task needs.
 | [`security.md`](./security.md)                 | Threat model, OWASP audit (2026-09-27), deferrals, incident log                        |
 | [`design-system.md`](./design-system.md)       | Mobile design system — tokens, components, patterns; Impeccable evolve scope           |
 | [`decisions/`](./decisions)                    | Architecture decision records                                                          |
-| [`deploy/`](./deploy)                          | Local setup, VPS, Railway, Vercel + Fly.io, Android builds, CI/CD                      |
+| [`deploy/`](./deploy)                          | Local setup, Docker/Compose, Railway, VPS, CI/CD, Android, Vercel + Fly.io             |
 | [`../PLAN.md`](../PLAN.md)                     | Roadmap / session checklist for the refactor                                           |
 
 Project-specific agent skills live in `.agents/skills/` (branch workflow,

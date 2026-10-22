@@ -1,16 +1,14 @@
 ---
 name: open-source-guidelines-pre-push
 description:
-  Checklist every AI agent (and human) must follow before pushing to
-  dev/main in this repository, now that the project follows open source
-  practice (Conventional Commits, SemVer, LICENSE, CONTRIBUTING). Always
-  use before `git push`, before opening a Pull Request, or before marking
-  a task done. Triggers on "push this", "open a PR", "ready to merge",
-  "ready to push", "before pushing", "finish the task".
+  Checklist every AI agent (and human) must follow before pushing to main
+  in this repository, now that the project follows open source practice
+  (Conventional Commits, SemVer, LICENSE, CONTRIBUTING). Always use before
+  `git push`, before marking a task done, or before cutting a release.
 license: MIT
 metadata:
   author: aleexgvieira
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
 # Open source guidelines — before pushing
@@ -18,14 +16,13 @@ metadata:
 This repository is (or is on its way to being) open source. That changes
 what "done" means: beyond working, every change needs to be something an
 outside contributor, reading the history cold, can understand and trust.
-This checklist runs **before every `git push`** to `dev` or `main` — not
-just at the end of large tasks.
+This checklist runs **before every `git push` to `main`** — not just at
+the end of large tasks.
 
-This skill assumes you already follow
+This skill assumes
 [`.agents/skills/git-branch-workflow/SKILL.md`](../git-branch-workflow/SKILL.md)
-(a single `dev` branch, never committing directly to `main`). What
-follows is additional to that, specific to keeping the project healthy
-as an open source repo.
+(work and push on `main`). What follows is additional, specific to keeping
+the project healthy as an open source repo.
 
 ## Checklist before `git push`
 
@@ -45,8 +42,8 @@ as an open source repo.
    [`docs/security.md`](../../../docs/security.md)).
    If you find a real secret staged or already committed, stop and flag
    it to whoever maintains the project — don't try to rewrite shared
-   history yourself (see `git-branch-workflow/SKILL.md`, "What NOT to
-   do"); the fix is rotating the credential, not just deleting the text.
+   history yourself (see `git-branch-workflow/SKILL.md`); the fix is
+   rotating the credential, not just deleting the text.
 3. **`.editorconfig` and Biome weren't violated.** `bun run format &&
    bun run lint` (the `pre-commit` hook already runs this) — consistent
    indentation, charset and line width are part of what makes an open
@@ -56,8 +53,7 @@ as an open source repo.
    Don't edit `LICENSE` without explicit confirmation — it's a legal
    change, not a technical one.
 5. **`CLAUDE.md`/`AGENTS.md` updated** if the change introduced a new
-   convention, command, structural dependency or architecture change
-   (see the global `CLAUDE.md`'s "Documentation and changelog" section).
+   convention, command, structural dependency or architecture change.
    Add the change under `## [Unreleased]` in the root `CHANGELOG.md`.
 6. **Tests and build pass locally** — what the `pre-push` hook runs:
 
@@ -70,25 +66,18 @@ as an open source repo.
    change touched routes, forms or flows that `frontend/e2e/` covers.
 7. **New dependencies use an exact stable version**, never
    `latest`/`next`/`canary`/`alpha`/`beta`/pre-release tags, and the
-   lockfile was regenerated with Bun 1.4.4 (`bun install`) (not the
-   global bun) — see the global `CLAUDE.md`'s "Dependencies" section and
-   [`docs/architecture.md`](../../../docs/architecture.md)'s `bun.lock` note.
+   lockfile was regenerated with Bun 1.4.4 (`bun install`) — see
+   [`docs/tooling.md`](../../../docs/tooling.md).
 
-## Before merging `dev` → `main`
-
-On top of the checklist above (which already applies to every commit on
-`dev`):
+## After pushing `main`
 
 8. **Consider whether the change deserves a release.** If the set of
-   commits going to `main` represents a unit of value for the end user
-   (a new feature, a relevant fix, a behavior change), create a
-   `vX.Y.Z` tag (following SemVer — see `CONTRIBUTING.md`) and a
-   [GitHub Release](../../../../../releases) summarizing the changes,
-   after the merge to `main` is pushed. Not every merge needs a release
-   — purely internal changes (`chore`, `refactor` with no observable
-   effect) usually don't.
-9. **Never force-push `main`.** If something went wrong after the merge,
+   commits on `main` represents a unit of value for the end user (a new
+   feature, a relevant fix, a behavior change), create a `vX.Y.Z` tag
+   (SemVer — see `CONTRIBUTING.md`) and a
+   [GitHub Release](../../../../../releases) summarizing the changes.
+   Not every push needs a release — purely internal changes usually
+   don't.
+9. **Never force-push `main`.** If something went wrong after the push,
    fix it with a new commit (`revert:` or `fix:`), not by rewriting what
-   was already pushed — same rule as `git-branch-workflow`, reinforced
-   here because rewritten history on a public repository breaks any
-   existing fork, clone or third-party PR.
+   was already pushed.

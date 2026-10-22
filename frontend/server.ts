@@ -6,11 +6,12 @@
 // `dist/client`, proxies API paths, and hands everything else to SSR.
 //
 // The SSR bundle is imported through a path computed at runtime on purpose:
-// `dist/` only exists after `bun run build`, and the pre-push hook runs
-// `tsc --noEmit` before building — a static import would fail typecheck on a
-// clean checkout (and even with `dist/` present, TS7016: Bun emits no .d.ts).
+// `dist/` only exists after `bun run build`, and typecheck runs before
+// building — a static import would fail typecheck on a clean checkout
+// (and even with `dist/` present, TS7016: Bun emits no .d.ts).
 import { extname, join, normalize } from "node:path";
 import { PROXIED_API_PATHS } from "./proxy-paths";
+import { telegramLogger } from "./src/lib/telegram-logger";
 
 type SsrHandler = { fetch: (request: Request) => Promise<Response> };
 
@@ -111,8 +112,14 @@ async function handle(request: Request): Promise<Response> {
 Bun.serve({
 	port,
 	async fetch(request) {
-		return withSecurityHeaders(await handle(request));
+		try {
+			return withSecurityHeaders(await handle(request));
+		} catch (error) {
+			console.error(error);
+			void telegramLogger.error(error, { path: new URL(request.url).pathname });
+			return withSecurityHeaders(new Response("Internal Server Error", { status: 500 }));
+		}
 	},
 });
 
-console.log(`🦊 Agent Money Boilerplate frontend listening on http://localhost:${port}`);
+console.log(`🦊 Agentic Personal Finances frontend listening on http://localhost:${port}`);

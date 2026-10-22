@@ -4,9 +4,8 @@ Single source of truth for onboarding agents and humans after the 2026-10
 refactor initiative. Tick a checkbox in the **same commit** that completes
 the work. Evidence for specs lives under `docs/verification/specs/`.
 
-**Branch:** use `dev` for implementation PRs (see
-`.agents/skills/git-branch-workflow`). Do not land unfinished slices on
-`main`.
+**Branch:** commit and push on **`main`** (see
+`.agents/skills/git-branch-workflow`). Verify locally before every push.
 
 **Runtime:** Bun **1.4.4** (`packageManager`). Typecheck:
 `bun check --no-script`. Full gate: `bun run check`.

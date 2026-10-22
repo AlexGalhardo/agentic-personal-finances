@@ -10,6 +10,11 @@ All notable changes to this project are documented here. The format follows
 
 - Shared workspace `@agentic-personal-finances/core` (`packages/core`) —
   bootstrap for the hexagonal refactor (H01).
+- Ops alerts via [`@galhardoalex/telegram-logger`](https://github.com/AlexGalhardo/telegram-logger)
+  in `backend`, `bot`, and the frontend production server (`warn` /
+  `error` / `fatal`; optional `TELEGRAM_LOGGER_*` env).
+- Deploy docs: `docs/deploy/docker.md` (Compose + Railway image), expanded
+  `docs/deploy/railway.md` / `ci-cd.md` for main-only push.
 
 ### Changed
 
@@ -26,9 +31,9 @@ All notable changes to this project are documented here. The format follows
 - Added SDD suite (`docs/specs/` H01–H08, M01–M03), `docs/system-design.md`,
   `docs/brainstorming.md`, and replaced `PLAN.md` with the new roadmap.
 - Documented the agent/human working workflow (PLAN → one Ready spec →
-  evidence → `dev` → CI → merge `main`) in `AGENTS.md` / `CLAUDE.md`,
+  evidence → push `main` → CI) in `AGENTS.md` / `CLAUDE.md`,
   `CONTRIBUTING.md`, and `docs/workflows.md`; CI job `core` for
-  `packages/core`.
+  `packages/core`. Direct-to-`main` replaces the former `dev` merge flow.
 
 ### Fixed
 

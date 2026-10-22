@@ -87,7 +87,7 @@ export const paymentService = {
 		// `description` — hence the plain hyphen.
 		const charge = await abacatepay.createPixCharge({
 			amount: definition.amount,
-			description: `Agent Money Boilerplate - plano ${definition.label}`,
+			description: `Agentic Personal Finances - plan ${definition.label}`,
 			expiresIn: PIX_EXPIRES_IN_SECONDS,
 			metadata: { userId, plan },
 		});

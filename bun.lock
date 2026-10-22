@@ -26,6 +26,7 @@
         "@elysiajs/cors": "1.4.2",
         "@elysiajs/eden": "1.4.9",
         "@elysiajs/openapi": "1.4.16",
+        "@galhardoalex/telegram-logger": "1.0.1",
         "@libsql/client": "0.18.0",
         "@prisma/adapter-libsql": "7.10.0",
         "@prisma/adapter-pg": "7.10.0",
@@ -53,6 +54,7 @@
       "version": "1.0.0-rc",
       "dependencies": {
         "@agent-money-boilerplate/backend": "workspace:*",
+        "@galhardoalex/telegram-logger": "1.0.1",
         "@grammyjs/conversations": "2.1.1",
         "bcryptjs": "3.0.3",
         "better-auth": "1.7.4",
@@ -81,6 +83,7 @@
         "@agent-money-boilerplate/backend": "workspace:*",
         "@better-auth/api-key": "1.7.5",
         "@elysiajs/eden": "1.4.9",
+        "@galhardoalex/telegram-logger": "1.0.1",
         "@scalar/api-reference-react": "0.9.74",
         "@tailwindcss/vite": "4.3.3",
         "@tanstack/react-devtools": "0.10.12",
@@ -641,6 +644,8 @@
     "@floating-ui/utils": ["@floating-ui/utils@0.2.10", "", {}, "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="],
 
     "@floating-ui/vue": ["@floating-ui/vue@1.1.9", "", { "dependencies": { "@floating-ui/dom": "^1.7.4", "@floating-ui/utils": "^0.2.10", "vue-demi": ">=0.13.0" } }, "sha512-BfNqNW6KA83Nexspgb9DZuz578R7HT8MZw1CfK9I6Ah4QReNWEJsXWHN+SdmOVLNGmTPDi+fDT535Df5PzMLbQ=="],
+
+    "@galhardoalex/telegram-logger": ["@galhardoalex/telegram-logger@1.0.1", "", {}, "sha512-0moMyuATPFKcOnYlCVhMmcRwslVxDF6M0jIUVwkCa2xM1JtCj1M06380rWA2LX/AwVym/gIhZ55SVvaPwLlTKw=="],
 
     "@grammyjs/conversations": ["@grammyjs/conversations@2.1.1", "", { "peerDependencies": { "grammy": "^1.20.1" } }, "sha512-hoxqwSkaXDeU7mzXulpk3A4Cmd6UZO3HU4aPoITX5ekSHK7ZcUEmMl7RhKKkqw3z6zVbbAShQreJoVV5/dDSLA=="],
 
