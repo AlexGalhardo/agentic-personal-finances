@@ -1,4 +1,9 @@
 set -e
 
+# Force a throwaway SQLite URL so a leftover shell DATABASE_URL (e.g. ci.db)
+# cannot poison test:setup / bun test.
+export DATABASE_URL="${DATABASE_URL:-file:./test.db}"
+export DATABASE_PROVIDER="${DATABASE_PROVIDER:-sqlite}"
+
 (cd backend && bun check --no-script && bun run test:setup && bun run test && bun run build)
 (cd frontend && bun check --no-script && bun run build)

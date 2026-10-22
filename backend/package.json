@@ -15,7 +15,7 @@
 		"test:unit": "bun test src/**/*.unit.test.ts",
 		"test:integration": "bun run test:setup && bun test src/**/*.integration.test.ts",
 		"db:generate": "bunx prisma generate",
-		"db:generate:postgres": "DATABASE_PROVIDER=postgresql bunx prisma generate",
+		"db:generate:postgres": "DATABASE_URL=postgresql://unused@localhost/unused DATABASE_PROVIDER=postgresql bunx prisma generate",
 		"db:migrate": "bunx prisma migrate dev",
 		"db:migrate:postgres": "DATABASE_PROVIDER=postgresql bunx prisma migrate dev",
 		"db:deploy": "bunx prisma migrate deploy",
