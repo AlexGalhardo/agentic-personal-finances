@@ -155,7 +155,7 @@ describe("payment use cases", () => {
 	});
 
 	test("AC-2 webhook completed without paid remote status does not activate", async () => {
-		const { deps, charges, setRemoteStatus } = buildFakes({ remoteStatus: "PENDING" });
+		const { deps, charges } = buildFakes({ remoteStatus: "PENDING" });
 		const charge = buildCharge();
 		charges.set(charge.id, charge);
 
