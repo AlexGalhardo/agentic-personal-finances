@@ -47,8 +47,9 @@ function parseSubject(raw: string): { type: string; scope: string; subject: stri
 	if (!m) return null;
 	const type = m[1].toLowerCase();
 	if (type === "merge") return null;
-	if (type === "chore" && /release/i.test(m[4])) return null;
 	const scope = (m[2] ? m[2].slice(1, -1) : type === "feat" || type === "fix" ? "repo" : type).toLowerCase();
+	// Never surface SemVer bump commits (chore(release): vX.Y.Z) in notes.
+	if (type === "chore" && (/^v?\d+\.\d+\.\d+/i.test(m[4]) || scope === "release")) return null;
 	return { type, scope, subject: m[4].trim().replace(/\.$/, ""), breaking: Boolean(m[3]) };
 }
 

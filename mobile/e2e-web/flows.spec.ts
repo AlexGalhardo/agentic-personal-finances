@@ -24,13 +24,13 @@ test("a new user signs up and lands on the dashboard", async ({ page }) => {
 	await visible(page.getByTestId("field-Senha")).fill("SenhaForte@123");
 	await visible(page.getByRole("button", { name: "Criar conta", exact: true })).click();
 
-	await expect(visible(page.getByText("Olá, Maestro"))).toBeVisible();
-	await expect(visible(page.getByText("Nenhuma transação"))).toBeVisible();
+	await expect(visible(page.getByText("Hello, Maestro"))).toBeVisible();
+	await expect(visible(page.getByText("No transactions"))).toBeVisible();
 });
 
 test("shows an inline error for wrong credentials", async ({ page }) => {
 	await logIn(page, "admin@gmail.com", "wrong-password");
-	await expect(visible(page.getByRole("alert"))).toContainText("incorret");
+	await expect(visible(page.getByRole("alert"))).toContainText(/incorrect/i);
 	await expect(page).toHaveURL(/\/login/);
 });
 
@@ -39,7 +39,7 @@ test("sign-up stays disabled until every field is filled and shows the password 
 	const submit = visible(page.getByRole("button", { name: "Criar conta", exact: true }));
 
 	await visible(page.getByTestId("field-Senha")).fill("abc");
-	await expect(visible(page.getByText("Uma letra maiúscula (A-Z)"))).toBeVisible();
+	await expect(visible(page.getByText("One uppercase letter (A-Z)"))).toBeVisible();
 	await expect(submit).toBeDisabled();
 
 	await visible(page.getByTestId("field-Nome")).fill("Maria");
@@ -51,15 +51,15 @@ test("sign-up stays disabled until every field is filled and shows the password 
 test("creates, finds and edits a transaction", async ({ page }) => {
 	const description = `Mobile E2E ${Date.now()}`;
 	await logIn(page, "admin@gmail.com", "adminBR@123");
-	await expect(visible(page.getByText("Olá, Admin"))).toBeVisible();
+	await expect(visible(page.getByText("Hello, Admin"))).toBeVisible();
 
 	await visible(page.getByTestId("nav-new-transaction")).click();
-	await expect(visible(page.getByText("Nova transação"))).toBeVisible();
+	await expect(visible(page.getByText("New transaction"))).toBeVisible();
 	await visible(page.getByTestId("field-Valor")).fill("4321");
 	await visible(page.getByTestId("field-Descrição")).fill(description);
-	await visible(page.getByRole("button", { name: "Compras" })).click();
-	await visible(page.getByRole("button", { name: "Adicionar" })).click();
-	await expect(visible(page.getByText("Olá, Admin"))).toBeVisible();
+	await visible(page.getByRole("button", { name: "Shopping" })).click();
+	await visible(page.getByRole("button", { name: "Add" })).click();
+	await expect(visible(page.getByText("Hello, Admin"))).toBeVisible();
 
 	await visible(page.getByTestId("nav-search")).click();
 	await visible(page.getByTestId("search-input")).fill(description);
@@ -67,10 +67,10 @@ test("creates, finds and edits a transaction", async ({ page }) => {
 	await expect(visible(page.getByText("− R$ 43,21"))).toBeVisible();
 
 	await visible(page.getByText(description)).click();
-	await expect(visible(page.getByText("Editar transação"))).toBeVisible();
+	await expect(visible(page.getByText("Edit transaction"))).toBeVisible();
 	await expect(visible(page.getByTestId("field-Valor"))).toHaveValue("43,21");
 	await visible(page.getByTestId("field-Valor")).fill("9999");
-	await visible(page.getByRole("button", { name: "Salvar alterações" })).click();
+	await visible(page.getByRole("button", { name: "Save changes" })).click();
 	await expect(visible(page.getByText("− R$ 99,99"))).toBeVisible();
 
 	// Deleting goes through a native Alert (a no-op on web) — covered by
@@ -93,7 +93,7 @@ test("profile shows the plan and never offers a chat ID field", async ({ page })
 
 	await expect(visible(page.getByRole("heading", { name: "Minha Conta" }))).toBeVisible();
 	await expect(visible(page.getByText(/^PRO/))).toBeVisible();
-	await expect(visible(page.getByText("Não vinculado"))).toBeVisible();
+	await expect(visible(page.getByText("Not linked"))).toBeVisible();
 	await expect(visible(page.getByTestId("field-Chat ID do Telegram"))).toHaveCount(0);
 });
 
@@ -101,7 +101,7 @@ test("dashboard filters by category and switches the chart", async ({ page }) =>
 	await logIn(page, "admin@gmail.com", "adminBR@123");
 	await expect(visible(page.getByText("500 no total"))).toBeVisible();
 
-	await visible(page.getByRole("button", { name: "Seguro", exact: true })).click();
+	await visible(page.getByRole("button", { name: "Insurance", exact: true })).click();
 	await expect(visible(page.getByText("Saldo no filtro"))).toBeVisible();
 	await expect(visible(page.getByText("500 no total"))).toHaveCount(0);
 

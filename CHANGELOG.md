@@ -99,7 +99,7 @@ All notable changes to this project are documented here. The format follows
 - Standalone build uses `prisma7 migrate deploy` (Prisma 8 CLI no longer owns
   migrate).
 
-## [1.0.0-rc] - 2026-09-30
+## [0.6.0] - 2026-09-30
 
 ### Added
 
@@ -240,5 +240,5 @@ recorded from the commit history.
 
 [Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.10.0...HEAD
 [0.10.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.9.0...v0.10.0
-[1.0.0-rc]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.1.0...v1.0.0-rc
+[0.6.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.5.0...v0.6.0
 [0.1.0]: https://github.com/AlexGalhardo/agentic-personal-finances/releases/tag/v0.1.0

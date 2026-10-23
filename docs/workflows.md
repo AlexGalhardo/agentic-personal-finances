@@ -42,8 +42,8 @@ Skill: `agent-money-ship`.
 
 ## Releasing
 
-Versions follow [SemVer](https://semver.org/). Project is at `1.0.0-rc`
-until the final `1.0.0`. On `main`:
+Versions follow [SemVer](https://semver.org/). Project is at `0.10.0`
+(0.x line). On `main`:
 
 1. Move `## [Unreleased]` in `CHANGELOG.md` to `## [x.y.z] - YYYY-MM-DD`,
    update the compare links at the bottom ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)).
