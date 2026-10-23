@@ -1,8 +1,9 @@
 {
 	"name": "@agentic-personal-finances/mobile",
 	"main": "expo-router/entry",
-	"version": "1.0.0-rc",
+	"version": "1.0.0",
 	"private": true,
+	"type": "module",
 	"dependencies": {
 		"@agentic-personal-finances/backend": "workspace:*",
 		"@agentic-personal-finances/core": "workspace:*",

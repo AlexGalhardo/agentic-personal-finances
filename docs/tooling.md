@@ -29,8 +29,8 @@ bun run format      # formatters only
 
 | Hook         | Runs                                                                                                                       |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `pre-commit` | blocks staged `*.exe` and `*.csv`, blocks a `bun.lock` that isn't `lockfileVersion: 1`, `bun run lint`                     |
-| `commit-msg` | [commitlint](https://commitlint.js.org) with `@commitlint/config-conventional` + the `merge` type (`commitlint.config.js`) |
+| `pre-commit` | blocks staged `*.exe` / `*.csv`, blocks a non-`lockfileVersion: 1` `bun.lock`, Biome format+check on all `*.ts`/`*.tsx`, then `bun run typecheck` |
+| `commit-msg` | [commitlint](https://commitlint.js.org) with `@commitlint/config-conventional` + the `merge` type (`commitlint.config.cjs`) |
 | `pre-push`   | backend `bun check --no-script` + tests + build; frontend `bun check --no-script` + build                                  |
 
 commitlint traps worth knowing (see the `agent-money-ship` skill):

@@ -1,7 +1,8 @@
 {
 	"name": "agentic-personal-finances",
 	"private": true,
-	"version": "1.0.0-rc",
+	"type": "module",
+	"version": "1.0.0",
 	"license": "MIT",
 	"packageManager": "bun@1.4.4",
 	"engines": {
@@ -65,6 +66,7 @@
 		"@commitlint/config-conventional": "21.2.3",
 		"@playwright/test": "1.63.0",
 		"@types/bun": "1.4.3",
+		"@types/node": "26.6.5",
 		"husky": "9.1.7",
 		"markdownlint-cli2": "0.23.3",
 		"prettier": "3.9.9",

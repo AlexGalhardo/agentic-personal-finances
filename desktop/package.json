@@ -4,7 +4,8 @@
 	"description": "Agent Money desktop app (Electron shell around the web dashboard).",
 	"author": "Alex Galhardo",
 	"private": true,
-	"version": "1.0.0-rc",
+	"type": "module",
+	"version": "1.0.0",
 	"main": "dist/main.js",
 	"appUrl": "http://localhost:4001",
 	"scripts": {

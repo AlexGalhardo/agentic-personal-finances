@@ -169,6 +169,56 @@ jobs:
           path: dist-mobile/*
           if-no-files-found: error
 
+  # All-in-one local binary (API + web + SQLite). Download, unzip next to
+  # `.standalone/`, run on localhost — no Docker/Postgres required.
+  standalone:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows-x64
+            ext: .exe
+          - os: ubuntu-latest
+            name: linux-x64
+            ext: ""
+          - os: macos-latest
+            name: macos-arm64
+            ext: ""
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - name: Build standalone
+        run: bun run build:standalone
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p dist-standalone
+          bin="agentic-personal-finances${{ matrix.ext }}"
+          test -f "$bin"
+          test -d .standalone
+          # Sidecar must sit beside the binary; ship both in one zip.
+          cp "$bin" dist-standalone/
+          cp -R .standalone dist-standalone/
+          (
+            cd dist-standalone
+            if command -v zip >/dev/null; then
+              zip -r "../agentic-personal-finances-standalone-${{ matrix.name }}.zip" .
+            else
+              7z a -tzip "../agentic-personal-finances-standalone-${{ matrix.name }}.zip" .
+            fi
+          )
+          mv "agentic-personal-finances-standalone-${{ matrix.name }}.zip" dist-standalone/
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: standalone-${{ matrix.name }}
+          path: dist-standalone/*.zip
+          if-no-files-found: error
+
   # Simulator build: runs on any Mac with Xcode (drag the .app onto a
   # simulator). A device .ipa needs an Apple Developer account — EAS path.
   ios:
@@ -205,7 +255,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: [binaries, electron, android, ios]
+    needs: [binaries, electron, android, ios, standalone]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -225,4 +275,19 @@ jobs:
         run: |
           pre=""
           case "$GITHUB_REF_NAME" in *-*) pre="--prerelease";; esac
-          gh release create "$GITHUB_REF_NAME" assets/* --title "$GITHUB_REF_NAME" --generate-notes --verify-tag $pre
+          # Prefer CHANGELOG notes when present; fall back to generated notes.
+          notes_file="$(mktemp)"
+          if [[ -f CHANGELOG.md ]]; then
+            # Extract ## [x.y.z] section matching the tag (without leading v).
+            ver="${GITHUB_REF_NAME#v}"
+            awk -v ver="$ver" '
+              $0 ~ "^## \\[" ver "\\]" {p=1; next}
+              p && $0 ~ /^## \\[/ {exit}
+              p {print}
+            ' CHANGELOG.md > "$notes_file"
+          fi
+          if [[ ! -s "$notes_file" ]]; then
+            gh release create "$GITHUB_REF_NAME" assets/* --title "$GITHUB_REF_NAME" --generate-notes --verify-tag $pre
+          else
+            gh release create "$GITHUB_REF_NAME" assets/* --title "$GITHUB_REF_NAME" --notes-file "$notes_file" --verify-tag $pre
+          fi

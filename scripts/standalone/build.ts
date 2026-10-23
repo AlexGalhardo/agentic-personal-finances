@@ -31,7 +31,8 @@ run(["bun", "run", "db:generate"], join(root, "backend"), {
 	DATABASE_URL: `file:${templateDb.replaceAll("\\", "/")}`,
 });
 
-run(["bunx", "prisma", "migrate", "deploy"], join(root, "backend"), {
+// Prisma 8 CLI moved `migrate deploy`; this repo still owns migrations via prisma7.
+run(["bunx", "prisma7", "migrate", "deploy"], join(root, "backend"), {
 	DATABASE_PROVIDER: "sqlite",
 	DATABASE_URL: `file:${templateDb.replaceAll("\\", "/")}`,
 });

@@ -75,9 +75,9 @@ This project follows [SemVer 2.0.0](https://semver.org/)
 - **MINOR** — a new backwards-compatible feature.
 - **PATCH** — a backwards-compatible bug fix.
 
-The project is at `1.0.0-rc` (see the root `package.json`): the API
+The project is at `1.0.0` (see the root `package.json`): the API
 between the workspaces (backend routes consumed by frontend/bot/mobile via
-Eden) is a release candidate for the compatibility guarantee above.
+Eden) follows the compatibility guarantee above.
 Incompatible changes may still land before the final `1.0.0`; from then on
 they bump `MAJOR`.
 

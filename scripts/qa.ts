@@ -490,9 +490,9 @@ function appears(locator: Locator, state: "visible" | "detached" = "visible", ti
 async function webLogIn(page: Page, base: string, email: string, password: string): Promise<void> {
 	await page.goto(`${base}/entrar`);
 	await page.waitForLoadState("networkidle");
-	await page.getByLabel("E-mail").fill(email);
-	await page.getByLabel("Senha", { exact: true }).fill(password);
-	await page.getByRole("button", { name: "Entrar", exact: true }).click();
+	await page.getByLabel("Email").fill(email);
+	await page.getByLabel("Password", { exact: true }).fill(password);
+	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 }
 
 async function crawlControls(page: Page, url: string, errors: string[]): Promise<number> {
@@ -591,19 +591,19 @@ await group("web", async () => {
 	const email = `qa-web-${RUN_ID}@example.com`;
 	await app.goto(`${WEB}/criar-conta`);
 	await app.waitForLoadState("networkidle");
-	await app.getByLabel("Nome").fill("Web QA");
-	await app.getByLabel("E-mail").fill(email);
-	await app.getByLabel("Senha", { exact: true }).fill(STRONG_PASSWORD);
-	await app.getByRole("button", { name: "Criar conta", exact: true }).click();
+	await app.getByLabel("Name").fill("Web QA");
+	await app.getByLabel("Email").fill(email);
+	await app.getByLabel("Password", { exact: true }).fill(STRONG_PASSWORD);
+	await app.getByRole("button", { name: "Create account", exact: true }).click();
 	await app.waitForURL(/\/dashboard/, { timeout: 15_000 }).catch(() => undefined);
 	check(g, "sign-up lands on the dashboard", app.url().includes("/dashboard"), app.url());
 	await shot(app, "web_dashboard_new_user");
 
 	const payload = `<img src=x onerror="window.__qaXss=1"> QA web ${RUN_ID}`;
-	await app.getByRole("button", { name: "Adicionar Despesa" }).click();
-	await app.getByLabel("Descrição").fill(payload);
+	await app.getByRole("button", { name: "Add expense" }).click();
+	await app.getByLabel("Description").fill(payload);
 	await app.getByLabel("Valor").fill("12.34");
-	await app.getByRole("button", { name: "Criar transação" }).click();
+	await app.getByRole("button", { name: "Create transaction" }).click();
 	await app.getByLabel("Buscar por nome").fill(`QA web ${RUN_ID}`);
 	const row = app.getByRole("row", { name: new RegExp(`QA WEB ${RUN_ID}`, "i") });
 	const rowVisible = await appears(row.first());
@@ -618,7 +618,7 @@ await group("web", async () => {
 	if (rowVisible) {
 		await row.getByRole("button", { name: "Editar" }).click();
 		await app.getByLabel("Valor").fill("56.78");
-		await app.getByRole("button", { name: "Salvar alterações" }).click();
+		await app.getByRole("button", { name: "Save changes" }).click();
 		check(g, "edit the transaction through the UI", await appears(row.getByText("R$ 56,78")));
 		await row.getByRole("button", { name: "Excluir" }).click();
 		await app.getByRole("button", { name: "Confirmar exclusão" }).click();
@@ -848,25 +848,25 @@ await group("bot", async () => {
 		});
 		return sent.slice(start).join("\n");
 	};
-	const noCrash = (reply: string): boolean => reply.length > 0 && !/erro inesperado/i.test(reply);
+	const noCrash = (reply: string): boolean => reply.length > 0 && !/erro inesperado|unexpected error/i.test(reply);
 
 	let reply = await say("/start");
 	check(
 		g,
 		"/start on an unlinked chat shows the access menu",
-		/escolha como você quer acessar/i.test(reply),
+		/choose how you want to access/i.test(reply),
 		reply.slice(0, 80),
 	);
 	reply = await tap("authmenu:login");
 	check(g, "login option asks for the e-mail", /e-mail/i.test(reply));
 	reply = await say(ADMIN.email);
-	check(g, "e-mail step asks for the password", /senha/i.test(reply));
+	check(g, "e-mail step asks for the password", /password/i.test(reply));
 	reply = await say("wrong-password");
-	check(g, "wrong password is refused", /incorret|inválid/i.test(reply), reply.slice(0, 80));
+	check(g, "wrong password is refused", /incorrect|invalid/i.test(reply), reply.slice(0, 80));
 	await tap("authmenu:login");
 	await say(ADMIN.email);
 	reply = await say(ADMIN.password);
-	check(g, "correct credentials link the chat", /conta vinculada/i.test(reply), reply.slice(0, 80));
+	check(g, "correct credentials link the chat", /account linked/i.test(reply), reply.slice(0, 80));
 
 	for (const action of ["summary", "transactions", "categories", "help"]) {
 		reply = await tap(`menu:${action}`);
@@ -875,7 +875,12 @@ await group("bot", async () => {
 	}
 	await tap("menu:transactions");
 	reply = await say("/cancelar");
-	check(g, "/cancelar leaves a running conversation", !/número/i.test(reply) && noCrash(reply), reply.slice(0, 80));
+	check(
+		g,
+		"/cancelar leaves a running conversation",
+		!/número|number/i.test(reply) && noCrash(reply),
+		reply.slice(0, 80),
+	);
 
 	await tap("menu:search");
 	await tap("filter:name");
@@ -885,7 +890,7 @@ await group("bot", async () => {
 
 	await tap("menu:expense");
 	reply = await say("abc");
-	check(g, "invalid amount is rejected with guidance", /inválido/i.test(reply));
+	check(g, "invalid amount is rejected with guidance", /invalid amount/i.test(reply));
 	await say("12.34");
 	await tap("cat:food");
 	reply = await say(`<b>QA bot ${RUN_ID}</b> *markdown* _test_`);
@@ -899,11 +904,11 @@ await group("bot", async () => {
 	check(g, "7-day report is generated", noCrash(reply), reply.slice(0, 80));
 
 	reply = await say("mensagem aleatória que o bot não conhece");
-	check(g, "unknown text falls back to the menu", /não entendi/i.test(reply));
+	check(g, "unknown text falls back to the menu", /did not understand/i.test(reply));
 	reply = await tap("menu:switch-account");
-	check(g, "switch-account asks for confirmation", /tem certeza/i.test(reply));
+	check(g, "switch-account asks for confirmation", /are you sure/i.test(reply));
 	reply = await tap("logout:confirm");
-	check(g, "logout unlinks the chat", /desconectada/i.test(reply));
+	check(g, "logout unlinks the chat", /account disconnected/i.test(reply));
 });
 
 // ── android (native app in the emulator via Expo Go) ─────────────────────────

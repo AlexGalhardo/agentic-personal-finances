@@ -26,4 +26,23 @@ if git diff --cached --name-only | grep -qx "bun.lock"; then
 	fi
 fi
 
-bun run lint
+# Format + lint every TypeScript source, then typecheck the monorepo.
+# Pass workspace dirs only — Windows rejects literal "*.ts" path args (os error 123).
+echo "pre-commit: biome format"
+bunx biome format --write --files-ignore-unknown=true \
+	backend frontend bot mobile desktop packages scripts
+
+echo "pre-commit: biome check"
+bunx biome check --files-ignore-unknown=true \
+	backend frontend bot mobile desktop packages scripts
+
+echo "pre-commit: typecheck"
+(
+	cd backend
+	DATABASE_URL="${DATABASE_URL:-file:./ci.db}" DATABASE_PROVIDER="${DATABASE_PROVIDER:-sqlite}" \
+		bun run db:generate
+)
+bun run typecheck
+
+# If format rewrote already-staged files, keep the index in sync.
+git update-index --again

@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-22
+
 ### Added
 
 - Identity and Telegram link ports/use cases in
@@ -45,6 +47,11 @@ All notable changes to this project are documented here. The format follows
   `docs/deploy/railway.md` / `ci-cd.md` for main-only push.
 - Railway IaC (`.railway/railway.ts`): DOCKERFILE builder, shared
   `infra/Dockerfile`, custom domain `finances.vukem.dev`.
+- Release workflow publishes a standalone localhost zip
+  (`agentic-personal-finances-standalone-*.zip`) beside the other
+  downloadables.
+- `@types/node` at the monorepo root; `"type": "module"` on every workspace
+  `package.json`.
 
 ### Changed
 
@@ -55,6 +62,8 @@ All notable changes to this project are documented here. The format follows
 - Product-facing API messages, OpenAPI summaries, web/mobile/bot UI copy, auth
   error maps, category labels, and transactional emails are English-only
   (legacy Portuguese URL paths unchanged).
+- Landing footer and contact page copy in English (Contact / Terms of use /
+  Privacy policy).
 - Renamed workspace npm scope `@agent-money-boilerplate/*` →
   `@agentic-personal-finances/*` (`backend`, `frontend`, `bot`, `mobile`,
   `desktop`); `@agentic-personal-finances/core`
@@ -78,12 +87,17 @@ All notable changes to this project are documented here. The format follows
   evidence → push `main` → CI) in `AGENTS.md` / `CLAUDE.md`,
   `CONTRIBUTING.md`, and `docs/workflows.md`; CI job `core` for
   `packages/core`. Direct-to-`main` replaces the former `dev` merge flow.
+- Pre-commit runs Biome format+check on all `*.ts`/`*.tsx`, then
+  `bun run typecheck`.
 
 ### Fixed
 
 - QA web group aborted (`net::ERR_ABORTED`) on CI: a cold Vite dev server
   discovered TanStack Start and Better Auth deps mid-session and force-reloaded
   the page; they are now pre-bundled via `optimizeDeps.include`.
+- QA desktop/bot asserts aligned with English UI and bot copy.
+- Standalone build uses `prisma7 migrate deploy` (Prisma 8 CLI no longer owns
+  migrate).
 
 ## [1.0.0-rc] - 2026-09-30
 
@@ -224,6 +238,7 @@ recorded from the commit history.
 - Initial application: auth, dashboard, transactions, PIX payments, Telegram
   bot.
 
-[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.0.0-rc...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.0.0-rc...v1.0.0
 [1.0.0-rc]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.1.0...v1.0.0-rc
 [0.1.0]: https://github.com/AlexGalhardo/agentic-personal-finances/releases/tag/v0.1.0

@@ -6,7 +6,7 @@ import { useSession } from "../lib/auth-client";
 
 export const Route = createFileRoute("/contato")({
 	head: () => ({
-		meta: [{ title: "Contato — Money" }, { name: "description", content: "Fale com o time da Money." }],
+		meta: [{ title: "Contact — Money" }, { name: "description", content: "Get in touch with the Money team." }],
 	}),
 	component: ContactPage,
 });
@@ -17,20 +17,20 @@ const subjectOptions = [
 	{ value: "questions", label: "Questions and suggestions" },
 	{ value: "bugs", label: "Technical issues and bugs" },
 	{ value: "payment", label: "Payment issues" },
-	{ value: "other", label: "Outros assuntos" },
+	{ value: "other", label: "Other" },
 ] as const;
 
 const contactSchema = z.object({
-	name: z.string().trim().min(1, "Informe seu nome"),
+	name: z.string().trim().min(1, "Enter your name"),
 	email: z.email("Invalid email"),
 	subject: z.enum(subjectOptions.map((option) => option.value) as [string, ...string[]], {
-		message: "Selecione um assunto",
+		message: "Select a subject",
 	}),
 	message: z
 		.string()
 		.trim()
-		.min(10, "Sua mensagem precisa ter pelo menos 10 caracteres")
-		.max(MESSAGE_MAX_LENGTH, `Your message must be at most ${MESSAGE_MAX_LENGTH} caracteres`),
+		.min(10, "Your message must be at least 10 characters")
+		.max(MESSAGE_MAX_LENGTH, `Your message must be at most ${MESSAGE_MAX_LENGTH} characters`),
 });
 
 function ContactPage() {
@@ -73,7 +73,7 @@ function ContactPage() {
 				<form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4" noValidate>
 					<div className="flex flex-col gap-1.5">
 						<label htmlFor="name" className="text-sm font-medium">
-							Nome
+							Name
 						</label>
 						<input
 							id="name"
@@ -94,7 +94,7 @@ function ContactPage() {
 
 					<div className="flex flex-col gap-1.5">
 						<label htmlFor="email" className="text-sm font-medium">
-							E-mail
+							Email
 						</label>
 						<input
 							id="email"
@@ -115,7 +115,7 @@ function ContactPage() {
 
 					<div className="flex flex-col gap-1.5">
 						<label htmlFor="subject" className="text-sm font-medium">
-							Assunto
+							Subject
 						</label>
 						<select
 							id="subject"
@@ -126,7 +126,7 @@ function ContactPage() {
 							aria-describedby={errors.subject ? "subject-error" : undefined}
 						>
 							<option value="" disabled>
-								Selecione um assunto
+								Select a subject
 							</option>
 							{subjectOptions.map((option) => (
 								<option key={option.value} value={option.value}>
@@ -144,7 +144,7 @@ function ContactPage() {
 					<div className="flex flex-col gap-1.5">
 						<div className="flex items-center justify-between">
 							<label htmlFor="message" className="text-sm font-medium">
-								Mensagem
+								Message
 							</label>
 							<span className="text-xs text-(--color-fg-muted)">
 								{messageLength}/{MESSAGE_MAX_LENGTH}
@@ -171,12 +171,12 @@ function ContactPage() {
 						type="submit"
 						className="mt-2 rounded-lg bg-brand-500 px-6 py-3 font-semibold text-black hover:bg-brand-400"
 					>
-						Enviar mensagem
+						Send message
 					</button>
 
 					{sent && (
 						<p role="status" className="rounded-lg bg-brand-500/10 px-4 py-3 text-sm text-brand-600">
-							Mensagem enviada com sucesso. Responderemos em breve.
+							Message sent successfully. We will get back to you soon.
 						</p>
 					)}
 				</form>
