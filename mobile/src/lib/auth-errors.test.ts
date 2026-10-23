@@ -1,8 +1,8 @@
 import { translateAuthError } from "./auth-errors";
 
 describe("translateAuthError", () => {
-	it("translates a known better-auth code to portuguese", () => {
-		expect(translateAuthError({ code: "INVALID_PASSWORD" }, "fallback")).toBe("Senha incorreta");
+	it("translates a known better-auth code to English", () => {
+		expect(translateAuthError({ code: "INVALID_PASSWORD" }, "fallback")).toBe("Incorrect password");
 		expect(translateAuthError({ code: "INVALID_EMAIL_OR_PASSWORD" }, "fallback")).toBe(
 			"Incorrect email and/or password",
 		);

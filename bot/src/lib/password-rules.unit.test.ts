@@ -32,7 +32,7 @@ describe("password-rules", () => {
 
 		expect(failing).toContain("One uppercase letter (A-Z)");
 		expect(failing).toContain("One digit (0-9)");
-		expect(failing).toContain("Um caractere especial (ex: !@#$%)");
-		expect(failing).not.toContain("Entre 8 e 32 caracteres");
+		expect(failing).toContain("One special character (e.g. !@#$%)");
+		expect(failing).not.toContain("Between 8 and 32 characters");
 	});
 });

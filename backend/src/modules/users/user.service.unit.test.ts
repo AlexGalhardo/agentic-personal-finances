@@ -7,26 +7,22 @@ const identityMock = {
 	purgePendingAccountDeletions: mock(),
 };
 
-mock.module("@agentic-personal-finances/core", () => ({
-	ACCOUNT_DELETION_GRACE_DAYS: 30,
-	getUserProfile: identityMock.getUserProfile,
-	updateUserProfile: identityMock.updateUserProfile,
-	requestAccountDeletion: identityMock.requestAccountDeletion,
-	purgePendingAccountDeletions: identityMock.purgePendingAccountDeletions,
-}));
-
-const userRepoMock = {
-	findByIdOrThrow: mock(),
-};
-
-mock.module("./user.repository", () => ({ userRepository: userRepoMock }));
+mock.module("@agentic-personal-finances/core", async () => {
+	const actual = await import("@agentic-personal-finances/core");
+	return {
+		...actual,
+		getUserProfile: identityMock.getUserProfile,
+		updateUserProfile: identityMock.updateUserProfile,
+		requestAccountDeletion: identityMock.requestAccountDeletion,
+		purgePendingAccountDeletions: identityMock.purgePendingAccountDeletions,
+	};
+});
 
 const { userService, ActivePlanError } = await import("./user.service");
 
 describe("userService", () => {
 	beforeEach(() => {
 		for (const fn of Object.values(identityMock)) fn.mockReset();
-		userRepoMock.findByIdOrThrow.mockReset();
 	});
 
 	it("requestDeletion throws ActivePlanError on conflict from core", async () => {
