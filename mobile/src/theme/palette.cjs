@@ -1,5 +1,5 @@
 // Single source of truth for the app's colors. CommonJS on purpose:
-// tailwind.config.js (run by Node, no TS loader) requires it to generate the
+// tailwind.config.cjs (run by Node, no TS loader) requires it to generate the
 // NativeWind classes, and src/theme/index.ts re-exports it typed for the
 // few props that need a raw value (icon colors, ActivityIndicator, pickers).
 // Dark-only by design — there is no light variant.

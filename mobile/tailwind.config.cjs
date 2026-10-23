@@ -1,4 +1,4 @@
-const palette = require("./src/theme/palette");
+const palette = require("./src/theme/palette.cjs");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

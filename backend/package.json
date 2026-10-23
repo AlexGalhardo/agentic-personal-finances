@@ -2,7 +2,7 @@
 	"name": "@agentic-personal-finances/backend",
 	"private": true,
 	"type": "module",
-	"version": "1.0.0",
+	"version": "0.10.0",
 	"engines": {
 		"bun": ">=1.4.4"
 	},

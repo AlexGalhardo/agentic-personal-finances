@@ -1,4 +1,4 @@
-import palette from "./palette";
+import palette from "./palette.cjs";
 
 export type ColorToken = keyof typeof palette;
 

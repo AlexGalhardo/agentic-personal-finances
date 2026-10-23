@@ -75,11 +75,11 @@ This project follows [SemVer 2.0.0](https://semver.org/)
 - **MINOR** — a new backwards-compatible feature.
 - **PATCH** — a backwards-compatible bug fix.
 
-The project is at `1.0.0` (see the root `package.json`): the API
+The project is at `0.10.0` (see the root `package.json`): the API
 between the workspaces (backend routes consumed by frontend/bot/mobile via
-Eden) follows the compatibility guarantee above.
-Incompatible changes may still land before the final `1.0.0`; from then on
-they bump `MAJOR`.
+Eden) follows the compatibility guarantee above for MINOR/PATCH within
+`0.x`. Incompatible changes bump `MINOR` until `1.0.0`; from then on they
+bump `MAJOR`.
 
 Each relevant release (typically when closing out a set of changes on
 `main`) gets a `vX.Y.Z` tag and a matching

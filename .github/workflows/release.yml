@@ -2,11 +2,12 @@ name: Release
 
 # Builds every downloadable: Bun executables (backend + bot), the Electron
 # desktop app for Windows/Linux/macOS, the Android APK and the iOS simulator
-# app. A `v*` tag publishes them as a GitHub Release; a manual run
-# (Actions > Release > Run workflow) builds them as workflow artifacts only.
+# app. Only the current minor line (v0.10.*) and v1.* tags publish
+# binaries — older v0.x tags are notes-only GitHub Releases.
+# Manual run (Actions > Release > Run workflow) builds artifacts only.
 on:
   push:
-    tags: ["v*"]
+    tags: ["v0.10.*", "v1.*"]
   workflow_dispatch:
 
 permissions:

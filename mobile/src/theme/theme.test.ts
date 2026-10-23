@@ -1,6 +1,6 @@
-import palette from "./palette";
+import palette from "./palette.cjs";
 
-// The palette feeds both NativeWind classes (tailwind.config.js) and raw
+// The palette feeds both NativeWind classes (tailwind.config.cjs) and raw
 // style props; a malformed value would silently render transparent.
 describe("palette", () => {
 	it("defines every token as a 6-digit hex color", () => {
@@ -10,7 +10,7 @@ describe("palette", () => {
 	});
 
 	it("is wired into the Tailwind theme", () => {
-		const config = require("../../tailwind.config.js");
+		const config = require("../../tailwind.config.cjs");
 		expect(config.theme.extend.colors).toBe(palette);
 	});
 });
