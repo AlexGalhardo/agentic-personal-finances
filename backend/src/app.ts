@@ -13,10 +13,13 @@ import { transactionImportRoutes } from "./modules/transactions/transaction-impo
 import { userRoutes } from "./modules/users/user.routes";
 
 // Public developer API only (transactions, authenticated with `x-api-key`).
-// The spec is served at /openapi/json and rendered by Scalar on the
-// frontend's /api page — no UI here (`provider: null`).
+// Spec at /openapi/json (frontend Scalar on /api). `@elysia/openapi` 2.0.0-rc.0
+// skips the JSON route when `provider: null`, so keep a provider so `/openapi/json`
+// is registered (UI at /openapi is unused in prod).
 const openapiPlugin = openapi({
-	provider: null,
+	provider: "scalar",
+	path: "/openapi",
+	specPath: "/openapi/json",
 	mapJsonSchema: { zod: z.toJSONSchema },
 	exclude: { paths: [/^\/(?!transactions)/] },
 	documentation: {

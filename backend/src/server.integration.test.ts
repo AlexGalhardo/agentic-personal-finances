@@ -339,7 +339,7 @@ describe("API integration", () => {
 		const body = (await response.json()) as { success: boolean; message: string };
 
 		expect(response.status).toBe(400);
-		expect(body).toMatchObject({ success: false, message: "Invalid data" });
+		expect(body).toMatchObject({ success: false, message: "Invalid request data" });
 		expect(JSON.stringify(body)).not.toContain("$schema");
 	});
 
