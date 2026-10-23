@@ -25,7 +25,8 @@ export default definePrismaConfig({
 					},
 				})
 			: defineSqliteConfig({
-					contract: prisma7Schema(schemaPath),
+					// SQLite ORM 8 config takes a schema path string; Postgres uses prisma7Schema().
+					contract: schemaPath,
 					output: "prisma/generated/prisma8-sqlite",
 					db: {
 						connection: databaseUrl,
