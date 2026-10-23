@@ -3,7 +3,7 @@
 | Field      | Value                                    |
 | ---------- | ---------------------------------------- |
 | PLAN tasks | M02                                      |
-| Status     | Ready                                    |
+| Status     | Done                                     |
 | Depends on | M01 recommended; **hard depend** H05     |
 | Risk       | High: framework RC; Eden client breakage |
 

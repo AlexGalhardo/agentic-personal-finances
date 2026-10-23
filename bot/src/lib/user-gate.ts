@@ -1,11 +1,11 @@
-import { env as apiEnv } from "@agent-money-boilerplate/backend/src/config/env";
-import { hasActivePlan } from "@agent-money-boilerplate/backend/src/lib/plan";
-import { PLAN_DEFINITIONS, planIds } from "@agent-money-boilerplate/backend/src/modules/payments/payment.schema";
+import { env as apiEnv } from "@agentic-personal-finances/backend/src/config/env";
+import { hasActivePlan } from "@agentic-personal-finances/backend/src/lib/plan";
 import {
 	AbacatePayNotConfiguredError,
 	paymentService,
-} from "@agent-money-boilerplate/backend/src/modules/payments/payment.service";
-import { userRepository } from "@agent-money-boilerplate/backend/src/modules/users/user.repository";
+} from "@agentic-personal-finances/backend/src/modules/payments/payment.service";
+import { userRepository } from "@agentic-personal-finances/backend/src/modules/users/user.repository";
+import { PLAN_DEFINITIONS, planIds } from "@agentic-personal-finances/core";
 import type { Context } from "grammy";
 import { InlineKeyboard, InputFile } from "grammy";
 import { formatDate } from "../formatting/format";
@@ -31,7 +31,7 @@ async function ensureActivePlan(conversation: BotConversation, ctx: Context, use
 	if (user && hasActivePlan(user)) return userId;
 
 	await ctx.reply(
-		"🔒 Sua conta está no plano gratuito, e o bot é exclusivo para quem tem um plano ativo. Escolha um plano para continuar:",
+		"🔒 Your account is on the free plan; the bot is only for active subscribers. Choose a plan to continue:",
 		{ reply_markup: planKeyboard() },
 	);
 
@@ -51,13 +51,13 @@ function planKeyboard(): InlineKeyboard {
 async function runPaymentLoop(conversation: BotConversation, userId: string): Promise<string | null> {
 	for (;;) {
 		const chosen = await conversation.waitFor("callback_query:data", {
-			otherwise: (otherCtx) => otherCtx.reply("Use os botões acima."),
+			otherwise: (otherCtx) => otherCtx.reply("Use the buttons above."),
 		});
 		const data = chosen.callbackQuery.data;
 		await chosen.answerCallbackQuery();
 
 		if (data === "plan:cancel") {
-			await chosen.reply("Operação cancelada.");
+			await chosen.reply("Operation cancelled.");
 			return null;
 		}
 
@@ -98,23 +98,23 @@ async function offerPixCheckout(
 ): Promise<boolean> {
 	const result = await conversation.external(() => tryCreatePixCheckout(userId, plan));
 	if (!result.ok) {
-		await ctx.reply(`Pagamento pelo bot indisponível no momento — assine em ${apiEnv.FRONTEND_URL}/checkout.`);
+		await ctx.reply(`Bot checkout is unavailable right now — subscribe at ${apiEnv.FRONTEND_URL}/checkout.`);
 		return false;
 	}
 	const charge = result.charge;
 
 	const qrBuffer = await conversation.external(() => Buffer.from(charge.brCodeBase64, "base64"));
 	await ctx.replyWithPhoto(new InputFile(qrBuffer, "pix.png"), {
-		caption: "Escaneie o QR code acima ou copie o código PIX abaixo:",
+		caption: "Scan the QR code above or copy the PIX code below:",
 	});
 	await ctx.reply(`<code>${charge.brCode}</code>`, { parse_mode: "HTML" });
 
 	const testMode = apiEnv.ABACATEPAY_PIX_TEST_MODE;
-	const keyboard = new InlineKeyboard().text("🔄 Verificar pagamento", "pix:check").row();
+	const keyboard = new InlineKeyboard().text("🔄 Check payment", "pix:check").row();
 	if (testMode) keyboard.text("🧪 Pagar PIX Teste Mode", "pix:simulate").row();
 	keyboard.text("❌ Cancelar", "pix:cancel");
 
-	await ctx.reply("Aguardando pagamento...", { reply_markup: keyboard });
+	await ctx.reply("Waiting for payment...", { reply_markup: keyboard });
 
 	for (;;) {
 		const action = await conversation.waitFor("callback_query:data", {
@@ -124,12 +124,12 @@ async function offerPixCheckout(
 		await action.answerCallbackQuery();
 
 		if (data === "pix:cancel") {
-			await action.reply("Operação cancelada.");
+			await action.reply("Operation cancelled.");
 			return false;
 		}
 
 		if (data === "pix:simulate" && testMode) {
-			await action.reply("Esse PIX será pago em 10 segundos...");
+			await action.reply("This PIX will be paid in 10 seconds...");
 			// @grammyjs/conversations v2 has no `conversation.sleep()` —
 			// `external()` runs the timeout once on the real execution (never
 			// on replay), the replay-safe way to wait inside a conversation.
@@ -142,18 +142,16 @@ async function offerPixCheckout(
 
 			if (status.status === "paid") {
 				const expiresAt = status.planExpiresAt ? formatDate(status.planExpiresAt) : "—";
-				await action.reply(
-					`✅ Pagamento realizado com sucesso! Você está no plano PRO até o dia ${expiresAt}.`,
-				);
+				await action.reply(`✅ Payment successful! You are on the PRO plan until ${expiresAt}.`);
 				return true;
 			}
 
 			if (status.status === "expired") {
-				await action.reply("Esse PIX expirou. Escolha o plano novamente para gerar um novo código.");
+				await action.reply("This PIX expired. Choose a plan again to generate a new code.");
 				return false;
 			}
 
-			await action.reply("Ainda aguardando o pagamento...");
+			await action.reply("Still waiting for payment...");
 		}
 	}
 }

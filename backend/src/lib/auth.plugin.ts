@@ -1,5 +1,5 @@
 import { APIError } from "better-auth";
-import { Elysia } from "elysia";
+import { Elysia, status } from "elysia";
 import { userRepository } from "../modules/users/user.repository";
 import { auth } from "./auth";
 
@@ -41,11 +41,11 @@ async function resolveSession(headers: Headers) {
 
 export const authPlugin = new Elysia({ name: "better-auth" }).mount(handleAuthRequest).macro({
 	auth: {
-		async resolve({ status, request: { headers } }) {
+		async derive({ request: { headers } }) {
 			const session = await resolveSession(headers);
 
 			if (!session) {
-				return status(401, { success: false, message: "Sessão inválida ou expirada" });
+				return status(401, { success: false, message: "Invalid or expired session" });
 			}
 
 			return {

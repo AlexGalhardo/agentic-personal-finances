@@ -20,7 +20,7 @@ a minimal public surface (placeholder `version` constant and empty barrels for
 - Do not add Result/AppFailure implementations beyond empty re-export stubs
   if needed for path stability — prefer empty dirs with `index.ts` exporting
   nothing yet, or a single `package.json` + `src/index.ts` with `CORE_VERSION`.
-- Do not rename `@agent-money-boilerplate/*` workspaces.
+- Do not rename client workspace npm scopes (scope rename was a separate task).
 - Do not change Prisma, Elysia, or UI.
 
 ## 3. Current state
@@ -31,7 +31,7 @@ Re-verify before starting:
   `desktop` — no `packages/*`.
 - No `packages/` directory at repo root.
 - Clients import backend types via
-  `@agent-money-boilerplate/backend/...` (Eden `App` type).
+  `@agentic-personal-finances/backend/...` (Eden `App` type).
 
 ## 4. Design
 

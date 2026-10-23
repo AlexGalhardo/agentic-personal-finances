@@ -50,11 +50,11 @@ export async function requirePassword(conversation: BotConversation, ctx: Contex
 	const chatId = ctx.chat?.id;
 	if (chatId === undefined) return false;
 
-	await ctx.reply("🔒 Digite sua senha pessoal para continuar:");
+	await ctx.reply("🔒 Enter your personal password to continue:");
 
 	for (;;) {
 		const replyCtx = await conversation.waitFor("message:text", {
-			otherwise: (otherCtx) => otherCtx.reply("Digite sua senha em texto para continuar:"),
+			otherwise: (otherCtx) => otherCtx.reply("Type your password as plain text to continue:"),
 		});
 		const text = replyCtx.message.text.trim();
 		await replyCtx.deleteMessage().catch(() => undefined);

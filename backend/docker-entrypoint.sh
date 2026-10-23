@@ -4,7 +4,7 @@
 # image serves both depending on DATABASE_PROVIDER (see prisma7.config.ts).
 set -e
 
-bunx prisma migrate deploy
-bunx prisma generate
+bunx prisma7 migrate deploy
+bunx prisma7 generate
 
 exec bun run src/server.ts

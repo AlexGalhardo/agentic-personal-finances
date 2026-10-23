@@ -1,29 +1,29 @@
-import { findUserIdByChatId } from "@agent-money-boilerplate/backend/src/modules/telegram/telegram.service";
-import { userRepository } from "@agent-money-boilerplate/backend/src/modules/users/user.repository";
+import { userRepository } from "@agentic-personal-finances/backend/src/modules/users/user.repository";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
+import { botFindUserIdByChatId } from "../adapters/identity-telegram";
 import type { BotConversation } from "../types";
 import { escapeMarkdown } from "./markdown";
 
-export const HELP_TEXT = ["💬 *Money BOT*", "", "Use os botões abaixo para navegar."].join("\n");
+export const HELP_TEXT = ["💬 *Money BOT*", "", "Use the buttons below to navigate."].join("\n");
 
 export function mainMenuKeyboard(): InlineKeyboard {
 	return new InlineKeyboard()
-		.text("💸 Despesa", "menu:expense")
-		.text("💰 Receita", "menu:income")
+		.text("💸 Expense", "menu:expense")
+		.text("💰 Income", "menu:income")
 		.row()
-		.text("📃 Transações", "menu:transactions")
-		.text("📊 Resumo", "menu:summary")
+		.text("📃 Transactions", "menu:transactions")
+		.text("📊 Summary", "menu:summary")
 		.row()
-		.text("🔎 Buscar", "menu:search")
-		.text("🗑️ Apagar", "menu:delete")
+		.text("🔎 Search", "menu:search")
+		.text("🗑️ Delete", "menu:delete")
 		.row()
-		.text("📄 Relatório PDF", "menu:report")
+		.text("📄 PDF report", "menu:report")
 		.row()
-		.text("📂 Categorias", "menu:categories")
-		.text("❓ Ajuda", "menu:help")
+		.text("📂 Categories", "menu:categories")
+		.text("❓ Help", "menu:help")
 		.row()
-		.text("🔌 Trocar de conta", "menu:switch-account");
+		.text("🔌 Switch account", "menu:switch-account");
 }
 
 // Shown instead of mainMenuKeyboard() whenever the chat isn't linked yet. The
@@ -31,7 +31,7 @@ export function mainMenuKeyboard(): InlineKeyboard {
 // callback prefix bot.ts dispatches), which runs the access flow — nothing
 // waits on this keyboard, so it must never offer any other button.
 export function loginPromptKeyboard(): InlineKeyboard {
-	return new InlineKeyboard().text("🔑 Entrar / Criar conta", "menu:login");
+	return new InlineKeyboard().text("🔑 Sign in / Create account", "menu:login");
 }
 
 /**
@@ -43,9 +43,9 @@ function buildMenuMessage(user: { name: string; email: string } | null): string 
 
 	const accountBlock = [
 		"",
-		"👤 *Conta conectada*",
-		`Nome: ${escapeMarkdown(user.name)}`,
-		`E-mail: ${escapeMarkdown(user.email)}`,
+		"👤 *Account connected*",
+		`Name: ${escapeMarkdown(user.name)}`,
+		`Email: ${escapeMarkdown(user.email)}`,
 	].join("\n");
 
 	return `${HELP_TEXT}${accountBlock}`;
@@ -61,7 +61,7 @@ function buildMenuMessage(user: { name: string; email: string } | null): string 
 export async function buildMenu(chatId: number | undefined): Promise<{ text: string; keyboard: InlineKeyboard }> {
 	if (chatId === undefined) return { text: HELP_TEXT, keyboard: loginPromptKeyboard() };
 
-	const userId = await findUserIdByChatId(chatId);
+	const userId = await botFindUserIdByChatId(chatId);
 	const user = userId ? await userRepository.findById(userId) : null;
 
 	return { text: buildMenuMessage(user), keyboard: user ? mainMenuKeyboard() : loginPromptKeyboard() };

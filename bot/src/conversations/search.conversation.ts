@@ -1,4 +1,4 @@
-import type { TransactionCategory } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
+import type { TransactionCategory } from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { botListTransactions } from "../adapters/transactions";
@@ -21,10 +21,10 @@ function filterMenuKeyboard(): InlineKeyboard {
 	const keyboard = new InlineKeyboard();
 	const options: [string, string][] = [
 		["Categoria", "filter:category"],
-		["Nome da transação", "filter:name"],
-		["Período (data inicial/final)", "filter:range"],
+		["Transaction name", "filter:name"],
+		["Period (start/end date)", "filter:range"],
 		["Ano", "filter:year"],
-		["Mês", "filter:month"],
+		["Month", "filter:month"],
 		["Última semana", "filter:lastweek"],
 		["Últimos 30 dias", "filter:last30"],
 	];
@@ -47,17 +47,17 @@ async function runSearch(
 
 	const truncated = result.total > PER_PAGE;
 	const header = truncated
-		? `Encontradas ${result.total} transações, mostrando as ${PER_PAGE} mais recentes:`
-		: `Encontradas ${result.total} transação(ões):`;
+		? `Found ${result.total} transactions, showing the ${PER_PAGE} most recent:`
+		: `Found ${result.total} transaction(s):`;
 
 	await ctx.reply(`${header}\n\n${formatTransactionList(result.transactions)}`);
 }
 
 export async function searchConversation(conversation: BotConversation, ctx: Context, userId: string): Promise<void> {
-	await ctx.reply("🔎 Como você quer buscar?", { reply_markup: filterMenuKeyboard() });
+	await ctx.reply("🔎 How do you want to search?", { reply_markup: filterMenuKeyboard() });
 
 	const choice = await conversation.waitFor("callback_query:data", {
-		otherwise: (otherCtx) => otherCtx.reply("Use os botões acima para escolher como buscar."),
+		otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to choose how to search."),
 	});
 	await choice.answerCallbackQuery();
 	const kind = choice.callbackQuery.data.slice("filter:".length);
@@ -76,12 +76,12 @@ export async function searchConversation(conversation: BotConversation, ctx: Con
 	if (kind === "category") {
 		await choice.reply("Escolha a categoria:", { reply_markup: categoryKeyboard() });
 		const categoryChoice = await conversation.waitFor("callback_query:data", {
-			otherwise: (otherCtx) => otherCtx.reply("Use os botões acima para escolher a categoria."),
+			otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to choose a category."),
 		});
 		await categoryChoice.answerCallbackQuery();
 		const category = parseCategoryCallback(categoryChoice.callbackQuery.data);
 		if (!category) {
-			await categoryChoice.reply("Categoria inválida.");
+			await categoryChoice.reply("Invalid category.");
 			return;
 		}
 		await runSearch(categoryChoice, conversation, userId, { category });
@@ -89,26 +89,26 @@ export async function searchConversation(conversation: BotConversation, ctx: Con
 	}
 
 	const prompts: Record<string, string> = {
-		name: "Digite o nome (ou parte do nome) da transação:",
+		name: "Enter the name (or part of the name) of the transaction:",
 		range: "Digite a data inicial e final no formato dd/mm/aaaa dd/mm/aaaa (ex: 01/08/2026 15/08/2026):",
 		year: "Digite o ano no formato aaaa (ex: 2026):",
-		month: "Digite o mês no formato mm/aaaa (ex: 08/2026):",
+		month: "Enter the month as mm/yyyy (e.g. 08/2026):",
 	};
 
 	const prompt = prompts[kind];
 	if (!prompt) {
-		await choice.reply("Opção inválida.");
+		await choice.reply("Invalid option.");
 		return;
 	}
 	await choice.reply(prompt);
 
 	for (;;) {
 		const reply = await conversation.waitFor("message:text", {
-			otherwise: (otherCtx) => otherCtx.reply("Não entendi, envie em texto:"),
+			otherwise: (otherCtx) => otherCtx.reply("I did not understand — send text:"),
 		});
 		const text = reply.message.text.trim();
 		if (!text) {
-			await reply.reply("Não entendi, tente novamente:");
+			await reply.reply("I did not understand — try again:");
 			continue;
 		}
 

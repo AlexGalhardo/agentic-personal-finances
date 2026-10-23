@@ -101,12 +101,12 @@ Each domain lives under `backend/src/modules/<domain>/`:
 <domain>.repository.ts  the only layer that touches Prisma (when needed)
 ```
 
-| Domain         | Notes                                                                                    |
-| -------------- | ---------------------------------------------------------------------------------------- |
-| `users`        | Full four-file module                                                                    |
-| `transactions` | Plus `transaction-import.*` (schema/routes/service); reuses `transaction.repository`     |
-| `payments`     | Full module + unit tests on the service                                                  |
-| `telegram`     | schema/routes/service; **no** repository — orchestrates `userRepository` and link tokens |
+| Domain         | Notes                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------- |
+| `users`        | Full four-file module                                                                 |
+| `transactions` | Plus `transaction-import.*` (schema/routes/service); reuses `transaction.repository`  |
+| `payments`     | Full module + unit tests on the service                                               |
+| `telegram`     | schema/routes/service; thin wrapper over core Telegram use cases + Prisma token store |
 
 - `src/app.ts` builds the app (CORS, OpenAPI, global error mapper, routes)
   without listening; `src/server.ts` calls `listen()` and re-exports the
@@ -124,14 +124,14 @@ Each domain lives under `backend/src/modules/<domain>/`:
 
 ### Target mapping (refactor direction)
 
-| Clean Architecture layer | Current home                                 | Likely next step                                                                |
-| ------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------- |
-| Entities / value objects | Implicit in services                         | Optional shared money/plan types if rules grow                                  |
-| Use cases                | `*.service.ts`                               | Keep; rename/split for “screaming” use cases where helpful                      |
-| Ports                    | Transactions: `packages/core/src/ports/`     | Wire Prisma/HTTP in H05; add payments/mail ports later — see `system-design.md` |
-| Interface adapters       | Routes, Zod, error mapper, bot conversations | Keep thin; map DTOs at the boundary                                             |
-| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron       | Stay outside the core                                                           |
-| Main                     | `app.ts`, bot entry, scripts                 | Explicit wiring; no new DI container unless needed                              |
+| Clean Architecture layer | Current home                                                          | Likely next step                                                         |
+| ------------------------ | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Entities / value objects | Implicit in services                                                  | Optional shared money/plan types if rules grow                           |
+| Use cases                | `*.service.ts`                                                        | Keep; rename/split for “screaming” use cases where helpful               |
+| Ports                    | Transactions, payments, identity/Telegram: `packages/core/src/ports/` | H05/H09/H10 adapters in `backend/src/adapters/` — see `system-design.md` |
+| Interface adapters       | Routes, Zod, error mapper, bot conversations                          | Keep thin; map DTOs at the boundary                                      |
+| Frameworks & drivers     | Elysia, Prisma, grammY, Expo, Electron                                | Stay outside the core                                                    |
+| Main                     | `app.ts`, bot entry, scripts                                          | Explicit wiring; no new DI container unless needed                       |
 
 ## How each client reaches the backend
 
@@ -159,10 +159,10 @@ web (`/telegram-vincular`). Linking by pasting an account ID was removed
 | Layer         | Technology                                                                   |
 | ------------- | ---------------------------------------------------------------------------- |
 | Runtime       | **Bun 1.4.4** (`packageManager` / CI); typecheck via `bun check --no-script` |
-| API           | ElysiaJS 1.4.x + Zod + `@elysiajs/openapi`                                   |
+| API           | ElysiaJS 2.0.0-rc.0 + Zod + `@elysia/openapi`                                |
 | Auth          | better-auth (cookies, optional 2FA, API keys, Expo plugin)                   |
-| Database      | Prisma 7 — dual schemas SQLite / PostgreSQL                                  |
-| Web           | TanStack Start + Query + Tailwind CSS v4; Scalar API reference               |
+| Database      | Prisma 8 RC CLI + Prisma 7.10.1 client/adapters — dual SQLite / PostgreSQL   |
+| Web           | TanStack Start 1.169.x + Router 1.170.x + Query 5.x; Scalar API reference    |
 | Mobile        | Expo SDK 57, Expo Router, NativeWind v4 (dark-only tokens)                   |
 | Bot           | grammY + conversations, pdfkit reports                                       |
 | Desktop       | Electron + electron-builder                                                  |
@@ -172,9 +172,8 @@ web (`/telegram-vincular`). Linking by pasting an account ID was removed
 | Tests         | `bun:test`, Jest (mobile), Playwright, Maestro                               |
 | Agent tooling | `.agents/skills/` (incl. clean-architecture-in-practice)                     |
 
-Planned upgrades (see `PLAN.md` / project prompt): Elysia 2 RC, Prisma 8 RC,
-TanStack Start 1.0 stable — treat each as its own migration, not a drive-by
-bump inside a CA refactor.
+Stack upgrades M01–M03 landed (see `PLAN.md`); Prisma ORM 8 runtime client
+migration remains incremental — `prisma7` owns generate/migrate today.
 
 ## Monorepo and runtime constraints
 
@@ -213,7 +212,7 @@ Alternatives: VPS (Docker or PM2 + Caddy). Mobile: EAS Build. Details:
 | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
 | [`brainstorming.md`](./brainstorming.md)                                                                     | Locked refactor decisions                                        |
 | [`system-design.md`](./system-design.md)                                                                     | Target CA layout (`packages/core`, adapters, upgrade order)      |
-| [`specs/`](./specs/)                                                                                         | SDD contracts H01–H08 / M01–M03                                  |
+| [`specs/`](./specs/)                                                                                         | SDD contracts H01–H10 / M01–M03                                  |
 | [`../PLAN.md`](../PLAN.md)                                                                                   | Roadmap / session checklist                                      |
 | [`decisions/`](./decisions/)                                                                                 | Normative ADRs (Prisma dual schema, bot in-process, AppError, …) |
 | [`security.md`](./security.md)                                                                               | Threat notes and deferred risks                                  |

@@ -3,7 +3,7 @@ import { PageLayout } from "../components/page-layout";
 
 export const Route = createFileRoute("/termos-de-uso")({
 	head: () => ({
-		meta: [{ title: "Termos de uso — Money" }, { name: "description", content: "Termos de uso da Money." }],
+		meta: [{ title: "Terms of use — Money" }, { name: "description", content: "Money terms of use." }],
 	}),
 	component: TermsPage,
 });
@@ -12,52 +12,51 @@ function TermsPage() {
 	return (
 		<PageLayout>
 			<section className="mx-auto max-w-3xl px-4 py-16">
-				<h1 className="text-3xl font-bold">Termos de uso</h1>
-				<p className="mt-2 text-sm text-(--color-fg-muted)">Última atualização: setembro de 2026.</p>
+				<h1 className="text-3xl font-bold">Terms of use</h1>
+				<p className="mt-2 text-sm text-(--color-fg-muted)">Last updated: September 2026.</p>
 
 				<div className="mt-8 flex flex-col gap-6 text-sm leading-relaxed text-(--color-fg-muted)">
 					<p>
-						Ao criar uma conta e usar a Money, você concorda com estes termos. Se não concordar, não utilize
-						o serviço.
+						By creating an account and using Money, you agree to these terms. If you do not agree, do not
+						use the service.
 					</p>
 
 					<div>
-						<h2 className="text-base font-semibold text-(--color-fg)">1. Uso do serviço</h2>
+						<h2 className="text-base font-semibold text-(--color-fg)">1. Use of the service</h2>
 						<p className="mt-2">
-							A Money é uma ferramenta de controle financeiro pessoal. Você é responsável pela veracidade
-							dos dados inseridos e pela guarda das credenciais da sua conta.
+							Money is a personal finance tool. You are responsible for the accuracy of the data you enter
+							and for keeping your account credentials secure.
 						</p>
 					</div>
 
 					<div>
-						<h2 className="text-base font-semibold text-(--color-fg)">2. Assinatura e pagamento</h2>
+						<h2 className="text-base font-semibold text-(--color-fg)">2. Subscription and payment</h2>
 						<p className="mt-2">
-							O plano anual é cobrado conforme exibido no momento da contratação. Cancelamentos seguem a
-							política descrita na área de conta.
+							Annual plans are charged as shown at checkout. Cancellations follow the policy described in
+							your account area.
 						</p>
 					</div>
 
 					<div>
-						<h2 className="text-base font-semibold text-(--color-fg)">3. Conta e exclusão</h2>
+						<h2 className="text-base font-semibold text-(--color-fg)">3. Account and deletion</h2>
 						<p className="mt-2">
-							Você pode excluir sua conta a qualquer momento, desde que não haja plano ativo em vigor. A
-							exclusão é permanente e remove seus dados conforme nossa Política de Privacidade.
+							You may delete your account at any time when no active plan is in effect. Deletion is
+							permanent and removes your data as described in our Privacy Policy.
 						</p>
 					</div>
 
 					<div>
-						<h2 className="text-base font-semibold text-(--color-fg)">4. Limitação de responsabilidade</h2>
+						<h2 className="text-base font-semibold text-(--color-fg)">4. Limitation of liability</h2>
 						<p className="mt-2">
-							A Money é fornecida "como está". Não nos responsabilizamos por decisões financeiras tomadas
-							com base nos dados do serviço.
+							Money is provided &quot;as is&quot;. We are not liable for financial decisions made based on
+							service data.
 						</p>
 					</div>
 
 					<div>
-						<h2 className="text-base font-semibold text-(--color-fg)">5. Alterações</h2>
+						<h2 className="text-base font-semibold text-(--color-fg)">5. Changes</h2>
 						<p className="mt-2">
-							Podemos atualizar estes termos periodicamente. Mudanças relevantes serão comunicadas por
-							e-mail.
+							We may update these terms periodically. Material changes will be communicated by email.
 						</p>
 					</div>
 				</div>

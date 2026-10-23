@@ -1,5 +1,5 @@
 {
-	"name": "@agent-money-boilerplate/desktop",
+	"name": "@agentic-personal-finances/desktop",
 	"productName": "Agent Money",
 	"description": "Agent Money desktop app (Electron shell around the web dashboard).",
 	"author": "Alex Galhardo",
@@ -13,6 +13,9 @@
 		"smoke": "bun run build && electron . --smoke",
 		"dist": "bun run build && electron-builder",
 		"typecheck": "bun check --no-script"
+	},
+	"dependencies": {
+		"zod": "4.6.2"
 	},
 	"devDependencies": {
 		"@types/node": "22.20.2",

@@ -22,7 +22,7 @@ function endOfDayUTC(year: number, month: number, day: number): Date {
 function parseBrazilianDate(value: string): { year: number; month: number; day: number } {
 	const match = value.trim().match(BRAZILIAN_DATE_PATTERN);
 	if (!match) {
-		throw new InvalidDateRangeError(`Data inválida "${value}", use o formato dd/mm/aaaa`);
+		throw new InvalidDateRangeError(`Invalid date "${value}", use format dd/mm/yyyy`);
 	}
 
 	const [, ddStr, mmStr, yyyyStr] = match;
@@ -35,7 +35,7 @@ function parseBrazilianDate(value: string): { year: number; month: number; day: 
 		roundTrip.getUTCFullYear() === year && roundTrip.getUTCMonth() === month - 1 && roundTrip.getUTCDate() === day;
 
 	if (!isValid) {
-		throw new InvalidDateRangeError(`Data inválida "${value}"`);
+		throw new InvalidDateRangeError(`Invalid date "${value}"`);
 	}
 
 	return { year, month, day };
@@ -59,7 +59,7 @@ export function last30Days(now: Date = new Date()): DateRange {
 export function yearRange(value: string): DateRange {
 	const match = value.trim().match(YEAR_PATTERN);
 	if (!match) {
-		throw new InvalidDateRangeError(`Ano inválido "${value}", use o formato aaaa`);
+		throw new InvalidDateRangeError(`Invalid year "${value}", use format yyyy`);
 	}
 	const year = Number(match[1]);
 
@@ -69,14 +69,14 @@ export function yearRange(value: string): DateRange {
 export function monthRange(value: string): DateRange {
 	const match = value.trim().match(MONTH_YEAR_PATTERN);
 	if (!match) {
-		throw new InvalidDateRangeError(`Mês inválido "${value}", use o formato mm/aaaa`);
+		throw new InvalidDateRangeError(`Invalid month "${value}", use format mm/yyyy`);
 	}
 
 	const month = Number(match[1]);
 	const year = Number(match[2]);
 
 	if (month < 1 || month > 12) {
-		throw new InvalidDateRangeError(`Mês inválido "${value}", o mês deve estar entre 01 e 12`);
+		throw new InvalidDateRangeError(`Invalid month "${value}", month must be between 01 and 12`);
 	}
 
 	const from = startOfDayUTC(year, month - 1, 1);
@@ -95,7 +95,7 @@ export function customRange(fromValue: string, toValue: string): DateRange {
 	const to = endOfDayUTC(end.year, end.month - 1, end.day);
 
 	if (from.getTime() > to.getTime()) {
-		throw new InvalidDateRangeError("A data inicial não pode ser depois da data final");
+		throw new InvalidDateRangeError("Start date cannot be after end date");
 	}
 
 	return { from, to };

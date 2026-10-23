@@ -10,7 +10,7 @@ import { resetPassword } from "@/lib/auth-client";
 import { translateAuthError } from "@/lib/auth-errors";
 import { isStrongPassword } from "@/lib/password-rules";
 
-const INVALID_LINK = "Link inválido ou expirado. Volte para “Esqueci minha senha” e solicite um novo.";
+const INVALID_LINK = "Invalid link ou expirado. Volte para “Forgot my password” e solicite um novo.";
 
 export default function ResetPasswordScreen() {
 	const router = useRouter();
@@ -30,7 +30,7 @@ export default function ResetPasswordScreen() {
 			return;
 		}
 		if (!isStrongPassword(password)) {
-			setError("A senha não atende aos requisitos abaixo.");
+			setError("Password does not meet the requirements below.");
 			return;
 		}
 
@@ -39,7 +39,7 @@ export default function ResetPasswordScreen() {
 		setSubmitting(false);
 
 		if (resetError) {
-			setError(translateAuthError(resetError, "Não foi possível redefinir sua senha"));
+			setError(translateAuthError(resetError, "Could not reset your password"));
 			return;
 		}
 
@@ -49,8 +49,8 @@ export default function ResetPasswordScreen() {
 
 	return (
 		<AuthShell
-			title="Nova senha"
-			subtitle="Escolha uma nova senha para sua conta."
+			title="New password"
+			subtitle="Choose a new password for your account."
 			footer={
 				<Link href="/login" className="text-subhead font-semibold text-fg">
 					Voltar para o login
@@ -59,7 +59,7 @@ export default function ResetPasswordScreen() {
 		>
 			{!token ? <Notice kind="error" message={INVALID_LINK} /> : null}
 			<TextField
-				label="Nova senha"
+				label="New password"
 				value={password}
 				onChangeText={setPassword}
 				placeholder="Crie uma nova senha forte"
@@ -69,7 +69,7 @@ export default function ResetPasswordScreen() {
 			<PasswordChecklist password={password} />
 			<Notice kind="error" message={token ? error : null} />
 			<Notice kind="success" message={done ? "Senha redefinida. Redirecionando…" : null} />
-			<Button label="Redefinir senha" onPress={onSubmit} loading={submitting} disabled={!password || !token} />
+			<Button label="Reset password" onPress={onSubmit} loading={submitting} disabled={!password || !token} />
 		</AuthShell>
 	);
 }

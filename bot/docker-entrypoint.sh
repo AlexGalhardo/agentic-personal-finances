@@ -5,6 +5,6 @@
 # filesystem (only the database is shared, through a volume).
 set -e
 
-(cd ../backend && bunx prisma generate)
+(cd ../backend && bunx prisma7 generate)
 
 exec bun run src/index.ts

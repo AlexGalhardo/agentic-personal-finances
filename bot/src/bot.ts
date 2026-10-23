@@ -1,10 +1,8 @@
-import {
-	findUserIdByChatId,
-	unlinkChatFromUser,
-} from "@agent-money-boilerplate/backend/src/modules/telegram/telegram.service";
-import { transactionCategories } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
+import { unlinkChatFromUser } from "@agentic-personal-finances/backend/src/modules/telegram/telegram.service";
+import { transactionCategories } from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import { Bot, InlineKeyboard } from "grammy";
+import { botFindUserIdByChatId } from "./adapters/identity-telegram";
 import { env } from "./config/env";
 import { createAddTransactionConversation } from "./conversations/add-transaction.conversation";
 import { balanceConversation } from "./conversations/balance.conversation";
@@ -79,7 +77,7 @@ export function createBot(): Bot<BotContext> {
 
 		if (action === "categories") {
 			const list = transactionCategories.map((category) => `• ${categoryLabels[category]}`).join("\n");
-			await ctx.reply(`Categorias disponíveis:\n\n${list}`);
+			await ctx.reply(`Available categories:\n\n${list}`);
 			return;
 		}
 
@@ -91,13 +89,13 @@ export function createBot(): Bot<BotContext> {
 
 		if (action === "switch-account") {
 			const chatId = ctx.chat?.id;
-			const linkedUserId = chatId === undefined ? null : await findUserIdByChatId(chatId);
+			const linkedUserId = chatId === undefined ? null : await botFindUserIdByChatId(chatId);
 			if (!linkedUserId) {
-				await ctx.reply("Este chat ainda não está vinculado a nenhuma conta.");
+				await ctx.reply("This chat is not linked to any account yet.");
 				return;
 			}
 			await ctx.reply(
-				"Tem certeza que deseja desconectar a conta atual deste chat? Você poderá vincular outra em seguida.",
+				"Are you sure you want to disconnect the current account from this chat? You can link another one next.",
 				{ reply_markup: confirmLogoutKeyboard() },
 			);
 			return;
@@ -116,18 +114,18 @@ export function createBot(): Bot<BotContext> {
 
 		if (action === "confirm" && chatId !== undefined) {
 			await unlinkChatFromUser(chatId);
-			await ctx.reply("🔌 Conta desconectada. Toque em qualquer opção do menu para entrar com outra conta.");
+			await ctx.reply("🔌 Account disconnected. Tap any menu option to sign in with another account.");
 			return;
 		}
 
-		await ctx.reply("Operação cancelada.");
+		await ctx.reply("Operation cancelled.");
 	});
 
 	// Global fallback: anything that isn't a known command nor consumed by a
 	// running conversation lands here, so the bot never goes silent.
 	bot.on("message", async (ctx) => {
 		const { keyboard } = await buildMenu(ctx.chat?.id);
-		await ctx.reply("Não entendi. Use os botões abaixo:", { reply_markup: keyboard });
+		await ctx.reply("I did not understand. Use the buttons below:", { reply_markup: keyboard });
 	});
 
 	bot.catch(({ error, ctx }) => {
@@ -135,7 +133,7 @@ export function createBot(): Bot<BotContext> {
 		void telegramLogger.error(error, { updateId: ctx.update.update_id, chatId: ctx.chat?.id });
 		buildMenu(ctx.chat?.id)
 			.then(({ keyboard }) =>
-				ctx.reply("⚠️ Ocorreu um erro inesperado. Toque em um botão abaixo para continuar:", {
+				ctx.reply("⚠️ An unexpected error occurred. Tap a button below to continue:", {
 					reply_markup: keyboard,
 				}),
 			)

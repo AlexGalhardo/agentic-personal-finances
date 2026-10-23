@@ -11,6 +11,7 @@
 // (and even with `dist/` present, TS7016: Bun emits no .d.ts).
 import { extname, join, normalize } from "node:path";
 import { PROXIED_API_PATHS } from "./proxy-paths";
+import { serverEnv } from "./server-env";
 import { telegramLogger } from "./src/lib/telegram-logger";
 
 type SsrHandler = { fetch: (request: Request) => Promise<Response> };
@@ -19,8 +20,8 @@ const ssrEntryPath = join(import.meta.dir, "dist/server/server.js");
 const { default: ssrHandler } = (await import(ssrEntryPath)) as { default: SsrHandler };
 
 const clientDir = join(import.meta.dir, "dist/client");
-const port = Number(process.env.PORT ?? 4001);
-const backendUrl = process.env.VITE_API_URL ?? "http://localhost:4000";
+const port = serverEnv.PORT;
+const backendUrl = serverEnv.VITE_API_URL;
 
 // OWASP A05. 'unsafe-inline' for scripts is required by the inline theme
 // script (__root.tsx) and TanStack Start's inline hydration payload; every

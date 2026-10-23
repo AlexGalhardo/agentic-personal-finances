@@ -2,7 +2,7 @@ import { api } from "#/adapters/http/api";
 
 export async function linkTelegramAccount(token: string) {
 	const { data, error } = await api.telegram.link.post({ token });
-	if (error || !data) throw error ?? new Error("Não foi possível vincular o Telegram");
+	if (error || !data) throw error ?? new Error("Could not link o Telegram");
 	return data;
 }
 

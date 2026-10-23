@@ -12,6 +12,22 @@ Both work on Linux, macOS and Windows 11. On Windows, run them from a
 `cmd.exe` — and clone the repo inside the WSL2 filesystem (`~/code/...`, not
 `/mnt/c/...`) for fast builds.
 
+## Single binary (API + web + SQLite)
+
+For a local smoke test without Docker/PM2, build one Bun-compiled executable
+at the repo root (gitignored):
+
+```bash
+bun run build:standalone
+./agentic-personal-finances          # Windows: .\agentic-personal-finances.exe
+```
+
+Produces `agentic-personal-finances(.exe)` plus a `.standalone/` sidecar
+(frontend assets + SQLite template) — keep both together. Defaults to
+`http://localhost:8787`, creates `.standalone-data/` (SQLite + secrets).
+Override with `PORT`, `STANDALONE_URL`, or the usual backend env vars —
+all validated with Zod before boot.
+
 ## Run natively in one command (`dev:all`)
 
 With Bun and a filled `backend/.env` (copy `backend/.env.example`):

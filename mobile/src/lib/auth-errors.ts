@@ -1,40 +1,37 @@
-// Mesmo mapa de error codes do better-auth usado no frontend e no bot (ver
-// frontend/src/lib/auth-errors.ts e bot/src/lib/auth-errors.ts) — duplicado
-// de propósito, mesmo padrão de categoryLabels (ver CLAUDE.md), pra não
-// depender do workspace do frontend só por causa de um mapa de strings.
+// Same better-auth error-code map as the frontend and bot (see
+// frontend/src/lib/auth-errors.ts and bot/src/lib/auth-errors.ts) — duplicated
+// on purpose so mobile does not depend on the frontend workspace for strings.
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
-	USER_NOT_FOUND: "Usuário não encontrado",
-	FAILED_TO_CREATE_USER: "Não foi possível criar o usuário",
-	FAILED_TO_CREATE_SESSION: "Não foi possível criar a sessão",
-	INVALID_PASSWORD: "Senha incorreta",
-	INVALID_EMAIL: "E-mail inválido",
-	INVALID_EMAIL_OR_PASSWORD: "E-mail e/ou senha incorretos",
-	INVALID_USER: "Usuário inválido",
-	INVALID_TOKEN: "Token inválido",
-	TOKEN_EXPIRED: "Token expirado",
-	USER_EMAIL_NOT_FOUND: "E-mail do usuário não encontrado",
-	EMAIL_NOT_VERIFIED: "E-mail ainda não confirmado",
-	PASSWORD_TOO_SHORT: "Senha muito curta",
-	PASSWORD_TOO_LONG: "Senha muito longa",
-	USER_ALREADY_EXISTS: "Já existe uma conta com esse e-mail",
-	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: "Já existe uma conta com esse e-mail — use outro e-mail",
-	CREDENTIAL_ACCOUNT_NOT_FOUND: "Conta com senha não encontrada",
-	SESSION_EXPIRED: "Sessão expirada — faça login novamente para continuar",
-	ACCOUNT_NOT_FOUND: "Conta não encontrada",
-	EMAIL_ALREADY_VERIFIED: "Esse e-mail já foi confirmado",
-	VALIDATION_ERROR: "Dados inválidos",
-	MISSING_FIELD: "Campo obrigatório não informado",
-	INVALID_CODE: "Código inválido",
-	OTP_HAS_EXPIRED: "O código expirou — solicite um novo",
-	TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE: "Muitas tentativas — solicite um novo código",
-	ACCOUNT_TEMPORARILY_LOCKED:
-		"Muitas tentativas incorretas — sua conta foi bloqueada temporariamente. Tente novamente mais tarde",
+	USER_NOT_FOUND: "User not found",
+	FAILED_TO_CREATE_USER: "Could not create user",
+	FAILED_TO_CREATE_SESSION: "Could not create session",
+	INVALID_PASSWORD: "Incorrect password",
+	INVALID_EMAIL: "Invalid email",
+	INVALID_EMAIL_OR_PASSWORD: "Incorrect email and/or password",
+	INVALID_USER: "Invalid user",
+	INVALID_TOKEN: "Invalid token",
+	TOKEN_EXPIRED: "Token expired",
+	USER_EMAIL_NOT_FOUND: "User email not found",
+	EMAIL_NOT_VERIFIED: "Email not verified yet",
+	PASSWORD_TOO_SHORT: "Password too short",
+	PASSWORD_TOO_LONG: "Password too long",
+	USER_ALREADY_EXISTS: "An account with this email already exists",
+	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: "An account with this email already exists — use another email",
+	CREDENTIAL_ACCOUNT_NOT_FOUND: "Password account not found",
+	SESSION_EXPIRED: "Session expired — sign in again to continue",
+	ACCOUNT_NOT_FOUND: "Account not found",
+	EMAIL_ALREADY_VERIFIED: "This email is already verified",
+	VALIDATION_ERROR: "Invalid data",
+	MISSING_FIELD: "Required field missing",
+	INVALID_CODE: "Invalid code",
+	OTP_HAS_EXPIRED: "Code expired — request a new one",
+	TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE: "Too many attempts — request a new code",
+	ACCOUNT_TEMPORARILY_LOCKED: "Too many incorrect attempts — your account is temporarily locked. Try again later",
 };
 
 /**
- * Traduz um erro do better-auth pelo `error.code` (estável entre versões —
- * `error.message` é sempre inglês). Sem code mapeado, usa o `fallback`
- * (já em português) passado pelo chamador.
+ * Translates a better-auth error by `error.code` (stable across versions —
+ * `error.message` is always English). Unmapped codes use the caller's fallback.
  */
 export function translateAuthError(
 	error: { code?: string | null; message?: string | null } | null | undefined,

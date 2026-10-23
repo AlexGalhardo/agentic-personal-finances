@@ -1,5 +1,5 @@
-import type { TransactionCategory } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
-import { transactionCategories } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
+import type { TransactionCategory } from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
+import { transactionCategories } from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
 import { InlineKeyboard } from "grammy";
 import { categoryLabels } from "../formatting/format";
 import { chunk } from "./chunk";

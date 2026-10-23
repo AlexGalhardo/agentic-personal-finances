@@ -37,21 +37,21 @@ export function DashboardActions({ disabled, userName, onImport, onAdd }: Props)
 	return (
 		<>
 			<ActionButton
-				label="Importar"
+				label="Import"
 				icon={Upload}
 				disabled={disabled}
 				onClick={onImport}
 				className="bg-[#820AD1] hover:bg-[#9a1df0]"
 			/>
 			<ActionButton
-				label="Adicionar Receita"
+				label="Add income"
 				icon={ArrowUpCircle}
 				disabled={disabled}
 				onClick={() => onAdd("income")}
 				className="bg-emerald-500 hover:bg-emerald-400"
 			/>
 			<ActionButton
-				label="Adicionar Despesa"
+				label="Add expense"
 				icon={ArrowDownCircle}
 				disabled={disabled}
 				onClick={() => onAdd("expense")}

@@ -1,5 +1,5 @@
 {
-	"name": "@agent-money-boilerplate/bot",
+	"name": "@agentic-personal-finances/bot",
 	"private": true,
 	"version": "1.0.0-rc",
 	"engines": {
@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"@agentic-personal-finances/core": "workspace:*",
-		"@agent-money-boilerplate/backend": "workspace:*",
+		"@agentic-personal-finances/backend": "workspace:*",
 		"@galhardoalex/telegram-logger": "1.0.1",
 		"@grammyjs/conversations": "2.1.1",
 		"bcryptjs": "3.0.3",

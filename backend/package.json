@@ -1,5 +1,5 @@
 {
-	"name": "@agent-money-boilerplate/backend",
+	"name": "@agentic-personal-finances/backend",
 	"private": true,
 	"version": "1.0.0-rc",
 	"engines": {
@@ -11,29 +11,29 @@
 		"build": "bun run db:generate:postgres && bun build --compile --minify ./src/server.ts --outfile server",
 		"pretest": "bun run test:setup",
 		"test": "bun test",
-		"test:setup": "bun run scripts/reset-test-db.ts && DATABASE_URL=file:./test.db DATABASE_PROVIDER=sqlite prisma migrate deploy && DATABASE_URL=file:./test.db DATABASE_PROVIDER=sqlite prisma generate",
+		"test:setup": "bun run scripts/reset-test-db.ts && DATABASE_URL=file:./test.db DATABASE_PROVIDER=sqlite prisma7 migrate deploy && DATABASE_URL=file:./test.db DATABASE_PROVIDER=sqlite prisma7 generate",
 		"test:unit": "bun test src/**/*.unit.test.ts",
 		"test:integration": "bun run test:setup && bun test src/**/*.integration.test.ts",
-		"db:generate": "bunx prisma generate",
-		"db:generate:postgres": "DATABASE_URL=postgresql://unused@localhost/unused DATABASE_PROVIDER=postgresql bunx prisma generate",
-		"db:migrate": "bunx prisma migrate dev",
-		"db:migrate:postgres": "DATABASE_PROVIDER=postgresql bunx prisma migrate dev",
-		"db:deploy": "bunx prisma migrate deploy",
-		"db:deploy:postgres": "DATABASE_PROVIDER=postgresql bunx prisma migrate deploy",
+		"db:generate": "DATABASE_URL=file:./dev.db DATABASE_PROVIDER=sqlite bunx prisma7 generate",
+		"db:generate:postgres": "DATABASE_URL=postgresql://unused@localhost/unused DATABASE_PROVIDER=postgresql bunx prisma7 generate",
+		"db:migrate": "bunx prisma7 migrate dev",
+		"db:migrate:postgres": "DATABASE_PROVIDER=postgresql bunx prisma7 migrate dev",
+		"db:deploy": "bunx prisma7 migrate deploy",
+		"db:deploy:postgres": "DATABASE_PROVIDER=postgresql bunx prisma7 migrate deploy",
 		"db:seed": "bun run prisma/seed.ts",
-		"db:studio": "bunx prisma studio",
+		"db:studio": "bunx prisma7 studio",
 		"cron:check-expired-plans": "bun run scripts/check-expired-plans.ts",
-		"test:e2e:setup": "bun run scripts/reset-e2e-db.ts && DATABASE_URL=file:./e2e.db DATABASE_PROVIDER=sqlite prisma migrate deploy && DATABASE_URL=file:./e2e.db DATABASE_PROVIDER=sqlite prisma generate && bun --env-file=.env.e2e run prisma/seed.ts",
+		"test:e2e:setup": "bun run scripts/reset-e2e-db.ts && DATABASE_URL=file:./e2e.db DATABASE_PROVIDER=sqlite prisma7 migrate deploy && DATABASE_URL=file:./e2e.db DATABASE_PROVIDER=sqlite prisma7 generate && bun --env-file=.env.e2e run prisma/seed.ts",
 		"start:e2e": "bun --env-file=.env.e2e run src/server.ts"
 	},
 	"dependencies": {
 		"@agentic-personal-finances/core": "workspace:*",
 		"@better-auth/api-key": "1.7.5",
 		"@better-auth/expo": "1.7.4",
-		"@elysiajs/bearer": "1.4.4",
-		"@elysiajs/cors": "1.4.2",
-		"@elysiajs/eden": "1.4.9",
-		"@elysiajs/openapi": "1.4.16",
+		"@elysia/bearer": "2.0.0-rc.0",
+		"@elysia/cors": "2.0.0-rc.0",
+		"@elysia/eden": "2.0.0-rc.0",
+		"@elysia/openapi": "2.0.0-rc.0",
 		"@galhardoalex/telegram-logger": "1.0.1",
 		"@libsql/client": "0.18.0",
 		"@prisma/adapter-libsql": "7.10.0",
@@ -42,7 +42,7 @@
 		"@react-email/components": "1.0.12",
 		"@react-email/render": "2.1.0",
 		"better-auth": "1.7.4",
-		"elysia": "1.4.30",
+		"elysia": "2.0.0-rc.0",
 		"pg": "8.23.0",
 		"react": "19.2.3",
 		"react-dom": "19.2.3",
@@ -51,9 +51,12 @@
 		"zod": "4.6.2"
 	},
 	"devDependencies": {
+		"@prisma/orm-postgres": "8.0.0-rc.20",
+		"@prisma/orm-sqlite": "8.0.0-rc.20",
+		"@prisma/prisma7": "7.10.1",
 		"@types/bun": "1.4.3",
 		"@types/pg": "8.23.1",
 		"@types/react": "19.2.18",
-		"prisma": "7.10.0"
+		"prisma": "8.0.0-rc.26"
 	}
 }

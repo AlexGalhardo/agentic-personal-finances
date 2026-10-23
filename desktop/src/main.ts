@@ -9,6 +9,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { app, BrowserWindow, session, shell } from "electron";
+import { resolveAppUrl } from "./config/env";
 
 const SMOKE = process.argv.includes("--smoke");
 const SMOKE_TIMEOUT_MS = 30_000;
@@ -20,7 +21,7 @@ function argValue(name: string): string | undefined {
 }
 
 const { appUrl } = JSON.parse(readFileSync(join(app.getAppPath(), "package.json"), "utf8")) as { appUrl: string };
-const APP_URL = new URL(argValue("--url") ?? process.env.DESKTOP_APP_URL ?? appUrl);
+const APP_URL = resolveAppUrl(appUrl, argValue("--url"));
 
 function isAppUrl(url: string): boolean {
 	return URL.canParse(url) && new URL(url).origin === APP_URL.origin;

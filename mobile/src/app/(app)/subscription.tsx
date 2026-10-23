@@ -15,18 +15,18 @@ type PlanId = "monthly" | "annual";
 type Charge = { id: string; brCode: string; brCodeBase64: string; expiresAt: string };
 
 const PLANS: { id: PlanId; label: string; price: string; period: string; description: string; badge?: string }[] = [
-	{ id: "monthly", label: "Mensal", price: "R$ 9,90", period: "/mês", description: "1 mês de acesso ao plano PRO." },
+	{ id: "monthly", label: "Monthly", price: "R$ 9,90", period: "/month", description: "1 month of PRO plan access." },
 	{
 		id: "annual",
 		label: "Anual",
 		price: "R$ 99,90",
 		period: "/ano",
 		description: "12 meses de acesso ao plano PRO.",
-		badge: "2 meses grátis",
+		badge: "2 months free",
 	},
 ];
 
-const BENEFITS = ["Transações ilimitadas", "Bot do Telegram", "Importação de extratos", "Relatórios em PDF"];
+const BENEFITS = ["Transactions ilimitadas", "Telegram bot", "Statement import", "PDF reports"];
 const POLL_INTERVAL_MS = 3000;
 
 export default function SubscriptionScreen() {
@@ -71,7 +71,7 @@ export default function SubscriptionScreen() {
 			setCharge(chargeData);
 		} catch {
 			setLoadingPlan(null);
-			setError("Não foi possível gerar o PIX. Tente novamente em instantes.");
+			setError("Could not generate PIX. Tente novamente em instantes.");
 		}
 	}
 
@@ -95,13 +95,9 @@ export default function SubscriptionScreen() {
 				<View className="size-14 items-center justify-center rounded-full bg-income/15">
 					<Feather name="check" size={26} color={colors.income} />
 				</View>
-				<Text className="text-title text-fg">Pagamento confirmado</Text>
-				<Text className="text-center text-body text-muted">Sua conta já está no plano PRO.</Text>
-				<Button
-					label="Voltar ao início"
-					onPress={() => router.replace("/dashboard")}
-					className="self-stretch"
-				/>
+				<Text className="text-title text-fg">Payment confirmed</Text>
+				<Text className="text-center text-body text-muted">Your account is already on the PRO plan.</Text>
+				<Button label="Back to home" onPress={() => router.replace("/dashboard")} className="self-stretch" />
 			</Screen>
 		);
 	}
@@ -109,7 +105,7 @@ export default function SubscriptionScreen() {
 	return (
 		<Screen scroll edges={["left", "right", "bottom"]} contentClassName="gap-6">
 			{activePlan ? (
-				<Notice kind="success" message={`Plano PRO ativo${remaining ? ` — ${remaining}` : ""}.`} />
+				<Notice kind="success" message={`Plan PRO ativo${remaining ? ` — ${remaining}` : ""}.`} />
 			) : (
 				<View className="gap-3">
 					<Text className="text-title text-fg">Seja PRO</Text>
@@ -119,9 +115,7 @@ export default function SubscriptionScreen() {
 							<Text className="text-body text-muted">{benefit}</Text>
 						</View>
 					))}
-					<Text className="text-footnote text-subtle">
-						Pagamento único via PIX, sem renovação automática.
-					</Text>
+					<Text className="text-footnote text-subtle">One-time PIX payment, no auto-renewal.</Text>
 				</View>
 			)}
 
@@ -129,14 +123,14 @@ export default function SubscriptionScreen() {
 
 			{charge && status === "pending" ? (
 				<View className="items-center gap-4 rounded-card bg-surface p-5">
-					<Text className="text-subhead text-muted">Escaneie o QR code ou copie o código PIX</Text>
+					<Text className="text-subhead text-muted">Scan the QR code or copy the PIX code</Text>
 					<View className="rounded-control bg-white p-3">
 						<Image source={{ uri: qrSrc }} className="size-52" accessibilityLabel="QR code PIX" />
 					</View>
 					<Pressable
 						onPress={handleCopy}
 						accessibilityRole="button"
-						accessibilityLabel="Copiar código PIX"
+						accessibilityLabel="Copy PIX code"
 						className="w-full flex-row items-center gap-3 rounded-control bg-raised px-4 py-3 active:opacity-70"
 					>
 						<Text className="flex-1 text-footnote text-muted" numberOfLines={1}>
@@ -148,12 +142,12 @@ export default function SubscriptionScreen() {
 							color={copied ? colors.income : colors.fg}
 						/>
 					</Pressable>
-					<Text className="text-caption text-subtle">Aguardando confirmação do pagamento…</Text>
+					<Text className="text-caption text-subtle">Waiting for payment confirmation…</Text>
 				</View>
 			) : null}
 
 			{status === "expired" ? (
-				<Notice kind="warning" message="Esse PIX expirou. Gere um novo código abaixo." />
+				<Notice kind="warning" message="This PIX expired. Generate a new code below." />
 			) : null}
 
 			{!activePlan ? (

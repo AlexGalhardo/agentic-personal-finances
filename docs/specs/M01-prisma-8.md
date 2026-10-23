@@ -3,7 +3,7 @@
 | Field      | Value                                                  |
 | ---------- | ------------------------------------------------------ |
 | PLAN tasks | M01                                                    |
-| Status     | Ready                                                  |
+| Status     | Done                                                   |
 | Depends on | H05 (transactions on ports — safer migration boundary) |
 | Risk       | High: ORM major/RC; dual schema                        |
 

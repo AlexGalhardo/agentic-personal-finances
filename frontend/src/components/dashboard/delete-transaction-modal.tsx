@@ -9,7 +9,7 @@ type Props = {
 
 export function DeleteTransactionModal({ description, pending, onConfirm, onClose }: Props) {
 	return (
-		<Modal title="Excluir transação" onClose={onClose}>
+		<Modal title="Delete transaction" onClose={onClose}>
 			<p className="text-sm text-(--color-fg-muted)">
 				Tem certeza que deseja excluir <strong className="text-(--color-fg)">{description}</strong>? Essa ação
 				não pode ser desfeita.

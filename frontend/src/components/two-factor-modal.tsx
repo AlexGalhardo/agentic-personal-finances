@@ -25,7 +25,7 @@ export function TwoFactorModal({ methods, onVerified, onClose }: TwoFactorModalP
 		setLoading(false);
 
 		if (sendError) {
-			setError(translateAuthError(sendError, "Não foi possível enviar o código por e-mail"));
+			setError(translateAuthError(sendError, "Could not send the code by email"));
 			return;
 		}
 
@@ -37,7 +37,7 @@ export function TwoFactorModal({ methods, onVerified, onClose }: TwoFactorModalP
 		setError(null);
 
 		if (code.length !== 6) {
-			setError("Informe o código de 6 dígitos");
+			setError("Enter the 6-digit code");
 			return;
 		}
 
@@ -49,7 +49,7 @@ export function TwoFactorModal({ methods, onVerified, onClose }: TwoFactorModalP
 		setLoading(false);
 
 		if (verifyError) {
-			setError(translateAuthError(verifyError, "Código inválido"));
+			setError(translateAuthError(verifyError, "Invalid code"));
 			return;
 		}
 
@@ -57,14 +57,14 @@ export function TwoFactorModal({ methods, onVerified, onClose }: TwoFactorModalP
 	}
 
 	return (
-		<Modal title="Verificação em duas etapas" onClose={onClose}>
+		<Modal title="Two-factor authentication" onClose={onClose}>
 			<form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
 				<p className="text-sm text-(--color-fg-muted)">
 					{mode === "totp"
-						? "Digite o código de 6 dígitos do seu aplicativo autenticador."
+						? "Enter the 6-digit code from your authenticator app."
 						: otpSent
-							? "Digite o código de 6 dígitos que enviamos para o seu e-mail."
-							: "Enviando código por e-mail..."}
+							? "Enter the 6-digit code we sent to your email."
+							: "Sending code by email..."}
 				</p>
 
 				{error && (
@@ -90,7 +90,7 @@ export function TwoFactorModal({ methods, onVerified, onClose }: TwoFactorModalP
 					disabled={loading}
 					className="rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 				>
-					{loading ? "Verificando..." : "Verificar"}
+					{loading ? "Verifying..." : "Verify"}
 				</button>
 
 				{mode === "totp" && (
@@ -99,7 +99,7 @@ export function TwoFactorModal({ methods, onVerified, onClose }: TwoFactorModalP
 						onClick={handleSendEmailCode}
 						className="text-center text-sm font-medium text-brand-600 hover:underline"
 					>
-						Enviar códigos por e-mail
+						Send code by email instead
 					</button>
 				)}
 			</form>

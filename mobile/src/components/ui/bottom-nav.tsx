@@ -53,10 +53,10 @@ export function BottomNav({ active }: { active: Tab }) {
 			style={{ paddingBottom: Math.max(insets.bottom, 8) }}
 		>
 			<NavItem
-				label="Início"
+				label="Home"
 				icon="home"
 				active={active === "home"}
-				accessibilityLabel="Início"
+				accessibilityLabel="Home"
 				testID="nav-home"
 				onPress={() => router.replace("/dashboard")}
 			/>
@@ -64,7 +64,7 @@ export function BottomNav({ active }: { active: Tab }) {
 				label="Buscar"
 				icon="search"
 				active={active === "search"}
-				accessibilityLabel="Buscar transações"
+				accessibilityLabel="Search transactions"
 				testID="nav-search"
 				onPress={() => router.push("/search")}
 			/>
@@ -72,7 +72,7 @@ export function BottomNav({ active }: { active: Tab }) {
 				<Pressable
 					onPress={() => router.push("/transaction/new")}
 					accessibilityRole="button"
-					accessibilityLabel="Nova transação"
+					accessibilityLabel="New transaction"
 					testID="nav-new-transaction"
 					className="size-12 items-center justify-center rounded-full bg-primary active:opacity-70"
 				>
@@ -91,7 +91,7 @@ export function BottomNav({ active }: { active: Tab }) {
 				label="Conta"
 				icon="user"
 				active={active === "profile"}
-				accessibilityLabel="Minha conta"
+				accessibilityLabel="My account"
 				testID="nav-profile"
 				onPress={() => router.push("/profile")}
 			/>

@@ -22,7 +22,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 		setLoading(false);
 
 		if (enableError || !data || data.method !== "totp") {
-			setError(translateAuthError(enableError, "Não foi possível ativar o 2FA"));
+			setError(translateAuthError(enableError, "Could not enable 2FA"));
 			return;
 		}
 
@@ -37,7 +37,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 		setError(null);
 
 		if (code.length !== 6) {
-			setError("Informe o código de 6 dígitos");
+			setError("Enter the 6-digit code");
 			return;
 		}
 
@@ -46,7 +46,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 		setLoading(false);
 
 		if (verifyError) {
-			setError(translateAuthError(verifyError, "Código inválido"));
+			setError(translateAuthError(verifyError, "Invalid code"));
 			return;
 		}
 
@@ -63,7 +63,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 		setLoading(false);
 
 		if (disableError) {
-			setError(translateAuthError(disableError, "Não foi possível desativar o 2FA"));
+			setError(translateAuthError(disableError, "Could not disable 2FA"));
 			return;
 		}
 
@@ -74,10 +74,10 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 	if (confirmed || (enabled && !setup)) {
 		return (
 			<div>
-				<p className="text-sm text-brand-600">A verificação em duas etapas está ativada para sua conta.</p>
+				<p className="text-sm text-brand-600">Two-factor authentication is enabled for your account.</p>
 				<form onSubmit={handleDisable} className="mt-4 flex flex-col gap-3">
 					{error && <p className="text-sm text-red-500">{error}</p>}
-					<FormField label="Confirme sua senha para desativar" id="disable-password">
+					<FormField label="Confirm your password to disable" id="disable-password">
 						<input
 							id="disable-password"
 							type="password"
@@ -91,7 +91,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 						disabled={loading}
 						className="self-start rounded-lg border border-red-500 px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-500/10 disabled:opacity-60"
 					>
-						{loading ? "Desativando..." : "Desativar 2FA"}
+						{loading ? "Disabling..." : "Disable 2FA"}
 					</button>
 				</form>
 			</div>
@@ -102,15 +102,15 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 		return (
 			<div>
 				<p className="text-sm text-(--color-fg-muted)">
-					Escaneie o QR code no seu aplicativo autenticador (Google Authenticator, Authy, etc.) e confirme com
-					o código gerado.
+					Scan the QR code in your authenticator app (Google Authenticator, Authy, etc.) and confirm with the
+					generated code.
 				</p>
-				<img src={setup.qrDataUrl} alt="QR code para configurar o autenticador" className="mt-4 size-48" />
+				<img src={setup.qrDataUrl} alt="QR code to set up authenticator" className="mt-4 size-48" />
 
 				{setup.backupCodes.length > 0 && (
 					<div className="mt-4 rounded-lg border border-(--color-border) bg-(--color-bg-subtle) p-3">
 						<p className="text-xs font-medium text-(--color-fg-muted)">
-							Códigos de backup — guarde em local seguro:
+							Backup codes — store in a safe place:
 						</p>
 						<p className="mt-1 break-all font-mono text-xs">{setup.backupCodes.join(" · ")}</p>
 					</div>
@@ -118,7 +118,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 
 				<form onSubmit={handleVerify} className="mt-4 flex flex-col gap-3">
 					{error && <p className="text-sm text-red-500">{error}</p>}
-					<FormField label="Código de 6 dígitos" id="verify-code">
+					<FormField label="6-digit code" id="verify-code">
 						<input
 							id="verify-code"
 							type="text"
@@ -134,7 +134,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 						disabled={loading}
 						className="self-start rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 					>
-						{loading ? "Confirmando..." : "Confirmar ativação"}
+						{loading ? "Confirming..." : "Confirm activation"}
 					</button>
 				</form>
 			</div>
@@ -143,12 +143,10 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 
 	return (
 		<div>
-			<p className="text-sm text-(--color-fg-muted)">
-				Adicione uma camada extra de segurança com um aplicativo autenticador.
-			</p>
+			<p className="text-sm text-(--color-fg-muted)">Add an extra layer of security with an authenticator app.</p>
 			<form onSubmit={handleEnable} className="mt-4 flex flex-col gap-3">
 				{error && <p className="text-sm text-red-500">{error}</p>}
-				<FormField label="Confirme sua senha" id="enable-password">
+				<FormField label="Confirm your password" id="enable-password">
 					<input
 						id="enable-password"
 						type="password"
@@ -162,7 +160,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 					disabled={loading}
 					className="self-start rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 				>
-					{loading ? "Ativando..." : "Ativar 2FA"}
+					{loading ? "Enabling..." : "Enable 2FA"}
 				</button>
 			</form>
 		</div>

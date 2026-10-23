@@ -1,5 +1,5 @@
-import type { App } from "@agent-money-boilerplate/backend/src/server";
-import { treaty } from "@elysiajs/eden";
+import type { App } from "@agentic-personal-finances/backend/src/server";
+import { treaty } from "@elysia/eden";
 import { Platform } from "react-native";
 import { env } from "../../config/env";
 import { authClient } from "../../lib/auth-client";

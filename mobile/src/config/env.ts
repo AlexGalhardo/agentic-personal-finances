@@ -1,21 +1,20 @@
 import { z } from "zod";
 
-// Config pública em runtime. Só variáveis `EXPO_PUBLIC_*` chegam ao bundle
-// (inlined em build time). Validada uma vez pra o resto do app poder assumir
-// um formato bom. Sem EXPO_PUBLIC_API_URL o app não sabe onde é o backend —
-// falha cedo em vez de quebrar silenciosamente em cada chamada.
+// Public runtime config. Only `EXPO_PUBLIC_*` reaches the bundle (inlined at
+// build time). Validated once so the rest of the app can assume a good shape.
+// Without EXPO_PUBLIC_API_URL the app cannot reach the API — fail early.
 const schema = z.object({
 	apiUrl: z.url(),
 });
 
 const parsed = schema.safeParse({
-	apiUrl: process.env.EXPO_PUBLIC_API_URL,
+	apiUrl: process.env.EXPO_PUBLIC_API_URL === "" ? undefined : process.env.EXPO_PUBLIC_API_URL,
 });
 
 if (!parsed.success) {
-	throw new Error(
-		`Config inválida (EXPO_PUBLIC_*): ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`,
-	);
+	console.error("Invalid mobile environment (EXPO_PUBLIC_*):");
+	console.error(z.treeifyError(parsed.error));
+	throw new Error("Failed to load mobile env. Check EXPO_PUBLIC_API_URL.");
 }
 
 export const env = parsed.data;

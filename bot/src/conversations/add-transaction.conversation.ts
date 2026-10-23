@@ -1,8 +1,8 @@
 import type {
 	TransactionCategory,
 	TransactionType,
-} from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
-import { createTransactionSchema } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
+} from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
+import { createTransactionSchema } from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { botCreateTransaction } from "../adapters/transactions";
@@ -31,7 +31,7 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 			if (parsed.success) {
 				amountCents = parsed.data;
 			} else {
-				await reply.reply("Valor inválido. Digite um número maior que zero, ex: 49.90");
+				await reply.reply("Invalid amount. Enter a number greater than zero, e.g. 49.90");
 			}
 		}
 
@@ -40,24 +40,24 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 		let category: TransactionCategory | null = null;
 		while (category === null) {
 			const reply = await conversation.waitFor("callback_query:data", {
-				otherwise: (otherCtx) => otherCtx.reply("Use os botões acima para escolher a categoria."),
+				otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to choose a category."),
 			});
 			await reply.answerCallbackQuery();
 			category = parseCategoryCallback(reply.callbackQuery.data);
 		}
 
-		await ctx.reply("📝 Descreva a transação (ex: Supermercado, Uber, Salário...):");
+		await ctx.reply("📝 Describe the transaction (e.g. Grocery, Uber, Salary...):");
 
 		let description: string | null = null;
 		while (description === null) {
 			const reply = await conversation.waitFor("message:text", {
-				otherwise: (otherCtx) => otherCtx.reply("Descreva a transação em texto:"),
+				otherwise: (otherCtx) => otherCtx.reply("Describe the transaction in text:"),
 			});
 			const parsed = descriptionSchema.safeParse(reply.message.text);
 			if (parsed.success) {
 				description = parsed.data;
 			} else {
-				await reply.reply("A descrição precisa ter entre 1 e 280 caracteres. Descreva a transação:");
+				await reply.reply("Description must be 1–280 characters. Describe the transaction:");
 			}
 		}
 
@@ -66,21 +66,21 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 			"",
 			`Valor: ${formatCurrencyCents(amountCents)}`,
 			`Categoria: ${categoryLabels[category]}`,
-			`Descrição: ${description}`,
+			`Description: ${description}`,
 		].join("\n");
 
 		const confirmKeyboard = new InlineKeyboard()
-			.text("✅ Confirmar", "confirm:yes")
+			.text("✅ Confirm", "confirm:yes")
 			.text("❌ Cancelar", "confirm:no");
 		await ctx.reply(summary, { reply_markup: confirmKeyboard });
 
 		const confirmation = await conversation.waitFor("callback_query:data", {
-			otherwise: (otherCtx) => otherCtx.reply("Use os botões acima para confirmar ou cancelar."),
+			otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to confirm or cancel."),
 		});
 		await confirmation.answerCallbackQuery();
 
 		if (confirmation.callbackQuery.data !== "confirm:yes") {
-			await confirmation.reply("Operação cancelada.");
+			await confirmation.reply("Operation cancelled.");
 			return;
 		}
 
@@ -91,6 +91,6 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 			return;
 		}
 
-		await confirmation.reply(`✅ ${type === "expense" ? "Despesa" : "Receita"} registrada com sucesso!`);
+		await confirmation.reply(`✅ ${type === "expense" ? "Expense" : "Income"} saved successfully!`);
 	};
 }

@@ -28,7 +28,7 @@ export type ImportConfirmInput = {
 export async function listTransactions(filters: TransactionListFilters) {
 	const { data, error } = await api.transactions.get({ query: filters });
 	if (error || !data || !("transactions" in data)) {
-		throw new Error("Falha ao carregar transações");
+		throw new Error("Failed to load transactions");
 	}
 	return data.transactions;
 }
@@ -36,7 +36,7 @@ export async function listTransactions(filters: TransactionListFilters) {
 export async function getTransactionStatistics() {
 	const { data, error } = await api.transactions.statistics.get();
 	if (error || !data || !("stats" in data)) {
-		throw new Error("Falha ao carregar estatísticas");
+		throw new Error("Failed to load statistics");
 	}
 	return data.stats;
 }
@@ -44,7 +44,7 @@ export async function getTransactionStatistics() {
 export async function getTransaction(id: string) {
 	const { data, error } = await api.transactions({ id }).get();
 	if (error || !data || !("transaction" in data)) {
-		throw new Error("Transação não encontrada");
+		throw new Error("Transaction not found");
 	}
 	return data.transaction;
 }
@@ -69,7 +69,7 @@ export async function deleteTransaction(id: string) {
 export async function previewTransactionImport(csv: string) {
 	const { data, error } = await api.transactions.import.preview.post({ csv });
 	if (error || !data || !("rows" in data)) {
-		throw error ?? new Error("Não foi possível ler o arquivo CSV");
+		throw error ?? new Error("Could not read the CSV file");
 	}
 	return data;
 }
@@ -77,7 +77,7 @@ export async function previewTransactionImport(csv: string) {
 export async function confirmTransactionImport(transactions: ImportConfirmInput[]) {
 	const { data, error } = await api.transactions.import.confirm.post({ transactions });
 	if (error || !data || !("created" in data)) {
-		throw error ?? new Error("Não foi possível importar as transações");
+		throw error ?? new Error("Could not import transactions");
 	}
 	return data;
 }

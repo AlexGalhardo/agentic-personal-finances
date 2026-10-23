@@ -53,6 +53,11 @@ railway init                    # or: railway link -p <existing-project-id>
 railway up                      # deploys from linked directory when configured
 ```
 
+Infrastructure-as-code for this project lives in [`.railway/railway.ts`](../../.railway/railway.ts)
+(`builder: DOCKERFILE`, `dockerfilePath: infra/Dockerfile`, custom domain
+`finances.vukem.dev`). After editing: `railway config plan` then
+`railway config apply --yes`.
+
 Prefer **GitHub-connected services** so every push to `main` deploys after
 CI, instead of only `railway up` from a laptop.
 
@@ -156,6 +161,18 @@ The bot is a long-polling worker: **no** public domain / HTTP port.
 In `backend` and `frontend` (not `bot`): **Settings → Networking →
 Generate Domain**, then **Redeploy** both so `${{...}}` references
 resolve.
+
+Custom web hostname (production): **`finances.vukem.dev`** on the
+`frontend` service. DNS is on Vercel (`vukem.dev` zone):
+
+| Type  | Name                       | Value                                            |
+| ----- | -------------------------- | ------------------------------------------------ |
+| CNAME | `finances`                 | Railway CNAME target (e.g. `*.up.railway.app`)   |
+| TXT   | `_railway-verify.finances` | `railway-verify=…` from Railway custom-domain UI |
+
+Set `FRONTEND_URL=https://finances.vukem.dev` on `backend` and `bot`
+(CORS / auth redirects). Keep `VITE_API_URL` on the backend’s
+`*.up.railway.app` URL (or a future `api.` hostname if you add one).
 
 ## 5. Deploy flow
 

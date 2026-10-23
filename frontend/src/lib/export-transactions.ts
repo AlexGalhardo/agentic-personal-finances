@@ -10,7 +10,7 @@ type ExportableTransaction = {
 	date: string;
 };
 
-const HEADERS = ["Descrição", "Categoria", "Tipo", "Data", "Valor"];
+const HEADERS = ["Description", "Category", "Type", "Date", "Amount"];
 
 // Spreadsheet apps execute cells starting with these characters as formulas
 // (CSV/formula injection, OWASP A03) — descriptions are user-controlled.

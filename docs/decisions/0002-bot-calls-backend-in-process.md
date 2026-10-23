@@ -9,7 +9,7 @@ The bot needs the same business rules, encryption and database as the API. Going
 
 ## Decision
 
-The bot imports services, repositories and `auth` from `@agent-money-boilerplate/backend` and runs them in its own process against the same database.
+The bot imports services, repositories and `auth` from `@agentic-personal-finances/backend` and runs them in its own process against the same database.
 
 ## Consequences
 

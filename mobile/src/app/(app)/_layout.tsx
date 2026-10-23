@@ -24,7 +24,7 @@ export default function AppLayout() {
 			<Stack.Screen name="search" options={{ title: "Buscar" }} />
 			<Stack.Screen name="profile" options={{ title: "Minha Conta" }} />
 			<Stack.Screen name="subscription" options={{ title: "Assinatura" }} />
-			<Stack.Screen name="two-factor" options={{ title: "Verificação em duas etapas" }} />
+			<Stack.Screen name="two-factor" options={{ title: "Two-factor authentication" }} />
 			<Stack.Screen name="import-nubank" options={{ title: "Importar do Nubank", presentation: "modal" }} />
 			<Stack.Screen name="transaction/[id]" options={{ presentation: "modal" }} />
 		</Stack>

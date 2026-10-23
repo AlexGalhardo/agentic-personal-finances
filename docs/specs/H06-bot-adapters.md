@@ -22,7 +22,7 @@ use cases using the same Prisma port implementations as the backend
 
 ## 3. Current state
 
-- Bot imports `@agent-money-boilerplate/backend/src/modules/...` services
+- Bot imports `@agentic-personal-finances/backend/src/modules/...` services
   and repositories directly (`bot/src/conversations/*`, `bot/src/lib/*`).
 - Per-chat lockouts and Zod validation live in the bot.
 

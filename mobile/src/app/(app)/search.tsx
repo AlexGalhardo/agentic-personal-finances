@@ -75,7 +75,7 @@ export default function SearchScreen() {
 					{!searching ? (
 						<EmptyState
 							icon="search"
-							title="Buscar transações"
+							title="Search transactions"
 							description={`Digite pelo menos ${MIN_QUERY_LENGTH} caracteres da descrição.`}
 						/>
 					) : transactionsQuery.isPending ? (

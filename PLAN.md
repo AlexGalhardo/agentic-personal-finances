@@ -87,23 +87,24 @@ files record which gates ran.
 - [x] [H07](./docs/specs/H07-web-mobile-thin-clients.md) — thin clients
 - [x] [H08](./docs/specs/H08-dependency-rule.md) — enforce Dependency Rule
 
-#### Later domain migrations (specs TBD after H08)
+#### Later domain migrations
 
-- [ ] Payments → core ports/use cases
-- [ ] Identity / telegram → core
-- [ ] Translate remaining Portuguese API/UI strings to English
+- [x] [H09](./docs/specs/H09-payments-core.md) — Payments → core ports/use cases
+- [x] [H10](./docs/specs/H10-identity-telegram-core.md) — Identity / telegram → core
+- [x] Translate remaining Portuguese API/UI strings to English
 
 #### Stack upgrades
 
-- [ ] [M01](./docs/specs/M01-prisma-8.md) — Prisma 8 RC
-- [ ] [M02](./docs/specs/M02-elysia-2.md) — Elysia 2 RC + Eden
-- [ ] [M03](./docs/specs/M03-tanstack-1.md) — TanStack Start 1.0 stable
-- [ ] Remaining deps: exact latest stable (no RC/beta) outside M01/M02 pins
+- [x] [M01](./docs/specs/M01-prisma-8.md) — Prisma 8 RC
+- [x] [M02](./docs/specs/M02-elysia-2.md) — Elysia 2 RC + Eden
+- [x] [M03](./docs/specs/M03-tanstack-1.md) — TanStack Start 1.0 stable
+- [x] Remaining deps: exact latest stable (no RC/beta) outside M01/M02 pins
 
 #### Product / OSS polish
 
 - [ ] Impeccable pass on web (evolve tokens; no new brand world)
-- [ ] Rename npm scope `@agent-money-boilerplate/*` → new name (dedicated spec)
+- [x] Rename npm scope `@agent-money-boilerplate/*` →
+      `@agentic-personal-finances/*` (see `docs/verification/specs/SCOPE-RENAME.md`)
 - [x] Retroactive GitHub Releases (Keep a Changelog / SemVer / Conventional
       Commits) — pattern:
       <https://github.com/AlexGalhardo/vukem/releases>

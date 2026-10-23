@@ -11,7 +11,7 @@ import { useSession } from "../lib/auth-client";
 const searchSchema = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute("/telegram-vincular")({
-	head: () => ({ meta: [{ title: "Vincular Telegram — Money" }] }),
+	head: () => ({ meta: [{ title: "Link Telegram — Money" }] }),
 	validateSearch: searchSchema,
 	component: TelegramLinkPage,
 });
@@ -40,9 +40,9 @@ function TelegramLinkPage() {
 
 	if (!token) {
 		return (
-			<AuthCard title="Link inválido" subtitle="Volte ao bot do Telegram e gere um novo link de login.">
+			<AuthCard title="Invalid link" subtitle="Return to the Telegram bot and generate a new sign-in link.">
 				<p role="alert" className="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-500">
-					Nenhum token de vínculo foi informado.
+					No link token was provided.
 				</p>
 			</AuthCard>
 		);
@@ -50,7 +50,7 @@ function TelegramLinkPage() {
 
 	if (isPending) {
 		return (
-			<AuthCard title="Vincular Telegram" subtitle="Verificando sua sessão...">
+			<AuthCard title="Link Telegram" subtitle="Checking your session...">
 				<p className="text-sm text-(--color-fg-muted)">Aguarde um instante.</p>
 			</AuthCard>
 		);
@@ -58,11 +58,7 @@ function TelegramLinkPage() {
 
 	if (!session) {
 		return (
-			<AuthCard
-				title="Entrar para vincular o Telegram"
-				subtitle="Faça login para concluir o vínculo com o bot."
-				centerHeader
-			>
+			<AuthCard title="Sign in to link Telegram" subtitle="Sign in to finish linking the bot." centerHeader>
 				<GoogleButton
 					label="Entrar com Google"
 					callbackURL={`/telegram-vincular?token=${encodeURIComponent(token)}`}
@@ -73,9 +69,9 @@ function TelegramLinkPage() {
 
 	if (linkMutation.isSuccess) {
 		return (
-			<AuthCard title="Telegram vinculado!" subtitle="Pode voltar para o Telegram e continuar por lá.">
+			<AuthCard title="Telegram linked!" subtitle="You can return to Telegram and continue there.">
 				<p role="status" className="rounded-lg bg-brand-500/10 px-4 py-3 text-sm text-brand-600">
-					✅ Sua conta foi vinculada ao chat do bot com sucesso.
+					✅ Your account was linked to the bot chat successfully.
 				</p>
 			</AuthCard>
 		);
@@ -83,16 +79,16 @@ function TelegramLinkPage() {
 
 	if (linkMutation.isError) {
 		return (
-			<AuthCard title="Não foi possível vincular" subtitle="Volte ao bot do Telegram e gere um novo link.">
+			<AuthCard title="Could not link" subtitle="Volte ao bot do Telegram e gere um novo link.">
 				<p role="alert" className="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-500">
-					{apiErrorMessage(linkMutation.error, "Link inválido ou expirado")}
+					{apiErrorMessage(linkMutation.error, "Invalid link ou expirado")}
 				</p>
 			</AuthCard>
 		);
 	}
 
 	return (
-		<AuthCard title="Vincular Telegram" subtitle="Concluindo o vínculo com o bot...">
+		<AuthCard title="Link Telegram" subtitle="Finishing link with the bot...">
 			<p className="text-sm text-(--color-fg-muted)">Aguarde um instante.</p>
 		</AuthCard>
 	);

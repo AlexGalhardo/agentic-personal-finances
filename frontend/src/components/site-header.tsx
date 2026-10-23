@@ -32,13 +32,13 @@ export function SiteHeader({ actions, titleBadge }: { actions?: ReactNode; title
 										to="/entrar"
 										className="rounded-lg px-3 py-1.5 text-sm font-medium text-(--color-fg) hover:bg-brand-500/10"
 									>
-										Entrar
+										Sign in
 									</Link>
 									<Link
 										to="/criar-conta"
 										className="rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-semibold text-black hover:bg-brand-600"
 									>
-										Criar conta
+										Create account
 									</Link>
 								</>
 							)

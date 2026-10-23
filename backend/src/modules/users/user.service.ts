@@ -1,18 +1,24 @@
+import type { AppFailure, Result } from "@agentic-personal-finances/core";
+import {
+	ACCOUNT_DELETION_GRACE_DAYS,
+	getUserProfile,
+	purgePendingAccountDeletions,
+	requestAccountDeletion,
+	updateUserProfile,
+} from "@agentic-personal-finances/core";
 import type { User } from "../../../prisma/generated/client/client";
+import { failureToAppError } from "../../adapters/http/map-result";
 import { decryptIfEncrypted } from "../../lib/encryption";
 import { AppError } from "../../lib/errors";
-import { hasActivePlan } from "../../lib/plan";
+import { identityPorts } from "./identity.deps";
 import { userRepository } from "./user.repository";
 import type { UpdateProfileInput, UserDTO } from "./user.schema";
 
-export const ACCOUNT_DELETION_GRACE_DAYS = 30;
+export { ACCOUNT_DELETION_GRACE_DAYS };
 
 export class ActivePlanError extends AppError {
 	constructor() {
-		super(
-			"Não é possível excluir a conta enquanto houver um plano ativo. Cancele o plano antes de continuar.",
-			409,
-		);
+		super("Cannot delete the account while an active plan exists. Cancel the plan before continuing.", 409);
 	}
 }
 
@@ -34,32 +40,31 @@ export function toUserDTO(user: User): UserDTO {
 	};
 }
 
+function unwrapIdentity<T>(result: Result<T, AppFailure>): T {
+	if (result.ok) return result.value;
+	if (result.error.code === "conflict") throw new ActivePlanError();
+	throw failureToAppError(result.error);
+}
+
 export const userService = {
 	async getProfile(userId: string): Promise<UserDTO> {
+		unwrapIdentity(await getUserProfile(identityPorts, userId));
 		return toUserDTO(await userRepository.findByIdOrThrow(userId));
 	},
 
 	async updateProfile(userId: string, input: UpdateProfileInput): Promise<UserDTO> {
-		return toUserDTO(await userRepository.update(userId, input));
+		unwrapIdentity(await updateUserProfile(identityPorts, userId, input));
+		return toUserDTO(await userRepository.findByIdOrThrow(userId));
 	},
 
 	// Free plan: deletion is deferred (soft delete) for ACCOUNT_DELETION_GRACE_DAYS —
 	// logging in during that window cancels it (databaseHooks.session.create in
 	// lib/auth.ts). The cron route /cron/delete-pending-accounts purges for real.
 	async requestDeletion(userId: string): Promise<{ deletionRequestedAt: Date }> {
-		const user = await userRepository.findByIdOrThrow(userId);
-
-		if (hasActivePlan(user)) {
-			throw new ActivePlanError();
-		}
-
-		const deletionRequestedAt = new Date();
-		await userRepository.update(userId, { deletionRequestedAt });
-		return { deletionRequestedAt };
+		return unwrapIdentity(await requestAccountDeletion(identityPorts, userId));
 	},
 
-	purgePendingDeletions(): Promise<number> {
-		const cutoff = new Date(Date.now() - ACCOUNT_DELETION_GRACE_DAYS * 24 * 60 * 60 * 1000);
-		return userRepository.deleteRequestedBefore(cutoff);
+	async purgePendingDeletions(): Promise<number> {
+		return unwrapIdentity(await purgePendingAccountDeletions(identityPorts));
 	},
 };

@@ -27,7 +27,7 @@ function drawCategoryBarChart(doc: PDFKit.PDFDocument, title: string, rows: Cate
 	doc.moveDown(0.3);
 
 	if (rows.length === 0) {
-		doc.fontSize(10).fillColor("#666666").text("Nenhuma transação neste período.");
+		doc.fontSize(10).fillColor("#666666").text("No transactions in this period.");
 		doc.fillColor("black");
 		doc.moveDown(0.6);
 		return;
@@ -87,14 +87,14 @@ export async function buildPeriodReportPdf(
 	doc.moveDown();
 
 	doc.fontSize(11);
-	doc.text(`Receitas: ${formatCurrencyCents(incomeTotal)}`);
-	doc.text(`Despesas: ${formatCurrencyCents(expenseTotal)}`);
+	doc.text(`Income: ${formatCurrencyCents(incomeTotal)}`);
+	doc.text(`Expenses: ${formatCurrencyCents(expenseTotal)}`);
 	doc.text(`Saldo: ${formatCurrencyCents(incomeTotal - expenseTotal)}`);
-	doc.text(`Transações no período: ${result.total}`);
+	doc.text(`Transactions in period: ${result.total}`);
 	doc.moveDown();
 
-	drawCategoryBarChart(doc, "Despesas por categoria", expenseRows, EXPENSE_COLOR);
-	drawCategoryBarChart(doc, "Receitas por categoria", incomeRows, INCOME_COLOR);
+	drawCategoryBarChart(doc, "Expenses by category", expenseRows, EXPENSE_COLOR);
+	drawCategoryBarChart(doc, "Income by category", incomeRows, INCOME_COLOR);
 
 	doc.end();
 	return done;

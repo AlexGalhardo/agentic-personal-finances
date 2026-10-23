@@ -152,4 +152,4 @@ web aligned to existing tokens; no new brand world in this initiative.
 - Full entity/VO catalog for every field on day one
 - CQRS / event sourcing
 - Second payment provider (port exists for readiness, not dual prod adapters)
-- Renaming npm scope `@agent-money-boilerplate/*` (can follow separately)
+- Further npm scope changes (client workspaces now `@agentic-personal-finances/*`)

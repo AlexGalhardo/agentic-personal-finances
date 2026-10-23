@@ -15,7 +15,7 @@ export async function deleteTransactionConversation(
 	ctx: Context,
 	userId: string,
 ): Promise<void> {
-	await ctx.reply("🗑️ Digite o nome (ou parte do nome) da transação que deseja apagar:");
+	await ctx.reply("🗑️ Enter the name (or part of the name) of the transaction you want to delete:");
 
 	let candidates: Candidate[] = [];
 	for (;;) {
@@ -33,7 +33,7 @@ export async function deleteTransactionConversation(
 		);
 
 		if (result.transactions.length === 0) {
-			await reply.reply("Nenhuma transação encontrada com esse nome.");
+			await reply.reply("No transactions found with that name.");
 			return;
 		}
 
@@ -49,17 +49,17 @@ export async function deleteTransactionConversation(
 		for (const candidate of candidates) {
 			keyboard.text(summarize(candidate).slice(0, 64), `del:${candidate.id}`).row();
 		}
-		await reply.reply("Qual dessas você quer apagar?", { reply_markup: keyboard });
+		await reply.reply("Which one do you want to delete?", { reply_markup: keyboard });
 		break;
 	}
 
 	const picked = await conversation.waitFor("callback_query:data", {
-		otherwise: (otherCtx) => otherCtx.reply("Use os botões acima para escolher a transação."),
+		otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to choose a transaction."),
 	});
 	const pickedId = picked.callbackQuery.data.slice("del:".length);
 	const candidate = candidates.find((item) => item.id === pickedId);
 	if (!candidate) {
-		await picked.answerCallbackQuery("Transação não encontrada");
+		await picked.answerCallbackQuery("Transaction not found");
 		return;
 	}
 	await picked.answerCallbackQuery();
@@ -70,15 +70,15 @@ export async function deleteTransactionConversation(
 	await picked.reply(`Tem certeza que deseja apagar?\n\n${summarize(candidate)}`, { reply_markup: confirmKeyboard });
 
 	const confirmation = await conversation.waitFor("callback_query:data", {
-		otherwise: (otherCtx) => otherCtx.reply("Use os botões acima para confirmar ou cancelar."),
+		otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to confirm or cancel."),
 	});
 	await confirmation.answerCallbackQuery();
 
 	if (confirmation.callbackQuery.data !== "confirm:yes") {
-		await confirmation.reply("Operação cancelada.");
+		await confirmation.reply("Operation cancelled.");
 		return;
 	}
 
 	await conversation.external(() => botDeleteTransaction(userId, candidate.id));
-	await confirmation.reply("✅ Transação apagada com sucesso.");
+	await confirmation.reply("✅ Transaction deleted successfully.");
 }

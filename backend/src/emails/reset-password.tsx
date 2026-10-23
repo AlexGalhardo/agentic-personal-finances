@@ -8,7 +8,7 @@ export function ResetPasswordEmail({ resetUrl }: ResetPasswordEmailProps) {
 	return (
 		<Html>
 			<Head />
-			<Preview>Redefinir sua senha</Preview>
+			<Preview>Reset your password</Preview>
 			<Body style={{ backgroundColor: "#0a0a0a", fontFamily: "sans-serif", padding: "32px 0" }}>
 				<Container
 					style={{
@@ -19,10 +19,10 @@ export function ResetPasswordEmail({ resetUrl }: ResetPasswordEmailProps) {
 						border: "1px solid #f97316",
 					}}
 				>
-					<Heading style={{ color: "#f97316", fontSize: "20px" }}>Redefinir senha</Heading>
+					<Heading style={{ color: "#f97316", fontSize: "20px" }}>Reset password</Heading>
 					<Text style={{ color: "#e5e5e5", fontSize: "14px", lineHeight: "22px" }}>
-						Recebemos um pedido para redefinir sua senha. Clique no botão abaixo para escolher uma nova
-						senha. Este link expira em breve.
+						We received a request to reset your password. Click the button below to choose a new password.
+						This link expires soon.
 					</Text>
 					<Button
 						href={resetUrl}
@@ -35,10 +35,10 @@ export function ResetPasswordEmail({ resetUrl }: ResetPasswordEmailProps) {
 							fontSize: "14px",
 						}}
 					>
-						Redefinir senha
+						Reset password
 					</Button>
 					<Text style={{ color: "#a3a3a3", fontSize: "12px", marginTop: "24px" }}>
-						Se você não pediu essa alteração, ignore este e-mail — sua senha continua a mesma.
+						If you did not request this change, ignore this email — your password stays the same.
 					</Text>
 				</Container>
 			</Body>

@@ -6,8 +6,8 @@ import { useAppConfig } from "../../lib/use-app-config";
 import { AccordionCard } from "../accordion-card";
 
 const PAYMENT_EVENT_LABELS: Record<string, string> = {
-	succeeded: "Pagamento confirmado",
-	expired: "PIX expirado",
+	succeeded: "Payment confirmed",
+	expired: "PIX expired",
 };
 
 type Props = {
@@ -31,22 +31,22 @@ export function PlanSection({ planStatus, planExpiresAt, freeTransactionCount }:
 
 	return (
 		<div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">
-			<h2 className="text-lg font-semibold">Plano</h2>
+			<h2 className="text-lg font-semibold">Plan</h2>
 
 			{active ? (
 				<p className="mt-3 text-sm text-(--color-fg-muted)">
-					Plano <strong className="text-(--color-fg)">PRO</strong> ativo até{" "}
+					Plan <strong className="text-(--color-fg)">PRO</strong> active until{" "}
 					{planExpiresAt ? new Date(planExpiresAt).toLocaleDateString("pt-BR") : "—"}.
 				</p>
 			) : (
 				<>
 					<p className="mt-2 text-sm text-(--color-fg-muted)">
-						Plano atual: <strong className="text-(--color-fg)">Gratuito</strong> — {freeTransactionCount}/
-						{FREE_TRANSACTION_LIMIT} transações utilizadas.
+						Current plan: <strong className="text-(--color-fg)">Free</strong> — {freeTransactionCount}/
+						{FREE_TRANSACTION_LIMIT} transactions used.
 					</p>
 					{freeTransactionCount >= FREE_TRANSACTION_LIMIT && (
 						<p className="mt-2 text-sm text-red-500">
-							Limite de transações gratuitas atingido — assine um plano para liberar acesso ilimitado.
+							Free transaction limit reached — subscribe for unlimited access.
 						</p>
 					)}
 					{(config?.enableAbacatepay || config?.abacatepayPixTestMode) && (
@@ -54,7 +54,7 @@ export function PlanSection({ planStatus, planExpiresAt, freeTransactionCount }:
 							to="/checkout"
 							className="mt-4 inline-block rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-400"
 						>
-							Assinar Plano
+							Subscribe
 						</Link>
 					)}
 				</>
@@ -62,7 +62,7 @@ export function PlanSection({ planStatus, planExpiresAt, freeTransactionCount }:
 
 			{history.length > 0 && (
 				<div className="mt-5 border-t border-(--color-border) pt-4">
-					<AccordionCard title="Histórico de pagamentos">
+					<AccordionCard title="Payment history">
 						<ul className="flex flex-col gap-2">
 							{history.map((log) => (
 								<li

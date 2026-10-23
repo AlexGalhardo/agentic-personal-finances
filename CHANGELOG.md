@@ -8,6 +8,16 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Identity and Telegram link ports/use cases in
+  `@agentic-personal-finances/core` (`UserProfileStore`,
+  `TelegramLinkTokenStore`; profile, deletion, chat link flows) — H10.
+- Backend Prisma identity/telegram adapters; bot calls core use cases
+  in-process via `bot/src/adapters/identity-telegram.ts` (H10).
+- `bun run build:standalone` — single Bun-compiled binary (API + web +
+  SQLite) at the repo root (gitignored); Zod-validated boot env.
+- Zod env validation for frontend (`src/config/env.ts`, `server-env.ts`),
+  desktop (`src/config/env.ts`), and tighter mobile `EXPO_PUBLIC_*` parsing;
+  SSR session/plan responses parsed with Zod.
 - Shared workspace `@agentic-personal-finances/core` (`packages/core`) —
   bootstrap for the hexagonal refactor (H01).
 - `Result` / `AppFailure` helpers in `@agentic-personal-finances/core` (H02).
@@ -24,14 +34,31 @@ All notable changes to this project are documented here. The format follows
   `application/*` façades (H07).
 - Dependency Rule gate: `bun run check:deps` /
   `scripts/check-dependency-rule.ts` (H08).
+- Payment plan catalog, `PaymentGateway` / `PaymentStore` ports, and PIX
+  checkout/webhook use cases in `@agentic-personal-finances/core` (H09).
+- Backend Prisma payment store and AbacatePay gateway adapters; thin
+  `payment.service` façade over core use cases (H09).
 - Ops alerts via [`@galhardoalex/telegram-logger`](https://github.com/AlexGalhardo/telegram-logger)
   in `backend`, `bot`, and the frontend production server (`warn` /
   `error` / `fatal`; optional `TELEGRAM_LOGGER_*` env).
 - Deploy docs: `docs/deploy/docker.md` (Compose + Railway image), expanded
   `docs/deploy/railway.md` / `ci-cd.md` for main-only push.
+- Railway IaC (`.railway/railway.ts`): DOCKERFILE builder, shared
+  `infra/Dockerfile`, custom domain `finances.vukem.dev`.
 
 ### Changed
 
+- Stack upgrades M01–M03: Prisma 8 RC CLI with Prisma 7.10.1 client hybrid
+  (`prisma7` migrate/generate, `prisma.config.ts` for ORM 8 side-by-side);
+  Elysia 2.0.0-rc.0 with `@elysia/*` plugins and route/macro/onError migrations;
+  TanStack Start 1.169.4 and Router 1.170.46; aligned mobile Query/Zod pins.
+- Product-facing API messages, OpenAPI summaries, web/mobile/bot UI copy, auth
+  error maps, category labels, and transactional emails are English-only
+  (legacy Portuguese URL paths unchanged).
+- Renamed workspace npm scope `@agent-money-boilerplate/*` →
+  `@agentic-personal-finances/*` (`backend`, `frontend`, `bot`, `mobile`,
+  `desktop`); `@agentic-personal-finances/core`
+  unchanged.
 - App logo (`docs/assets/logo.svg`): green money bag, no outer ring.
 - Frontend and mobile screens import `application/*` instead of the Eden treaty
   directly; `lib/api.ts` re-exports the HTTP adapter for compatibility (H07).

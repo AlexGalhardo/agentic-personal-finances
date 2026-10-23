@@ -60,7 +60,7 @@ export default function ImportNubankScreen() {
 			setRows(data.rows as PreviewRow[]);
 			setSummary(data.summary);
 		} catch {
-			setError("Não foi possível ler o arquivo selecionado.");
+			setError("Could not read the selected file.");
 		} finally {
 			setLoadingPreview(false);
 		}
@@ -82,7 +82,7 @@ export default function ImportNubankScreen() {
 			);
 		} catch {
 			setConfirming(false);
-			setError("Não foi possível importar as transações.");
+			setError("Could not import transactions.");
 			return;
 		}
 		setConfirming(false);
@@ -108,7 +108,7 @@ export default function ImportNubankScreen() {
 					<Feather name="check" size={26} color={colors.income} />
 				</View>
 				<Text className="text-title text-fg">
-					{result.created} {result.created === 1 ? "transação importada" : "transações importadas"}
+					{result.created} {result.created === 1 ? "transaction imported" : "transactions imported"}
 				</Text>
 				{result.skippedDuplicates > 0 ? (
 					<Text className="text-center text-body text-muted">

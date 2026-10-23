@@ -18,6 +18,7 @@ const envMock = { ABACATEPAY_PIX_TEST_MODE: false };
 mock.module("../../lib/abacatepay", () => ({
 	abacatepay: abacatepayMock,
 	AbacatePayNotConfiguredError: class AbacatePayNotConfiguredError extends Error {},
+	AbacatePayRequestError: class AbacatePayRequestError extends Error {},
 }));
 mock.module("../../config/prisma", () => ({ prisma: prismaMock }));
 mock.module("../../config/env", () => ({ env: envMock }));
@@ -124,7 +125,7 @@ describe("paymentService", () => {
 		it("marks an unpaid, past-expiry charge as expired without calling AbacatePay", async () => {
 			prismaMock.pixCharge.findFirst.mockResolvedValue(buildCharge({ expiresAt: new Date(Date.now() - 1000) }));
 			prismaMock.pixCharge.update.mockResolvedValue({});
-			prismaMock.pixCharge.findUniqueOrThrow.mockResolvedValue(buildCharge({ status: "expired" }));
+			prismaMock.pixCharge.findUnique.mockResolvedValue(buildCharge({ status: "expired" }));
 			prismaMock.paymentLog.upsert.mockResolvedValue({});
 
 			const result = await paymentService.getCheckoutStatus("user-1", "charge-1");
@@ -140,7 +141,7 @@ describe("paymentService", () => {
 		it("logs a pix.expired payment event when a pending charge has expired", async () => {
 			prismaMock.pixCharge.findFirst.mockResolvedValue(buildCharge({ expiresAt: new Date(Date.now() - 1000) }));
 			prismaMock.pixCharge.update.mockResolvedValue({});
-			prismaMock.pixCharge.findUniqueOrThrow.mockResolvedValue(buildCharge({ status: "expired" }));
+			prismaMock.pixCharge.findUnique.mockResolvedValue(buildCharge({ status: "expired" }));
 			prismaMock.paymentLog.upsert.mockResolvedValue({});
 
 			await paymentService.getCheckoutStatus("user-1", "charge-1");
@@ -157,7 +158,7 @@ describe("paymentService", () => {
 		it("activates the plan once AbacatePay confirms the charge as PAID", async () => {
 			prismaMock.pixCharge.findFirst.mockResolvedValue(buildCharge());
 			abacatepayMock.checkPixCharge.mockResolvedValue({ id: "ext-1", status: "PAID" });
-			prismaMock.pixCharge.findUniqueOrThrow.mockResolvedValue(buildCharge({ status: "paid" }));
+			prismaMock.pixCharge.findUnique.mockResolvedValue(buildCharge({ status: "paid" }));
 			prismaMock.paymentLog.upsert.mockResolvedValue({});
 
 			const result = await paymentService.getCheckoutStatus("user-1", "charge-1");
@@ -175,7 +176,7 @@ describe("paymentService", () => {
 		it("leaves the charge pending when AbacatePay still reports it unpaid", async () => {
 			prismaMock.pixCharge.findFirst.mockResolvedValue(buildCharge());
 			abacatepayMock.checkPixCharge.mockResolvedValue({ id: "ext-1", status: "PENDING" });
-			prismaMock.pixCharge.findUniqueOrThrow.mockResolvedValue(buildCharge({ status: "pending" }));
+			prismaMock.pixCharge.findUnique.mockResolvedValue(buildCharge({ status: "pending" }));
 
 			const result = await paymentService.getCheckoutStatus("user-1", "charge-1");
 

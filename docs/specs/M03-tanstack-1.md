@@ -3,7 +3,7 @@
 | Field      | Value                                                  |
 | ---------- | ------------------------------------------------------ |
 | PLAN tasks | M03                                                    |
-| Status     | Ready                                                  |
+| Status     | Done                                                   |
 | Depends on | H07 (thin clients); M02 optional but recommended first |
 | Risk       | High: SSR/router major; follow official migration      |
 

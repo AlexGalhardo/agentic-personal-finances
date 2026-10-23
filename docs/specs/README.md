@@ -102,8 +102,8 @@ evidence row.
 | identity     | Users, better-auth, telegram link            | core                       |
 | clients      | Web/mobile/bot/desktop adapters              | core + HTTP/in-process     |
 
-**Build order:** H01–H08 (hexagonal foundation + transactions slice) → then
-payments/identity migration specs (later) → M01–M03 (stack upgrades).
+**Build order:** H01–H08 (hexagonal foundation + transactions slice) →
+H09–H10 (payments + identity/telegram) → M01–M03 (stack upgrades).
 
 ## 6. Shared conventions
 
@@ -112,8 +112,8 @@ payments/identity migration specs (later) → M01–M03 (stack upgrades).
   at real boundaries (persistence, payments, mail, clock/id).
 - Use cases return `Result<T, AppFailure>`; adapters map to HTTP/bot/UI.
 - Pure/immutable code in `packages/core` only.
-- Workspace package scopes may still be `@agent-money-boilerplate/*` until a
-  dedicated rename spec; new shared package uses the new scope.
+- Workspace client packages use `@agentic-personal-finances/*`; shared core is
+  `@agentic-personal-finances/core`.
 - Typecheck: `bun check --no-script`. Full gate: `bun run check`.
 
 ## 7. Spec index and execution order
@@ -128,9 +128,11 @@ payments/identity migration specs (later) → M01–M03 (stack upgrades).
 | 6     | [H06](H06-bot-adapters.md)            | Bot calls core use cases in-process                |
 | 7     | [H07](H07-web-mobile-thin-clients.md) | Thin client façades; shared failure codes          |
 | 8     | [H08](H08-dependency-rule.md)         | Enforce core cannot import adapters                |
-| 9     | [M01](M01-prisma-8.md)                | Prisma 8 RC migration                              |
-| 10    | [M02](M02-elysia-2.md)                | Elysia 2 RC + Eden clients                         |
-| 11    | [M03](M03-tanstack-1.md)              | TanStack Start 1.0 stable                          |
+| 9     | [H09](H09-payments-core.md)           | Payments / PIX plans → core ports + use cases      |
+| 10    | [H10](H10-identity-telegram-core.md)  | Profile, deletion, Telegram link → core            |
+| 11    | [M01](M01-prisma-8.md)                | Prisma 8 RC migration                              |
+| 12    | [M02](M02-elysia-2.md)                | Elysia 2 RC + Eden clients                         |
+| 13    | [M03](M03-tanstack-1.md)              | TanStack Start 1.0 stable                          |
 
 ## 8. Agent report format
 

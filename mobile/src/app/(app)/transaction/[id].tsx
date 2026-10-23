@@ -80,7 +80,7 @@ export default function TransactionFormScreen() {
 		setError(null);
 		if (amountCents < MIN_AMOUNT_CENTS) return setError("O valor mínimo é R$ 0,01.");
 		if (amountCents > MAX_AMOUNT_CENTS) return setError("O valor máximo é R$ 999.999,99.");
-		if (!description.trim()) return setError("Informe uma descrição.");
+		if (!description.trim()) return setError("Enter a description.");
 
 		const input = {
 			type,
@@ -95,13 +95,13 @@ export default function TransactionFormScreen() {
 			else await updateMut.mutateAsync({ id, input });
 			router.back();
 		} catch {
-			setError("Não foi possível salvar a transação.");
+			setError("Could not save the transaction.");
 		}
 	}
 
 	// A native confirmation is right here: deleting is irreversible and rare.
 	function onDelete(): void {
-		Alert.alert("Excluir transação", "Esta ação não pode ser desfeita.", [
+		Alert.alert("Delete transaction", "Esta ação não pode ser desfeita.", [
 			{ text: "Cancelar", style: "cancel" },
 			{
 				text: "Excluir",
@@ -117,7 +117,7 @@ export default function TransactionFormScreen() {
 	const header = (
 		<Stack.Screen
 			options={{
-				title: isNew ? "Nova transação" : "Editar transação",
+				title: isNew ? "New transaction" : "Edit transaction",
 				headerLeft: () => (
 					<Pressable onPress={() => router.back()} hitSlop={10} className="active:opacity-60">
 						<Text className="text-body text-muted">Cancelar</Text>
@@ -193,13 +193,13 @@ export default function TransactionFormScreen() {
 
 			<View className="gap-3">
 				<Button
-					label={isNew ? "Adicionar" : "Salvar alterações"}
+					label={isNew ? "Add" : "Save changes"}
 					onPress={onSubmit}
 					loading={createMut.isPending || updateMut.isPending}
 				/>
 				{!isNew ? (
 					<Button
-						label="Excluir transação"
+						label="Delete transaction"
 						variant="danger"
 						onPress={onDelete}
 						loading={deleteMut.isPending}

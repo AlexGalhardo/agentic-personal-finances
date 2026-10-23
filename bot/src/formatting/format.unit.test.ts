@@ -19,9 +19,9 @@ describe("formatDate", () => {
 });
 
 describe("getCategoryLabel", () => {
-	it("returns the Portuguese label for a known category", () => {
-		expect(getCategoryLabel("credit_card_bill")).toBe("Fatura do cartão");
-		expect(getCategoryLabel("transfers")).toBe("Transferências");
+	it("returns the English label for a known category", () => {
+		expect(getCategoryLabel("credit_card_bill")).toBe("Credit card bill");
+		expect(getCategoryLabel("transfers")).toBe("Transfers");
 	});
 
 	it("falls back to the raw value for an unknown category", () => {
@@ -31,7 +31,7 @@ describe("getCategoryLabel", () => {
 
 describe("formatTransactionList", () => {
 	it("returns a friendly message for an empty list", () => {
-		expect(formatTransactionList([])).toBe("Nenhuma transação encontrada.");
+		expect(formatTransactionList([])).toBe("No transactions found.");
 	});
 
 	it("numbers each transaction and includes sign, value, category and date", () => {
@@ -54,7 +54,7 @@ describe("formatTransactionList", () => {
 			},
 		]);
 
-		expect(result).toContain(`1. +R$${NBSP}500,00 · Investimentos · 07/08/2026`);
-		expect(result).toContain(`2. -R$${NBSP}100,00 · Fatura do cartão · 27/08/2026`);
+		expect(result).toContain(`1. +R$${NBSP}500,00 · Investments · 07/08/2026`);
+		expect(result).toContain(`2. -R$${NBSP}100,00 · Credit card bill · 27/08/2026`);
 	});
 });

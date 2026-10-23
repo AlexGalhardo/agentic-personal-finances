@@ -9,7 +9,7 @@ import { translateAuthError } from "../lib/auth-errors";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
 export const Route = createFileRoute("/criar-conta")({
-	head: () => ({ meta: [{ title: "Criar conta — Money" }] }),
+	head: () => ({ meta: [{ title: "Create account — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	component: SignupPage,
 });
@@ -23,9 +23,9 @@ const signupSchema = z.object({
 		.string()
 		.trim()
 		.min(4, "O nome precisa ter pelo menos 4 letras")
-		.max(16, "O nome pode ter no máximo 16 caracteres"),
-	email: z.email("E-mail inválido").max(48, "O e-mail pode ter no máximo 48 caracteres"),
-	password: z.string().refine(isStrongPassword, "A senha não atende aos requisitos abaixo"),
+		.max(16, "Name can be at most 16 characters"),
+	email: z.email("Invalid email").max(48, "Email can be at most 48 characters"),
+	password: z.string().refine(isStrongPassword, "Password does not meet the requirements below"),
 });
 
 function SignupPage() {
@@ -64,7 +64,7 @@ function SignupPage() {
 		setLoading(false);
 
 		if (error) {
-			setFormError(translateAuthError(error, "Não foi possível criar sua conta"));
+			setFormError(translateAuthError(error, "Could not create your account"));
 			return;
 		}
 
@@ -80,10 +80,10 @@ function SignupPage() {
 
 	if (pendingVerificationEmail) {
 		return (
-			<AuthCard title="Confirme seu e-mail" subtitle="Falta só um passo para acessar sua conta.">
+			<AuthCard title="Confirm your email" subtitle="One more step to access your account.">
 				<p role="status" className="rounded-lg bg-brand-500/10 px-4 py-3 text-sm text-brand-600">
-					Enviamos um link de confirmação para <strong>{pendingVerificationEmail}</strong>. Confirme seu
-					e-mail antes de acessar sua conta.
+					We sent a confirmation link to <strong>{pendingVerificationEmail}</strong>. Confirm your e-mail
+					antes de acessar sua conta.
 				</p>
 				<p className="mt-4 text-center text-sm text-(--color-fg-muted)">
 					<Link to="/entrar" className="font-medium text-brand-600 hover:underline">
@@ -95,9 +95,9 @@ function SignupPage() {
 	}
 
 	return (
-		<AuthCard title="Criar conta" subtitle="Leva menos de um minuto.">
+		<AuthCard title="Create account" subtitle="Takes less than a minute.">
 			<div className="flex flex-col gap-4">
-				<GoogleButton label="Criar conta com Google" />
+				<GoogleButton label="Create account with Google" />
 
 				<div className="flex items-center gap-3 text-xs text-(--color-fg-muted)">
 					<span className="h-px flex-1 bg-(--color-border)" />
@@ -112,7 +112,7 @@ function SignupPage() {
 				)}
 
 				<form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-					<FormField label="Nome" id="name" error={errors.name}>
+					<FormField label="Name" id="name" error={errors.name}>
 						<input
 							id="name"
 							name="name"
@@ -126,7 +126,7 @@ function SignupPage() {
 						/>
 					</FormField>
 
-					<FormField label="E-mail" id="email" error={errors.email}>
+					<FormField label="Email" id="email" error={errors.email}>
 						<input
 							id="email"
 							name="email"
@@ -138,13 +138,13 @@ function SignupPage() {
 						/>
 					</FormField>
 
-					<FormField label="Senha" id="password" error={errors.password}>
+					<FormField label="Password" id="password" error={errors.password}>
 						<PasswordStrengthInput
 							id="password"
 							name="password"
 							value={password}
 							onChange={setPassword}
-							placeholder="Crie uma senha forte"
+							placeholder="Create a strong password"
 						/>
 					</FormField>
 
@@ -153,14 +153,14 @@ function SignupPage() {
 						disabled={loading}
 						className="rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 					>
-						{loading ? "Criando conta..." : "Criar conta"}
+						{loading ? "Creating account..." : "Create account"}
 					</button>
 				</form>
 
 				<p className="text-center text-sm text-(--color-fg-muted)">
-					Já tem conta?{" "}
+					Already have an account?{" "}
 					<Link to="/entrar" className="font-medium text-brand-600 hover:underline">
-						Entrar
+						Sign in
 					</Link>
 				</p>
 			</div>

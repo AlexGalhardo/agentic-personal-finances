@@ -37,11 +37,11 @@ export default function SignUpScreen() {
 			return;
 		}
 		if (email.length > 48 || !emailPattern.test(email)) {
-			setError("Informe um e-mail válido (máximo 48 caracteres).");
+			setError("Enter a valid email (max 48 characters).");
 			return;
 		}
 		if (!isStrongPassword(password)) {
-			setError("A senha não atende aos requisitos abaixo.");
+			setError("Password does not meet the requirements below.");
 			return;
 		}
 
@@ -54,7 +54,7 @@ export default function SignUpScreen() {
 		setSubmitting(false);
 
 		if (signUpError) {
-			setError(translateAuthError(signUpError, "Não foi possível criar sua conta"));
+			setError(translateAuthError(signUpError, "Could not create your account"));
 			return;
 		}
 
@@ -69,8 +69,8 @@ export default function SignUpScreen() {
 	if (pendingVerificationEmail) {
 		return (
 			<AuthShell
-				title="Confirme seu e-mail"
-				subtitle={`Enviamos um link de confirmação para ${pendingVerificationEmail}. Confirme antes de acessar sua conta.`}
+				title="Confirm your email"
+				subtitle={`We sent a confirmation link to ${pendingVerificationEmail}. Confirme antes de acessar sua conta.`}
 			>
 				<Button label="Voltar para o login" variant="secondary" onPress={() => router.replace("/login")} />
 			</AuthShell>
@@ -83,7 +83,7 @@ export default function SignUpScreen() {
 			subtitle="Leva menos de um minuto."
 			footer={
 				<>
-					<Text className="text-subhead text-muted">Já tem uma conta?</Text>
+					<Text className="text-subhead text-muted">Already have an account?</Text>
 					<Link href="/login" className="text-subhead font-semibold text-fg">
 						Entrar
 					</Link>
@@ -115,7 +115,7 @@ export default function SignUpScreen() {
 				label="Senha"
 				value={password}
 				onChangeText={setPassword}
-				placeholder="Crie uma senha forte"
+				placeholder="Create a strong password"
 				autoComplete="new-password"
 				secureTextEntry
 			/>

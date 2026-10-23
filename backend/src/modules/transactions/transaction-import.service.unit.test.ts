@@ -247,7 +247,7 @@ describe("transactionImportService.confirm", () => {
 					createdAt: "2026-08-03T12:00:00.000Z",
 				},
 			]),
-		).rejects.toThrow("Limite de 10 transações");
+		).rejects.toThrow("Free plan limit of 10 transactions");
 
 		expect(repositoryMock.createMany).not.toHaveBeenCalled();
 	});

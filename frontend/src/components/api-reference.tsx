@@ -6,7 +6,7 @@ import "@scalar/api-reference-react/style.css";
 import { ApiReferenceReact } from "@scalar/api-reference-react";
 import { useIsDarkTheme } from "./theme-toggle";
 
-// Served by the backend (@elysiajs/openapi, generated from the routes' Zod
+// Served by the backend (@elysia/openapi, generated from the routes' Zod
 // schemas) and proxied like every other API path — see proxy-paths.ts.
 const OPENAPI_SPEC_PATH = "/openapi/json";
 

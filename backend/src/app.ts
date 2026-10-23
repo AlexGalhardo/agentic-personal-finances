@@ -1,6 +1,6 @@
-import { cors } from "@elysiajs/cors";
-import { openapi } from "@elysiajs/openapi";
-import { Elysia } from "elysia";
+import { cors } from "@elysia/cors";
+import { openapi } from "@elysia/openapi";
+import { Elysia, NotFound, ParseError, ValidationError } from "elysia";
 import { z } from "zod";
 import { env } from "./config/env";
 import { authPlugin } from "./lib/auth.plugin";
@@ -24,7 +24,7 @@ const openapiPlugin = openapi({
 			title: "Agent Money API",
 			version: "0.2.0",
 			description:
-				"Acesse suas transações programaticamente. Gere um token em /api e envie-o no header `x-api-key` de cada requisição.",
+				"Access your transactions programmatically. Generate a token on /api and send it in the `x-api-key` header on every request.",
 		},
 		components: {
 			securitySchemes: { apiKey: { type: "apiKey", in: "header", name: "x-api-key" } },
@@ -37,31 +37,24 @@ const openapiPlugin = openapi({
 export const app = new Elysia()
 	.use(cors({ origin: env.FRONTEND_URL, credentials: true }))
 	.use(openapiPlugin)
-	.onError({ as: "global" }, ({ code, error, set }) => {
+	.onError(({ error, status }) => {
 		if (error instanceof AppError) {
-			set.status = error.status;
-			return { success: false, message: error.message };
+			return status(error.status, { success: false, message: error.message });
 		}
-
-		if (code === "VALIDATION") {
-			set.status = 400;
-			return { success: false, message: "Dados inválidos", errors: error.all.map((issue) => issue.summary) };
-		}
-
-		if (code === "NOT_FOUND") {
-			set.status = 404;
-			return { success: false, message: "Rota não encontrada" };
-		}
-
-		if (code === "PARSE") {
-			set.status = 400;
-			return { success: false, message: "Corpo da requisição inválido" };
-		}
-
+	})
+	.onError(ValidationError, ({ error, status }) =>
+		status(400, {
+			success: false,
+			message: "Invalid request data",
+			errors: error.errors.map((issue: { summary?: string; message?: string }) => issue.summary ?? issue.message),
+		}),
+	)
+	.onError(NotFound, ({ status }) => status(404, { success: false, message: "Route not found" }))
+	.onError(ParseError, ({ status }) => status(400, { success: false, message: "Invalid request body" }))
+	.onError(({ error, status }) => {
 		console.error(error);
-		void telegramLogger.error(error, { code });
-		set.status = 500;
-		return { success: false, message: "Erro interno do servidor" };
+		void telegramLogger.error(error instanceof Error ? error : new Error(String(error)), {});
+		return status(500, { success: false, message: "Internal server error" });
 	})
 	.get("/", () => ({ success: true, message: "Agentic Personal Finances API" }))
 	.get("/config", () => ({

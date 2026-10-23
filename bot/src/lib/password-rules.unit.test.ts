@@ -30,8 +30,8 @@ describe("password-rules", () => {
 	it("lists only the rules that still fail", () => {
 		const failing = failingPasswordRules("correcthorse");
 
-		expect(failing).toContain("Uma letra maiúscula (A-Z)");
-		expect(failing).toContain("Um número (0-9)");
+		expect(failing).toContain("One uppercase letter (A-Z)");
+		expect(failing).toContain("One digit (0-9)");
 		expect(failing).toContain("Um caractere especial (ex: !@#$%)");
 		expect(failing).not.toContain("Entre 8 e 32 caracteres");
 	});

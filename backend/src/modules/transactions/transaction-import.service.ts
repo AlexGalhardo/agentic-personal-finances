@@ -38,12 +38,12 @@ export function parseNubankCsv(csv: string): ParsedCsvRow[] {
 	const [header, ...dataLines] = lines;
 	if (!header?.toLowerCase().startsWith(NUBANK_HEADER_PREFIX)) {
 		throw new ImportParseError(
-			"Formato de CSV não reconhecido. Esperado um extrato do Nubank com colunas Data,Valor,Identificador,Descrição.",
+			"Unrecognized CSV format. Expected a Nubank statement with columns Date,Amount,Identifier,Description.",
 		);
 	}
 
 	if (dataLines.length === 0) {
-		throw new ImportParseError("O arquivo não contém nenhuma transação");
+		throw new ImportParseError("The file contains no transactions");
 	}
 
 	return dataLines.map((line, index) => {
@@ -51,22 +51,22 @@ export function parseNubankCsv(csv: string): ParsedCsvRow[] {
 		const parts = line.split(",");
 
 		if (parts.length < 4) {
-			throw new ImportParseError(`Linha ${rowNumber}: formato inválido (esperado 4 colunas)`);
+			throw new ImportParseError(`Line ${rowNumber}: invalid format (expected 4 columns)`);
 		}
 
 		const [rawDate, rawValue, , ...descriptionParts] = parts;
-		const description = descriptionParts.join(",").trim().replace(/^"|"$/g, "") || "Transação importada";
+		const description = descriptionParts.join(",").trim().replace(/^"|"$/g, "") || "Imported transaction";
 
 		const dateMatch = rawDate?.trim().match(DATE_PATTERN);
 		if (!dateMatch) {
-			throw new ImportParseError(`Linha ${rowNumber}: data inválida "${rawDate}"`);
+			throw new ImportParseError(`Line ${rowNumber}: invalid date "${rawDate}"`);
 		}
 		const [, day, month, year] = dateMatch;
 		const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
 
 		const value = Number.parseFloat((rawValue ?? "").trim());
 		if (Number.isNaN(value)) {
-			throw new ImportParseError(`Linha ${rowNumber}: valor inválido "${rawValue}"`);
+			throw new ImportParseError(`Line ${rowNumber}: invalid amount "${rawValue}"`);
 		}
 
 		return {

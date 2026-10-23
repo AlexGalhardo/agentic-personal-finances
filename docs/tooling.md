@@ -53,7 +53,11 @@ Never bypass hooks with `--no-verify` without the maintainer's explicit OK.
   lockfile versions.
 - **Exact stable versions** — no `^`/`~`, no `latest`/`next`/`beta`. Look
   up the current stable with `npm view <pkg> version dist-tags`.
-- **Moved the repo?** Workspace links in `node_modules/@agent-money-boilerplate/*`
+- **Stack pins (M01–M03):** Prisma CLI `8.0.0-rc.26` + client/adapters
+  `7.10.1` (`prisma7` for migrate/generate); Elysia `2.0.0-rc.0` and
+  `@elysia/*` plugins; TanStack Start `1.169.4`, Router `1.170.46` (see
+  `docs/architecture.md` stack table).
+- **Moved the repo?** Workspace links in `node_modules/@agentic-personal-finances/*`
   are absolute symlinks — after moving the folder, `bun install` again or
   typecheck fails with "Cannot find module" /
   "Please install Elysia before using Eden".

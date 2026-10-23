@@ -1,8 +1,8 @@
-import { failureToAppError, unwrapOrThrow } from "@agent-money-boilerplate/backend/src/adapters/http/map-result";
+import { failureToAppError, unwrapOrThrow } from "@agentic-personal-finances/backend/src/adapters/http/map-result";
 import type {
 	TransactionCategory,
 	TransactionType,
-} from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.schema";
+} from "@agentic-personal-finances/backend/src/modules/transactions/transaction.schema";
 import {
 	type AppFailure,
 	createTransaction,
@@ -67,7 +67,7 @@ export type BotCreateInput = {
 
 export type BotCreateOutcome = { ok: true } | { ok: false; reply: string };
 
-const PLAN_LIMIT_REPLY = "Limite de transações do plano gratuito atingido. Assine um plano para continuar.";
+const PLAN_LIMIT_REPLY = "Free plan transaction limit reached. Subscribe to continue.";
 
 /** Maps core create failures to in-chat replies; other codes stay thrown as AppError. */
 export function replyForCreateFailure(error: AppFailure): BotCreateOutcome | "throw" {

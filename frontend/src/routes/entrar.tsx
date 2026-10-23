@@ -10,14 +10,14 @@ import { translateAuthError } from "../lib/auth-errors";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
 export const Route = createFileRoute("/entrar")({
-	head: () => ({ meta: [{ title: "Entrar — Money" }] }),
+	head: () => ({ meta: [{ title: "Sign in — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	component: LoginPage,
 });
 
 const loginSchema = z.object({
-	email: z.email("E-mail inválido"),
-	password: z.string().min(1, "Informe sua senha"),
+	email: z.email("Invalid email"),
+	password: z.string().min(1, "Enter your password"),
 });
 
 function LoginPage() {
@@ -60,7 +60,7 @@ function LoginPage() {
 				setUnverifiedEmail(result.data.email);
 				return;
 			}
-			setFormError(translateAuthError(error, "E-mail e/ou senha incorretos"));
+			setFormError(translateAuthError(error, "Incorrect email and/or password"));
 			return;
 		}
 
@@ -82,15 +82,15 @@ function LoginPage() {
 
 	if (unverifiedEmail) {
 		return (
-			<AuthCard title="Confirme seu e-mail" subtitle="Você precisa confirmar seu e-mail antes de entrar.">
+			<AuthCard title="Confirm your email" subtitle="You must confirm your email before signing in.">
 				<p className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">
-					Ainda não confirmamos <strong>{unverifiedEmail}</strong>. Verifique sua caixa de entrada ou reenvie
-					o link de confirmação.
+					We have not confirmed yet <strong>{unverifiedEmail}</strong>. Check your inbox or resend the
+					confirmation link.
 				</p>
 
 				{resendState === "sent" ? (
 					<p role="status" className="mt-4 rounded-lg bg-brand-500/10 px-4 py-3 text-sm text-brand-600">
-						Link de confirmação reenviado.
+						Confirmation link resent.
 					</p>
 				) : (
 					<button
@@ -117,9 +117,9 @@ function LoginPage() {
 	}
 
 	return (
-		<AuthCard title="Entrar" subtitle="Acesse sua conta para ver seu painel financeiro." centerHeader>
+		<AuthCard title="Sign in" subtitle="Sign in to view your financial dashboard." centerHeader>
 			<div className="flex flex-col gap-4">
-				<GoogleButton label="Entrar com Google" />
+				<GoogleButton label="Sign in with Google" />
 
 				<div className="flex items-center gap-3 text-xs text-(--color-fg-muted)">
 					<span className="h-px flex-1 bg-(--color-border)" />
@@ -134,7 +134,7 @@ function LoginPage() {
 				)}
 
 				<form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-					<FormField label="E-mail" id="email" error={errors.email}>
+					<FormField label="Email" id="email" error={errors.email}>
 						<input
 							id="email"
 							name="email"
@@ -144,12 +144,12 @@ function LoginPage() {
 						/>
 					</FormField>
 
-					<FormField label="Senha" id="password" error={errors.password}>
+					<FormField label="Password" id="password" error={errors.password}>
 						<PasswordInput id="password" name="password" value={password} onChange={setPassword} />
 					</FormField>
 
 					<Link to="/esqueci-senha" className="text-right text-sm text-brand-600 hover:underline">
-						Esqueci minha senha
+						Forgot my password
 					</Link>
 
 					<button
@@ -157,14 +157,14 @@ function LoginPage() {
 						disabled={loading}
 						className="rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 					>
-						{loading ? "Entrando..." : "Entrar"}
+						{loading ? "Signing in..." : "Sign in"}
 					</button>
 				</form>
 
 				<p className="text-center text-sm text-(--color-fg-muted)">
-					Não tem conta?{" "}
+					Don't have an account?{" "}
 					<Link to="/criar-conta" className="font-medium text-brand-600 hover:underline">
-						Criar conta
+						Create account
 					</Link>
 				</p>
 			</div>

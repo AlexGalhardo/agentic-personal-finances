@@ -14,15 +14,15 @@ export const Route = createFileRoute("/contato")({
 const MESSAGE_MAX_LENGTH = 512;
 
 const subjectOptions = [
-	{ value: "questions", label: "Dúvidas e Sugestões" },
-	{ value: "bugs", label: "Problemas Técnicos e Bugs" },
-	{ value: "payment", label: "Problemas com Pagamento" },
+	{ value: "questions", label: "Questions and suggestions" },
+	{ value: "bugs", label: "Technical issues and bugs" },
+	{ value: "payment", label: "Payment issues" },
 	{ value: "other", label: "Outros assuntos" },
 ] as const;
 
 const contactSchema = z.object({
 	name: z.string().trim().min(1, "Informe seu nome"),
-	email: z.email("E-mail inválido"),
+	email: z.email("Invalid email"),
 	subject: z.enum(subjectOptions.map((option) => option.value) as [string, ...string[]], {
 		message: "Selecione um assunto",
 	}),
@@ -30,7 +30,7 @@ const contactSchema = z.object({
 		.string()
 		.trim()
 		.min(10, "Sua mensagem precisa ter pelo menos 10 caracteres")
-		.max(MESSAGE_MAX_LENGTH, `Sua mensagem precisa ter no máximo ${MESSAGE_MAX_LENGTH} caracteres`),
+		.max(MESSAGE_MAX_LENGTH, `Your message must be at most ${MESSAGE_MAX_LENGTH} caracteres`),
 });
 
 function ContactPage() {
@@ -68,7 +68,7 @@ function ContactPage() {
 	return (
 		<PageLayout>
 			<section className="mx-auto max-w-xl px-4 py-16">
-				<h1 className="text-3xl font-bold">Entre em Contato</h1>
+				<h1 className="text-3xl font-bold">Contact us</h1>
 
 				<form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4" noValidate>
 					<div className="flex flex-col gap-1.5">

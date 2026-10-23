@@ -12,7 +12,7 @@ export const MAX_CSV_LENGTH = 5_000_000;
 export const MAX_IMPORT_ROWS = 5000;
 
 export const importPreviewRequestSchema = z.object({
-	csv: z.string().min(1, "Arquivo CSV vazio").max(MAX_CSV_LENGTH, "Arquivo CSV muito grande (máximo 5 MB)"),
+	csv: z.string().min(1, "Empty CSV file").max(MAX_CSV_LENGTH, "CSV file too large (max 5 MB)"),
 });
 
 export const importedTransactionSchema = z.object({

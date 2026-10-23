@@ -17,7 +17,7 @@ export type PixStatus =
 export async function createPixCheckout(plan: SubscriptionPlanId) {
 	const { data, error } = await api.payments.pix.checkout.post({ plan });
 	if (error || !data || !("id" in data)) {
-		throw error ?? new Error("Não foi possível gerar o PIX");
+		throw error ?? new Error("Could not generate PIX");
 	}
 	return {
 		id: data.id,

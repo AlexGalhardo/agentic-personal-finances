@@ -29,8 +29,8 @@ export default function LoginScreen() {
 		if (signInError) {
 			setError(
 				signInError.code === "EMAIL_NOT_VERIFIED"
-					? "Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada."
-					: translateAuthError(signInError, "E-mail e/ou senha incorretos"),
+					? "Confirm your email antes de entrar. Verifique sua caixa de entrada."
+					: translateAuthError(signInError, "Incorrect email and/or password"),
 			);
 			return;
 		}
@@ -40,7 +40,7 @@ export default function LoginScreen() {
 			const { error: otpError } = await authClient.twoFactor.sendOtp();
 			setSubmitting(false);
 			if (otpError) {
-				setError(translateAuthError(otpError, "Não foi possível enviar o código por e-mail"));
+				setError(translateAuthError(otpError, "Could not send the code by email"));
 				return;
 			}
 			setNeedsTwoFactor(true);
@@ -57,7 +57,7 @@ export default function LoginScreen() {
 		setSubmitting(false);
 
 		if (verifyError) {
-			setError(translateAuthError(verifyError, "Código inválido"));
+			setError(translateAuthError(verifyError, "Invalid code"));
 			return;
 		}
 
@@ -67,11 +67,11 @@ export default function LoginScreen() {
 	if (needsTwoFactor) {
 		return (
 			<AuthShell
-				title="Verificação"
-				subtitle="Enviamos um código de 6 dígitos para o seu e-mail. Digite abaixo para continuar."
+				title="Verification"
+				subtitle="We sent a 6-digit code to your email. Enter it below to continue."
 			>
 				<TextField
-					label="Código de verificação"
+					label="Verification code"
 					value={code}
 					onChangeText={(value) => setCode(value.replace(/\D/g, "").slice(0, 6))}
 					placeholder="000000"
@@ -92,10 +92,10 @@ export default function LoginScreen() {
 	return (
 		<AuthShell
 			title="Entrar"
-			subtitle="Acesse sua conta para acompanhar suas finanças."
+			subtitle="Sign in to track your finances."
 			footer={
 				<>
-					<Text className="text-subhead text-muted">Não tem uma conta?</Text>
+					<Text className="text-subhead text-muted">Don't have an account?</Text>
 					<Link href="/signup" className="text-subhead font-semibold text-fg">
 						Criar conta
 					</Link>
@@ -122,7 +122,7 @@ export default function LoginScreen() {
 				secureTextEntry
 			/>
 			<Link href="/forgot-password" className="-mt-2 self-end text-footnote font-medium text-muted">
-				Esqueci minha senha
+				Forgot my password
 			</Link>
 
 			<Notice kind="error" message={error} />

@@ -1,12 +1,44 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
+import { z } from "zod";
+import { env } from "#/config/env";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+const API_URL = env.VITE_API_URL;
 
-export type ServerSession = {
-	session: { id: string; userId: string; expiresAt: string };
-	user: { id: string; name: string; email: string; twoFactorEnabled?: boolean | null };
-} | null;
+const serverSessionSchema = z
+	.object({
+		session: z.object({
+			id: z.string(),
+			userId: z.string(),
+			expiresAt: z.string(),
+		}),
+		user: z.object({
+			id: z.string(),
+			name: z.string(),
+			email: z.string(),
+			twoFactorEnabled: z.boolean().nullable().optional(),
+		}),
+	})
+	.nullable();
+
+const serverPlanSchema = z
+	.object({
+		planStatus: z.string(),
+		planExpiresAt: z.string().nullable(),
+	})
+	.nullable();
+
+const meResponseSchema = z.object({
+	user: z
+		.object({
+			planStatus: z.string(),
+			planExpiresAt: z.string().nullable(),
+		})
+		.optional(),
+});
+
+export type ServerSession = z.infer<typeof serverSessionSchema>;
+export type ServerPlan = z.infer<typeof serverPlanSchema>;
 
 /**
  * Frontend and API run on separate servers, so during SSR (direct URL
@@ -23,10 +55,9 @@ export const getServerSession = createServerFn({ method: "GET" }).handler(async 
 	});
 
 	if (!response.ok) return null;
-	return (await response.json()) as ServerSession;
+	const parsed = serverSessionSchema.safeParse(await response.json());
+	return parsed.success ? parsed.data : null;
 });
-
-export type ServerPlan = { planStatus: string; planExpiresAt: string | null } | null;
 
 /** Same cookie forwarding as `getServerSession`, for the plan fields
  * (not native to better-auth) exposed by `/users/me`. */
@@ -39,6 +70,10 @@ export const getServerPlan = createServerFn({ method: "GET" }).handler(async ():
 	});
 
 	if (!response.ok) return null;
-	const data = (await response.json()) as { user?: { planStatus: string; planExpiresAt: string | null } };
-	return data.user ? { planStatus: data.user.planStatus, planExpiresAt: data.user.planExpiresAt } : null;
+	const parsed = meResponseSchema.safeParse(await response.json());
+	if (!parsed.success || !parsed.data.user) return null;
+	return serverPlanSchema.parse({
+		planStatus: parsed.data.user.planStatus,
+		planExpiresAt: parsed.data.user.planExpiresAt,
+	});
 });

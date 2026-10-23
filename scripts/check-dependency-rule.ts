@@ -11,11 +11,11 @@ const CORE_SRC = join(ROOT, "packages/core/src");
 
 /** Substrings forbidden in import/require/export-from paths under packages/core. */
 export const FORBIDDEN_IMPORT_SUBSTRINGS = [
-	"@agent-money-boilerplate/backend",
-	"@agent-money-boilerplate/bot",
-	"@agent-money-boilerplate/frontend",
-	"@agent-money-boilerplate/mobile",
-	"@agent-money-boilerplate/desktop",
+	"@agentic-personal-finances/backend",
+	"@agentic-personal-finances/bot",
+	"@agentic-personal-finances/frontend",
+	"@agentic-personal-finances/mobile",
+	"@agentic-personal-finances/desktop",
 	"@agentic-personal-finances/backend",
 	"elysia",
 	"@prisma",

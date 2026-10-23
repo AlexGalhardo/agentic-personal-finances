@@ -1,22 +1,33 @@
-import { randomBytes } from "node:crypto";
-import { prisma } from "../../config/prisma";
+import type { AppFailure, Result } from "@agentic-personal-finances/core";
+import {
+	completeTelegramLink,
+	createTelegramLinkToken,
+	linkTelegramChat,
+	resolveUserIdByChat,
+	unlinkTelegramChat,
+	unlinkTelegramForUser,
+} from "@agentic-personal-finances/core";
+import { failureToAppError, unwrapOrThrow } from "../../adapters/http/map-result";
 import { AppError } from "../../lib/errors";
-import { userRepository } from "../users/user.repository";
-
-// Long enough to finish a browser login (including Google OAuth) without
-// leaving a usable token around for long.
-const LINK_TOKEN_TTL_MS = 15 * 60 * 1000;
+import { telegramPorts } from "./telegram.deps";
 
 export class ChatAlreadyLinkedError extends AppError {
 	constructor() {
-		super("Esse chat já está vinculado a outra conta", 409);
+		super("This chat is already linked to another account", 409);
 	}
 }
 
 export class InvalidLinkTokenError extends AppError {
 	constructor() {
-		super("Link inválido ou expirado", 400);
+		super("Invalid or expired link", 400);
 	}
+}
+
+function unwrapTelegram<T>(result: Result<T, AppFailure>): T {
+	if (result.ok) return result.value;
+	if (result.error.code === "conflict") throw new ChatAlreadyLinkedError();
+	if (result.error.code === "invalid_input") throw new InvalidLinkTokenError();
+	throw failureToAppError(result.error);
 }
 
 /**
@@ -27,29 +38,20 @@ export class InvalidLinkTokenError extends AppError {
  * from an identifier the requester merely claims to own.
  */
 export async function findUserIdByChatId(chatId: number): Promise<string | null> {
-	const user = await userRepository.findByTelegramChatId(String(chatId));
-	return user?.id ?? null;
+	return unwrapOrThrow(await resolveUserIdByChat(telegramPorts, chatId));
 }
 
 /** Links the chat to an account the caller has already authenticated as. */
 export async function linkChatToUser(chatId: number, userId: string): Promise<void> {
-	const existing = await userRepository.findByTelegramChatId(String(chatId));
-	if (existing && existing.id !== userId) {
-		throw new ChatAlreadyLinkedError();
-	}
-
-	await userRepository.update(userId, { telegramChatId: String(chatId) });
+	unwrapTelegram(await linkTelegramChat(telegramPorts, chatId, userId));
 }
 
 export async function unlinkChatFromUser(chatId: number): Promise<void> {
-	const user = await userRepository.findByTelegramChatId(String(chatId));
-	if (!user) return;
-
-	await userRepository.update(user.id, { telegramChatId: null });
+	unwrapOrThrow(await unlinkTelegramChat(telegramPorts, chatId));
 }
 
 export async function unlinkUser(userId: string): Promise<void> {
-	await userRepository.update(userId, { telegramChatId: null });
+	unwrapOrThrow(await unlinkTelegramForUser(telegramPorts, userId));
 }
 
 /**
@@ -59,12 +61,7 @@ export async function unlinkUser(userId: string): Promise<void> {
  * `completeLinkToken` redeems it for the authenticated account.
  */
 export async function createLinkToken(chatId: number): Promise<{ token: string; expiresAt: Date }> {
-	const token = randomBytes(32).toString("base64url");
-	const expiresAt = new Date(Date.now() + LINK_TOKEN_TTL_MS);
-
-	await prisma.telegramLinkToken.create({ data: { token, chatId: String(chatId), expiresAt } });
-
-	return { token, expiresAt };
+	return unwrapOrThrow(await createTelegramLinkToken(telegramPorts, chatId));
 }
 
 /**
@@ -74,13 +71,5 @@ export async function createLinkToken(chatId: number): Promise<{ token: string; 
  * pile up.
  */
 export async function completeLinkToken(userId: string, token: string): Promise<{ chatId: number }> {
-	const record = await prisma.telegramLinkToken.delete({ where: { token } }).catch(() => null);
-
-	if (!record || record.expiresAt < new Date()) {
-		throw new InvalidLinkTokenError();
-	}
-
-	const chatId = Number(record.chatId);
-	await linkChatToUser(chatId, userId);
-	return { chatId };
+	return unwrapTelegram(await completeTelegramLink(telegramPorts, userId, token));
 }

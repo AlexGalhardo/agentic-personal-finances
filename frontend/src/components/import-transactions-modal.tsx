@@ -32,7 +32,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 			try {
 				return await previewTransactionImport(csv);
 			} catch (reqError) {
-				throw new Error(apiErrorMessage(reqError, "Não foi possível ler o arquivo CSV"));
+				throw new Error(apiErrorMessage(reqError, "Could not read the CSV file"));
 			}
 		},
 		onSuccess: (data) => {
@@ -41,7 +41,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 			setError(null);
 		},
 		onError: (err: unknown) => {
-			setError(err instanceof Error ? err.message : "Não foi possível ler o arquivo CSV");
+			setError(err instanceof Error ? err.message : "Could not read the CSV file");
 			setRows(null);
 			setSummary(null);
 		},
@@ -61,7 +61,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 					})),
 				);
 			} catch (reqError) {
-				throw new Error(apiErrorMessage(reqError, "Não foi possível importar as transações"));
+				throw new Error(apiErrorMessage(reqError, "Could not import transactions"));
 			}
 		},
 		onSuccess: (data) => {
@@ -70,7 +70,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 			onImported();
 		},
 		onError: (err: unknown) => {
-			setError(err instanceof Error ? err.message : "Não foi possível importar as transações");
+			setError(err instanceof Error ? err.message : "Could not import transactions");
 		},
 	});
 
@@ -85,7 +85,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 			const csv = typeof reader.result === "string" ? reader.result : "";
 			previewMutation.mutate(csv);
 		};
-		reader.onerror = () => setError("Não foi possível ler o arquivo selecionado");
+		reader.onerror = () => setError("Could not read the selected file");
 		reader.readAsText(file, "utf-8");
 	}
 
@@ -98,7 +98,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 	const needsReviewRows = rows?.filter((row) => row.needsReview) ?? [];
 
 	return (
-		<Modal title="Importar transações do Nubank" onClose={onClose} maxWidth="max-w-4xl">
+		<Modal title="Import Nubank transactions" onClose={onClose} maxWidth="max-w-4xl">
 			<div className="flex flex-col gap-4">
 				{!rows && !result && (
 					<>
@@ -118,7 +118,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 							onClick={() => fileInputRef.current?.click()}
 							className="flex w-fit items-center gap-2 rounded-lg bg-[#820AD1] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#9a1df0]"
 						>
-							Importar Nubank CSV
+							Import Nubank CSV
 						</button>
 						{fileName && !previewMutation.isPending && !rows && (
 							<p className="text-sm text-(--color-fg-muted)">Arquivo selecionado: {fileName}</p>
@@ -146,8 +146,8 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 
 						{needsReviewRows.length > 0 && (
 							<p className="text-sm text-amber-500">
-								Não consegui identificar a categoria de {needsReviewRows.length}{" "}
-								{needsReviewRows.length === 1 ? "transação" : "transações"} automaticamente. Revise e
+								Could not automatically categorize {needsReviewRows.length}{" "}
+								{needsReviewRows.length === 1 ? "transação" : "transações"} automatically. Review and
 								escolha a categoria correta abaixo antes de confirmar.
 							</p>
 						)}
@@ -215,7 +215,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 								disabled={confirmMutation.isPending}
 								className="rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 							>
-								{confirmMutation.isPending ? "Importando..." : `Confirmar importação (${rows.length})`}
+								{confirmMutation.isPending ? "Importing..." : `Confirm import (${rows.length})`}
 							</button>
 							<button
 								type="button"
@@ -236,7 +236,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 				{result && (
 					<div className="flex flex-col gap-3">
 						<p className="text-sm">
-							{result.created} {result.created === 1 ? "transação importada" : "transações importadas"}{" "}
+							{result.created} {result.created === 1 ? "transaction imported" : "transactions imported"}{" "}
 							com sucesso.
 							{result.skippedDuplicates > 0 &&
 								` ${result.skippedDuplicates} ${result.skippedDuplicates === 1 ? "já existia" : "já existiam"} e ${result.skippedDuplicates === 1 ? "foi ignorada" : "foram ignoradas"}.`}

@@ -16,9 +16,6 @@ export function transactionAllowance(user: PlanFields & { freeTransactionCount: 
 
 export class FreeLimitReachedError extends AppError {
 	constructor() {
-		super(
-			`Limite de ${FREE_TRANSACTION_LIMIT} transações do plano gratuito atingido. Assine um plano para continuar.`,
-			403,
-		);
+		super(`Free plan limit of ${FREE_TRANSACTION_LIMIT} transactions reached. Subscribe to continue.`, 403);
 	}
 }

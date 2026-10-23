@@ -22,12 +22,12 @@ const plans: {
 	price: string;
 	description: string;
 }[] = [
-	{ id: "monthly", label: "Mensal", price: "R$ 9,90", description: "1 mês de acesso ao plano PRO." },
+	{ id: "monthly", label: "Monthly", price: "R$ 9,90", description: "1 month of PRO plan access." },
 	{
 		id: "annual",
 		label: "Anual",
 		price: "R$ 99,90",
-		description: "12 meses de acesso ao plano PRO (2 meses grátis).",
+		description: "12 months of PRO plan access (2 months free).",
 	},
 ];
 
@@ -49,7 +49,7 @@ function CheckoutPage() {
 			setCharge(chargeData);
 		} catch (requestError) {
 			setLoadingPlan(null);
-			setError(requestError instanceof Error ? requestError.message : "Não foi possível gerar o PIX");
+			setError(requestError instanceof Error ? requestError.message : "Could not generate PIX");
 		}
 	}
 
@@ -66,7 +66,7 @@ function CheckoutPage() {
 		<PageLayout>
 			<section className="mx-auto max-w-3xl px-4 py-16">
 				<h1 className="text-3xl font-bold">Escolha seu plano</h1>
-				<p className="mt-2 text-(--color-fg-muted)">Pagamento único via PIX, sem renovação automática.</p>
+				<p className="mt-2 text-(--color-fg-muted)">One-time PIX payment, no auto-renewal.</p>
 
 				{error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 

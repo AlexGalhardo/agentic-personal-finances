@@ -103,7 +103,7 @@ export default function DashboardScreen() {
 				<View className="flex-row items-center justify-between">
 					<View>
 						<Text className="text-footnote text-subtle">Bem-vindo de volta</Text>
-						<Text className="text-title text-fg">Olá, {firstName}</Text>
+						<Text className="text-title text-fg">Hello, {firstName}</Text>
 					</View>
 					<Pressable
 						onPress={() => router.push("/profile")}
@@ -156,13 +156,13 @@ export default function DashboardScreen() {
 									value={startDate}
 									onChange={setStartDate}
 									onClear={() => setStartDate(null)}
-									placeholder="Início"
+									placeholder="Home"
 									maximumDate={endDate ? new Date(endDate) : undefined}
 								/>
 							</View>
 							<View className="flex-1">
 								<DateField
-									label="Até"
+									label="Until"
 									value={endDate}
 									onChange={setEndDate}
 									onClear={() => setEndDate(null)}
@@ -218,7 +218,7 @@ export default function DashboardScreen() {
 
 				<View className="gap-2">
 					<View className="flex-row items-baseline justify-between px-1">
-						<Text className="text-caption font-semibold uppercase text-subtle">Últimas transações</Text>
+						<Text className="text-caption font-semibold uppercase text-subtle">Recent transactions</Text>
 						<Text className="text-caption text-subtle">{all.length} no total</Text>
 					</View>
 					<View className="overflow-hidden rounded-card bg-surface">
@@ -227,13 +227,13 @@ export default function DashboardScreen() {
 						) : transactionsQuery.isError ? (
 							<EmptyState
 								icon="wifi-off"
-								title="Não foi possível carregar"
+								title="Could not load"
 								description="Puxe para baixo para tentar de novo."
 							/>
 						) : visible.length === 0 ? (
 							<EmptyState
 								icon="inbox"
-								title="Nenhuma transação"
+								title="No transactions"
 								description="Ajuste os filtros ou toque em + para adicionar."
 							/>
 						) : (

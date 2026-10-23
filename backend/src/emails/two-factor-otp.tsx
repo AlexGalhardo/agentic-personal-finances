@@ -8,7 +8,7 @@ export function TwoFactorOtpEmail({ code }: TwoFactorOtpEmailProps) {
 	return (
 		<Html>
 			<Head />
-			<Preview>Seu código de verificação: {code}</Preview>
+			<Preview>Your verification code: {code}</Preview>
 			<Body style={{ backgroundColor: "#0a0a0a", fontFamily: "sans-serif", padding: "32px 0" }}>
 				<Container
 					style={{
@@ -19,9 +19,9 @@ export function TwoFactorOtpEmail({ code }: TwoFactorOtpEmailProps) {
 						border: "1px solid #f97316",
 					}}
 				>
-					<Heading style={{ color: "#f97316", fontSize: "20px" }}>Código de verificação</Heading>
+					<Heading style={{ color: "#f97316", fontSize: "20px" }}>Verification code</Heading>
 					<Text style={{ color: "#e5e5e5", fontSize: "14px", lineHeight: "22px" }}>
-						Use o código abaixo para confirmar seu login em duas etapas. Ele expira em alguns minutos.
+						Use the code below to confirm your two-factor sign-in. It expires in a few minutes.
 					</Text>
 					<Text
 						style={{
@@ -36,7 +36,7 @@ export function TwoFactorOtpEmail({ code }: TwoFactorOtpEmailProps) {
 						{code}
 					</Text>
 					<Text style={{ color: "#a3a3a3", fontSize: "12px" }}>
-						Se você não tentou entrar na sua conta agora, ignore este e-mail.
+						If you did not try to sign in just now, ignore this email.
 					</Text>
 				</Container>
 			</Body>

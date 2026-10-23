@@ -16,46 +16,37 @@ export const paymentRoutes = new Elysia({ prefix: "/payments" })
 	.guard({ auth: true })
 	.get("/status", async ({ user }) => ({ success: true, plan: await paymentService.getPlanStatus(user.id) }))
 	.get("/history", async ({ user }) => ({ success: true, logs: await paymentService.listHistory(user.id) }))
-	.post(
-		"/pix/checkout",
-		async ({ user, body }) => ({ success: true, ...(await paymentService.createPixCheckout(user.id, body.plan)) }),
-		{ body: createPixCheckoutSchema },
-	)
-	.get(
-		"/pix/:id/status",
-		async ({ user, params }) => ({
-			success: true,
-			...(await paymentService.getCheckoutStatus(user.id, params.id)),
-		}),
-		{ params: pixChargeIdParamSchema },
-	)
-	.post(
-		"/pix/:id/simulate",
-		async ({ user, params }) => {
-			await paymentService.simulateCheckout(user.id, params.id);
-			return { success: true };
-		},
-		{ params: pixChargeIdParamSchema },
-	);
+	.post("/pix/checkout", { body: createPixCheckoutSchema }, async ({ user, body }) => ({
+		success: true,
+		...(await paymentService.createPixCheckout(user.id, body.plan)),
+	}))
+	.get("/pix/:id/status", { params: pixChargeIdParamSchema }, async ({ user, params }) => ({
+		success: true,
+		...(await paymentService.getCheckoutStatus(user.id, params.id)),
+	}))
+	.post("/pix/:id/simulate", { params: pixChargeIdParamSchema }, async ({ user, params }) => {
+		await paymentService.simulateCheckout(user.id, params.id);
+		return { success: true };
+	});
 
 // Registered on AbacatePay as
 // `<APP_URL>/webhook/abacatepay?webhookSecret=<ABACATEPAY_WEBHOOK_SECRET>` —
 // see paymentService.handleWebhookEvent for why the secret alone isn't trusted.
 export const paymentWebhookRoutes = new Elysia().post(
 	"/webhook/abacatepay",
+	{ query: webhookQuerySchema, body: webhookEventSchema },
 	async ({ query, body, status }) => {
 		if (!env.ENABLE_ABACATEPAY || !env.ABACATEPAY_WEBHOOK_SECRET) {
-			return status(503, { success: false, message: "Webhook não configurado" });
+			return status(503, { success: false, message: "Webhook is not configured" });
 		}
 
 		if (!secureCompare(query.webhookSecret, env.ABACATEPAY_WEBHOOK_SECRET)) {
-			return status(401, { success: false, message: "Não autorizado" });
+			return status(401, { success: false, message: "Unauthorized" });
 		}
 
 		await paymentService.handleWebhookEvent(body);
 		return { success: true };
 	},
-	{ query: webhookQuerySchema, body: webhookEventSchema },
 );
 
 function isAuthorizedCron(authorization: string | undefined): boolean {

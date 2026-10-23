@@ -6,7 +6,7 @@ const BASE_URL = "https://api.abacatepay.com/v2";
 
 export class AbacatePayNotConfiguredError extends AppError {
 	constructor() {
-		super("Pagamentos PIX indisponíveis no momento", 503);
+		super("PIX payments are unavailable right now", 503);
 	}
 }
 

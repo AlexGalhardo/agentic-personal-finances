@@ -1,6 +1,6 @@
-import { createPrismaPlanQuotaReader } from "@agent-money-boilerplate/backend/src/adapters/prisma/plan-quota-reader";
-import { systemClock } from "@agent-money-boilerplate/backend/src/adapters/prisma/system-clock";
-import { createPrismaTransactionRepository } from "@agent-money-boilerplate/backend/src/adapters/prisma/transaction-repository";
+import { createPrismaPlanQuotaReader } from "@agentic-personal-finances/backend/src/adapters/prisma/plan-quota-reader";
+import { systemClock } from "@agentic-personal-finances/backend/src/adapters/prisma/system-clock";
+import { createPrismaTransactionRepository } from "@agentic-personal-finances/backend/src/adapters/prisma/transaction-repository";
 import type {
 	CreateTransactionDeps,
 	DeleteTransactionDeps,

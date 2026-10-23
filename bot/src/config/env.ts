@@ -6,7 +6,7 @@ const boolFromString = z
 	.transform((value) => value === "true");
 
 // The bot imports `prisma`/`encrypt`/`decrypt` and services straight from
-// `@agent-money-boilerplate/backend` (same database, same encryption), so the
+// `@agentic-personal-finances/backend` (same database, same encryption), so the
 // bot process must also satisfy the API's env schema (DATABASE_URL,
 // BETTER_AUTH_SECRET, ENCRYPTION_KEY, ...) — `bot/.env.example` mirrors
 // `backend/.env.example` plus the variables below.

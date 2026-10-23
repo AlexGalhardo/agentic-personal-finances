@@ -20,7 +20,7 @@ export function TelegramLinkSection({ telegramChatId }: { telegramChatId: string
 		try {
 			await unlinkTelegramAccount();
 		} catch (requestError) {
-			setError(apiErrorMessage(requestError, "Não foi possível desvincular o Telegram"));
+			setError(apiErrorMessage(requestError, "Could not unlink Telegram"));
 			setUnlinking(false);
 			return;
 		}
@@ -30,13 +30,12 @@ export function TelegramLinkSection({ telegramChatId }: { telegramChatId: string
 
 	return (
 		<div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">
-			<h2 className="text-lg font-semibold">Bot do Telegram</h2>
+			<h2 className="text-lg font-semibold">Telegram bot</h2>
 
 			{telegramChatId ? (
 				<>
 					<p className="mt-2 text-sm text-(--color-fg-muted)">
-						Sua conta está vinculada a um chat do Telegram. As transações feitas pelo bot entram nesta
-						conta.
+						Your account is linked to a Telegram chat. Transactions from the bot appear in this conta.
 					</p>
 					{error && <p className="mt-3 text-sm text-red-500">{error}</p>}
 					<button
@@ -45,13 +44,13 @@ export function TelegramLinkSection({ telegramChatId }: { telegramChatId: string
 						disabled={unlinking}
 						className="mt-4 rounded-lg border border-(--color-border) px-4 py-2 text-sm font-semibold hover:bg-(--color-bg-subtle) disabled:opacity-60"
 					>
-						{unlinking ? "Desvinculando..." : "Desvincular Telegram"}
+						{unlinking ? "Unlinking..." : "Unlink Telegram"}
 					</button>
 				</>
 			) : (
 				<p className="mt-2 text-sm text-(--color-fg-muted)">
-					Nenhum chat vinculado. Abra o bot no Telegram e entre com seu e-mail e senha — ou escolha “Entrar
-					pelo navegador” para usar o Google.
+					No chat linked. Abra o bot no Telegram e entre com seu e-mail e senha — ou escolha “Entrar pelo
+					navegador” para usar o Google.
 				</p>
 			)}
 		</div>

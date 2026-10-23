@@ -8,8 +8,8 @@ set -e
 case "$RAILWAY_SERVICE_TARGET" in
 	backend)
 		cd backend
-		bunx prisma migrate deploy
-		bunx prisma generate
+		bunx prisma7 migrate deploy
+		bunx prisma7 generate
 		exec bun run src/server.ts
 		;;
 	frontend)
@@ -20,7 +20,7 @@ case "$RAILWAY_SERVICE_TARGET" in
 		# The bot uses the Prisma Client generated in backend/prisma/generated
 		# (same schema, same database as the API), so it must be generated on
 		# this container's filesystem too.
-		(cd backend && bunx prisma generate)
+		(cd backend && bunx prisma7 generate)
 		cd bot
 		exec bun run src/index.ts
 		;;

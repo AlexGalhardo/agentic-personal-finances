@@ -6,11 +6,10 @@ import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 export const Route = createFileRoute("/")({
 	head: () => ({
 		meta: [
-			{ title: "Money — Suas finanças no Telegram" },
+			{ title: "Money — Your finances on Telegram" },
 			{
 				name: "description",
-				content:
-					"Controle suas finanças direto pelo Telegram: registre transações e acompanhe seus gastos por lá.",
+				content: "Manage your finances on Telegram: log transactions and track spending there.",
 			},
 		],
 	}),
@@ -38,13 +37,13 @@ function Home() {
 							to="/entrar"
 							className="rounded-lg border border-(--color-border) px-4 py-2 text-sm font-medium hover:bg-brand-500/10"
 						>
-							Entrar
+							Sign in
 						</Link>
 						<Link
 							to="/criar-conta"
 							className="rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-semibold text-black hover:bg-brand-600"
 						>
-							Criar conta
+							Create account
 						</Link>
 					</div>
 				</div>
@@ -54,10 +53,10 @@ function Home() {
 				<div className="mx-auto w-full text-center lg:w-1/2">
 					<h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">
 						<span className="block bg-gradient-to-r from-brand-300 via-brand-500 to-brand-700 bg-clip-text text-transparent">
-							Suas finanças.
+							Your finances.
 						</span>
-						<span className="block text-orange-500">Na web.</span>
-						<span className="block text-blue-500">E no Telegram.</span>
+						<span className="block text-orange-500">On the web.</span>
+						<span className="block text-blue-500">And on Telegram.</span>
 					</h1>
 				</div>
 			</main>

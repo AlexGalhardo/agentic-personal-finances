@@ -79,7 +79,7 @@ export function TransactionFilters({ values, onChange, searchSummary }: Props) {
 
 				<div className="flex flex-col gap-1">
 					<label htmlFor="to" className="text-xs font-medium text-(--color-fg-muted)">
-						Até
+						Until
 					</label>
 					<input
 						id="to"

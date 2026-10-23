@@ -15,7 +15,7 @@ RUN bun install --frozen-lockfile
 
 FROM install AS build
 # backend/src is only needed to resolve the Eden types
-# (import type { App } from "@agent-money-boilerplate/backend/src/server")
+# (import type { App } from "@agentic-personal-finances/backend/src/server")
 # during the build — the final image doesn't include the API code.
 COPY backend/src ./backend/src
 COPY backend/tsconfig.json ./backend/tsconfig.json
@@ -34,7 +34,9 @@ COPY --from=install --chown=bun:bun /repo/frontend/node_modules ./frontend/node_
 COPY --from=build --chown=bun:bun /repo/frontend/dist ./frontend/dist
 COPY --chown=bun:bun frontend/package.json ./frontend/package.json
 COPY --chown=bun:bun frontend/server.ts ./frontend/server.ts
+COPY --chown=bun:bun frontend/server-env.ts ./frontend/server-env.ts
 COPY --chown=bun:bun frontend/proxy-paths.ts ./frontend/proxy-paths.ts
+COPY --chown=bun:bun frontend/src/lib/telegram-logger.ts ./frontend/src/lib/telegram-logger.ts
 WORKDIR /repo/frontend
 USER bun
 ENV PORT=4001

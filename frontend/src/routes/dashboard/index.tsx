@@ -35,7 +35,7 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 const PER_PAGE = 10;
-const SAVE_ERROR = "Não foi possível salvar a transação";
+const SAVE_ERROR = "Could not save the transaction";
 
 type StatRow = { category: string; type: "income" | "expense"; total: number; percentage: number };
 
@@ -137,11 +137,11 @@ function DashboardPage() {
 			<section className="mx-auto max-w-7xl px-4 py-10">
 				{freeLimitReached && (
 					<p className="text-sm text-red-500">
-						Limite de {FREE_TRANSACTION_LIMIT} transações do plano gratuito atingido —{" "}
+						Free plan limit of {FREE_TRANSACTION_LIMIT} transactions reached —{" "}
 						<a href="/minha-conta" className="underline">
 							assine um plano
 						</a>{" "}
-						para continuar adicionando, importando ou exportando transações.
+						to keep adding, importing, or exporting transactions.
 					</p>
 				)}
 
@@ -169,7 +169,7 @@ function DashboardPage() {
 
 					<div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">
 						<div className="flex flex-wrap items-center justify-between gap-3">
-							<h2 className="font-semibold">Transações</h2>
+							<h2 className="font-semibold">Transactions</h2>
 							<ExportButtons
 								disabled={allTransactions.length === 0 || freeLimitReached}
 								exportingPdf={exportingPdf}
@@ -213,9 +213,7 @@ function DashboardPage() {
 
 			{(addType || editing) && (
 				<Modal
-					title={
-						editing ? "Editar transação" : addType === "income" ? "Adicionar Receita" : "Adicionar Despesa"
-					}
+					title={editing ? "Edit transaction" : addType === "income" ? "Add income" : "Add expense"}
 					onClose={closeForm}
 				>
 					{formError && <p className="mb-3 text-sm text-red-500">{formError}</p>}
@@ -232,7 +230,7 @@ function DashboardPage() {
 									},
 								}
 							: { fixedType: addType ?? "expense" })}
-						submitLabel={editing ? "Salvar alterações" : "Criar transação"}
+						submitLabel={editing ? "Save changes" : "Create transaction"}
 						loading={saveMutation.isPending}
 						onSubmit={(values) => saveMutation.mutate({ id: editing?.id, values })}
 					/>

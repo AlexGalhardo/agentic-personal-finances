@@ -15,12 +15,12 @@ export const transactionFormSchema = z.object({
 	description: z
 		.string()
 		.trim()
-		.min(4, "A descrição precisa ter pelo menos 4 caracteres")
-		.max(DESCRIPTION_MAX_LENGTH, `A descrição pode ter no máximo ${DESCRIPTION_MAX_LENGTH} caracteres`),
-	amount: z.coerce.number().positive("Informe um valor maior que zero"),
+		.min(4, "Description must be at least 4 characters")
+		.max(DESCRIPTION_MAX_LENGTH, `Description can be at most ${DESCRIPTION_MAX_LENGTH} characters`),
+	amount: z.coerce.number().positive("Enter an amount greater than zero"),
 	category: z.enum([...incomeCategories, ...expenseCategories] as [TransactionCategory, ...TransactionCategory[]]),
 	type: z.enum(["income", "expense"]),
-	date: z.string().min(1, "Informe a data da transação"),
+	date: z.string().min(1, "Enter the transaction date"),
 });
 
 export type TransactionFormValues = z.infer<typeof transactionFormSchema>;
@@ -147,7 +147,7 @@ export function TransactionForm({
 				</FormField>
 			)}
 
-			<FormField label="Descrição" id="description" error={errors.description}>
+			<FormField label="Description" id="description" error={errors.description}>
 				{isLongDescription ? (
 					<textarea
 						id="description"
@@ -208,7 +208,7 @@ export function TransactionForm({
 				/>
 			</FormField>
 
-			<FormField label="Data da transação" id="date" error={errors.date}>
+			<FormField label="Transaction date" id="date" error={errors.date}>
 				<input
 					id="date"
 					name="date"
@@ -223,7 +223,7 @@ export function TransactionForm({
 				disabled={loading}
 				className={`mt-2 rounded-lg px-4 py-2.5 font-semibold text-black disabled:opacity-60 ${scheme.button}`}
 			>
-				{loading ? "Salvando..." : submitLabel}
+				{loading ? "Saving..." : submitLabel}
 			</button>
 		</form>
 	);

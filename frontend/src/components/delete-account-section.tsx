@@ -34,7 +34,7 @@ export function DeleteAccountSection({
 			await onConfirm();
 			setModalOpen(false);
 		} catch (confirmError) {
-			setError(confirmError instanceof Error ? confirmError.message : "Não foi possível excluir sua conta");
+			setError(confirmError instanceof Error ? confirmError.message : "Could not delete your account");
 		} finally {
 			setDeleting(false);
 		}
@@ -42,9 +42,9 @@ export function DeleteAccountSection({
 
 	return (
 		<div className="mt-6 rounded-2xl border border-red-500/30 bg-(--color-surface) p-6">
-			<h2 className="text-lg font-semibold text-red-500">Excluir conta</h2>
+			<h2 className="text-lg font-semibold text-red-500">Delete account</h2>
 			<p className="mt-2 text-sm text-(--color-fg-muted)">
-				Essa ação remove todos os seus dados. Não é possível excluir a conta com um plano ativo.
+				This removes all your data. You cannot delete the account while a plan is active.
 			</p>
 
 			<button
@@ -52,23 +52,21 @@ export function DeleteAccountSection({
 				onClick={openModal}
 				className="mt-4 rounded-lg border border-red-500 px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-500/10"
 			>
-				Excluir minha conta
+				Delete my account
 			</button>
 
 			{modalOpen && (
-				<Modal title="Excluir conta" onClose={() => setModalOpen(false)}>
+				<Modal title="Delete account" onClose={() => setModalOpen(false)}>
 					{hasActivePlan ? (
 						<p className="text-sm text-(--color-fg-muted)">
-							Você tem um plano ativo. Cancele ou aguarde o vencimento do plano antes de excluir sua
-							conta.
+							You have an active plan. Cancel or wait for the plan to expire before deleting your account.
 						</p>
 					) : (
 						<div className="flex flex-col gap-4">
 							<p className="text-sm text-(--color-fg-muted)">
-								Sua conta será marcada para exclusão. Você tem <strong>30 dias</strong> para fazer login
-								novamente e cancelar o processo — basta entrar na sua conta normalmente. Depois desse
-								prazo, a conta e todos os seus dados são apagados <strong>definitivamente</strong>, sem
-								possibilidade de recuperação.
+								Your account will be scheduled for deletion. You have <strong>30 days</strong> to sign
+								in again and cancel — just sign in normally. After that deadline, the account and all
+								data are deleted <strong>permanently</strong>, with no way to recover them.
 							</p>
 
 							{error && <p className="text-sm text-red-500">{error}</p>}
@@ -80,10 +78,10 @@ export function DeleteAccountSection({
 								className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-60"
 							>
 								{deleting
-									? "Excluindo..."
+									? "Deleting..."
 									: secondsLeft > 0
-										? `${secondsLeft} segundos para confirmar exclusão de conta`
-										: "Confirmar exclusão de conta"}
+										? `${secondsLeft} seconds to confirm account deletion`
+										: "Confirm account deletion"}
 							</button>
 						</div>
 					)}

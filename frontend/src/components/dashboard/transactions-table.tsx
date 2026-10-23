@@ -41,7 +41,7 @@ export function TransactionsTable({ transactions, loading, onEdit, onDelete }: P
 				</thead>
 				<tbody>
 					{loading && <EmptyRow>Carregando...</EmptyRow>}
-					{!loading && transactions.length === 0 && <EmptyRow>Nenhuma transação encontrada.</EmptyRow>}
+					{!loading && transactions.length === 0 && <EmptyRow>No transactions found.</EmptyRow>}
 
 					{transactions.map((transaction) => (
 						<tr key={transaction.id} className="border-b border-(--color-border) last:border-0">

@@ -19,7 +19,7 @@ export default function ForgotPasswordScreen() {
 	async function onSubmit(): Promise<void> {
 		setError(null);
 		if (!emailPattern.test(email)) {
-			setError("Informe um e-mail válido.");
+			setError("Enter a valid email.");
 			return;
 		}
 
@@ -34,8 +34,8 @@ export default function ForgotPasswordScreen() {
 
 	return (
 		<AuthShell
-			title="Recuperar senha"
-			subtitle="Enviaremos um link de redefinição para o seu e-mail."
+			title="Recover password"
+			subtitle="We will send a reset link to your email."
 			footer={
 				<>
 					<Text className="text-subhead text-muted">Lembrou a senha?</Text>
@@ -48,7 +48,7 @@ export default function ForgotPasswordScreen() {
 			{sent ? (
 				<Notice
 					kind="success"
-					message="Se este e-mail estiver cadastrado, você receberá um link para redefinir sua senha. Abra o link pelo celular para voltar direto ao app."
+					message="If this email is registered, you will receive a link to reset your password. Abra o link pelo celular para voltar direto ao app."
 				/>
 			) : (
 				<>

@@ -19,7 +19,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{
 				name: "description",
-				content: "Controle suas finanças pessoais: transações, categorias e relatórios em um só lugar.",
+				content: "Manage personal finances: transactions, categories, and reports in one place.",
 			},
 			{ title: "Money" },
 		],

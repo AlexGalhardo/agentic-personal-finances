@@ -48,7 +48,7 @@ RUN bun install --frozen-lockfile
 # on a build-time env var (Railway can't vary it per service, see above).
 FROM install AS frontend-build
 # backend/src is only needed to resolve the Eden client types
-# (import type { App } from "@agent-money-boilerplate/backend/src/server")
+# (import type { App } from "@agentic-personal-finances/backend/src/server")
 # during the build; the API itself runs from the runtime stage below when
 # RAILWAY_SERVICE_TARGET=backend.
 COPY backend/src ./backend/src
@@ -63,7 +63,8 @@ FROM install AS runtime
 COPY --chown=bun:bun backend ./backend
 COPY --chown=bun:bun bot ./bot
 COPY --chown=bun:bun packages/core ./packages/core
-COPY --chown=bun:bun frontend/package.json frontend/server.ts frontend/proxy-paths.ts ./frontend/
+COPY --chown=bun:bun frontend/package.json frontend/server.ts frontend/server-env.ts frontend/proxy-paths.ts ./frontend/
+COPY --chown=bun:bun frontend/src/lib/telegram-logger.ts ./frontend/src/lib/telegram-logger.ts
 COPY --from=frontend-build --chown=bun:bun /repo/frontend/dist ./frontend/dist
 COPY --chown=bun:bun setups/railway-entrypoint.sh ./railway-entrypoint.sh
 RUN chmod +x railway-entrypoint.sh \

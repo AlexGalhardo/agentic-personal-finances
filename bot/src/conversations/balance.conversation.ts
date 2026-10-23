@@ -1,4 +1,4 @@
-import { transactionService } from "@agent-money-boilerplate/backend/src/modules/transactions/transaction.service";
+import { transactionService } from "@agentic-personal-finances/backend/src/modules/transactions/transaction.service";
 import type { Context } from "grammy";
 import { formatCurrencyCents, getCategoryLabel } from "../formatting/format";
 import type { BotConversation } from "../types";
@@ -11,13 +11,13 @@ export async function balanceConversation(conversation: BotConversation, ctx: Co
 	const balance = incomeTotal - expenseTotal;
 
 	const lines = [
-		"📊 Resumo geral",
+		"📊 Overall summary",
 		"",
-		`Receitas: ${formatCurrencyCents(incomeTotal)}`,
-		`Despesas: ${formatCurrencyCents(expenseTotal)}`,
-		`Saldo: ${formatCurrencyCents(balance)}`,
+		`Income: ${formatCurrencyCents(incomeTotal)}`,
+		`Expenses: ${formatCurrencyCents(expenseTotal)}`,
+		`Balance: ${formatCurrencyCents(balance)}`,
 		"",
-		"Por categoria:",
+		"By category:",
 		...stats
 			.sort((a, b) => b.total - a.total)
 			.map(

@@ -19,10 +19,22 @@ bot/bot
 desktop-electronjs/release
 qa-report.md
 qa-shots
-# Segurança extra: `bun run build` do backend gera esse binário compilado
-# (~90MB) com `bun build --compile` — já aconteceu de ser commitado por
-# engano mais de uma vez (ver .husky/pre-commit), nunca deveria ir pro git.
+# Extra safety: backend `bun run build` and root `bun run build:standalone`
+# emit large compiled binaries (~90MB+) — never commit them.
 *.exe
+/agentic-personal-finances
+/agentic-personal-finances.exe
+.standalone-data/
+.standalone/
+scripts/standalone/assets/
+scripts/standalone/.bundle/
+.railway-secrets.tmp
+.railway-secrets.json
+.railway-vars-*.json
+# Railway CLI link metadata (project id) — keep IaC authoring tracked
+.railway/*
+!.railway/railway.ts
+!.railway/README.md
 **/.tanstack
 
 # prisma

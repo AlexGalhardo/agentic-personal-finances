@@ -7,10 +7,10 @@ import { translateAuthError } from "../lib/auth-errors";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
 const searchSchema = z.object({ token: z.string().optional() });
-const passwordSchema = z.object({ password: z.string().min(8, "A senha precisa ter pelo menos 8 caracteres") });
+const passwordSchema = z.object({ password: z.string().min(8, "Password must be at least 8 characters") });
 
 export const Route = createFileRoute("/resetar-senha")({
-	head: () => ({ meta: [{ title: "Redefinir senha — Money" }] }),
+	head: () => ({ meta: [{ title: "Reset password — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	validateSearch: searchSchema,
 	component: ResetPasswordPage,
@@ -27,7 +27,7 @@ function ResetPasswordPage() {
 		setError(null);
 
 		if (!token) {
-			setError("Link inválido ou expirado. Solicite uma nova redefinição de senha.");
+			setError("Invalid link ou expirado. Solicite uma nova redefinição de senha.");
 			return;
 		}
 
@@ -35,7 +35,7 @@ function ResetPasswordPage() {
 		const result = passwordSchema.safeParse({ password: formData.get("password") });
 
 		if (!result.success) {
-			setError(result.error.issues[0]?.message ?? "Senha inválida");
+			setError(result.error.issues[0]?.message ?? "Invalid password");
 			return;
 		}
 
@@ -44,7 +44,7 @@ function ResetPasswordPage() {
 		setLoading(false);
 
 		if (resetError) {
-			setError(translateAuthError(resetError, "Não foi possível redefinir sua senha"));
+			setError(translateAuthError(resetError, "Could not reset your password"));
 			return;
 		}
 
@@ -52,7 +52,7 @@ function ResetPasswordPage() {
 	}
 
 	return (
-		<AuthCard title="Redefinir senha" subtitle="Escolha uma nova senha para sua conta.">
+		<AuthCard title="Reset password" subtitle="Choose a new password for your account.">
 			<form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
 				{error && (
 					<p role="alert" className="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-500">
@@ -60,7 +60,7 @@ function ResetPasswordPage() {
 					</p>
 				)}
 
-				<FormField label="Nova senha" id="password">
+				<FormField label="New password" id="password">
 					<input id="password" name="password" type="password" className={inputClassName} />
 				</FormField>
 
@@ -69,7 +69,7 @@ function ResetPasswordPage() {
 					disabled={loading}
 					className="rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 				>
-					{loading ? "Salvando..." : "Redefinir senha"}
+					{loading ? "Saving..." : "Reset password"}
 				</button>
 			</form>
 		</AuthCard>

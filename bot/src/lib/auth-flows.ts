@@ -1,15 +1,11 @@
-import { env as apiEnv } from "@agent-money-boilerplate/backend/src/config/env";
-import { auth } from "@agent-money-boilerplate/backend/src/lib/auth";
-import {
-	createLinkToken,
-	findUserIdByChatId,
-	linkChatToUser,
-} from "@agent-money-boilerplate/backend/src/modules/telegram/telegram.service";
-import { userRepository } from "@agent-money-boilerplate/backend/src/modules/users/user.repository";
+import { env as apiEnv } from "@agentic-personal-finances/backend/src/config/env";
+import { auth } from "@agentic-personal-finances/backend/src/lib/auth";
+import { userRepository } from "@agentic-personal-finances/backend/src/modules/users/user.repository";
 import { APIError } from "better-auth";
 import type { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { z } from "zod";
+import { botCreateLinkToken, botFindUserIdByChatId, botLinkChatToUser } from "../adapters/identity-telegram";
 import type { BotConversation } from "../types";
 import { translateAuthError } from "./auth-errors";
 import { createLockout, remainingMinutes } from "./lockout";
@@ -23,13 +19,13 @@ const emailSchema = z.email();
 
 function authMenuKeyboard(): InlineKeyboard {
 	return new InlineKeyboard()
-		.text("🔑 Entrar com e-mail e senha", "authmenu:login")
+		.text("🔑 Sign in with email and password", "authmenu:login")
 		.row()
-		.text("🆕 Criar conta", "authmenu:signup")
+		.text("🆕 Create account", "authmenu:signup")
 		.row()
 		.text("🌐 Entrar pelo navegador (Google ou e-mail)", "authmenu:web")
 		.row()
-		.text("❓ Esqueci minha senha", "authmenu:forgot");
+		.text("❓ Forgot my password", "authmenu:forgot");
 }
 
 function capitalizeFirstLetter(value: string): string {
@@ -70,7 +66,7 @@ async function promptPassword(
 
 	for (;;) {
 		const replyCtx = await conversation.waitFor("message:text", {
-			otherwise: (otherCtx) => otherCtx.reply("Digite sua senha em texto:"),
+			otherwise: (otherCtx) => otherCtx.reply("Type your password as plain text:"),
 		});
 		const text = replyCtx.message.text.trim();
 		await replyCtx.deleteMessage().catch(() => undefined);
@@ -125,15 +121,15 @@ async function attemptLogin(chatId: number, email: string, password: string): Pr
 	if ("twoFactorRedirect" in result.data && result.data.twoFactorRedirect) return { outcome: "two-factor" };
 	if (!("user" in result.data)) return { outcome: "failed" };
 
-	await linkChatToUser(chatId, result.data.user.id);
+	await botLinkChatToUser(chatId, result.data.user.id);
 	return { outcome: "ok", userId: result.data.user.id, name: result.data.user.name };
 }
 
 async function handleLogin(conversation: BotConversation, ctx: Context, chatId: number): Promise<string | null> {
 	const email = await promptText(conversation, ctx, "Digite seu *e-mail*:", (text) =>
-		emailSchema.safeParse(text).success ? null : "E-mail inválido.",
+		emailSchema.safeParse(text).success ? null : "Invalid email.",
 	);
-	const password = await promptPassword(conversation, ctx, "🔒 Digite sua senha:", () => null);
+	const password = await promptPassword(conversation, ctx, "🔒 Enter your password:", () => null);
 
 	const attempt = await conversation.external(() => attemptLogin(chatId, email, password));
 
@@ -143,20 +139,18 @@ async function handleLogin(conversation: BotConversation, ctx: Context, chatId: 
 			return null;
 		case "failed":
 			if (attempt.code === "EMAIL_NOT_VERIFIED") {
-				await ctx.reply(
-					"📧 Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada antes de entrar.",
-				);
+				await ctx.reply("📧 Your email is not verified yet. Check your inbox before signing in.");
 				return null;
 			}
-			await ctx.reply(`❌ ${translateAuthError(attempt.code, "E-mail e/ou senha incorretos")}`);
+			await ctx.reply(`❌ ${translateAuthError(attempt.code, "Incorrect email and/or password")}`);
 			return null;
 		case "two-factor":
 			await ctx.reply(
-				"🔐 Sua conta tem verificação em duas etapas. Use a opção 'Entrar pelo navegador' para vincular este chat.",
+				"🔐 Your account has two-factor authentication. Use 'Sign in via browser' to link this chat.",
 			);
 			return null;
 		case "ok":
-			await ctx.reply(`✅ Conta vinculada! Olá, ${attempt.name}.`);
+			await ctx.reply(`✅ Account linked! Hello, ${attempt.name}.`);
 			return attempt.userId;
 	}
 }
@@ -167,22 +161,22 @@ async function handleSignup(conversation: BotConversation, ctx: Context, chatId:
 		ctx,
 		"Como podemos te chamar? Digite seu *nome* (4 a 16 letras):",
 		(text) => {
-			if (text.length < 4) return "Nome muito curto (mínimo 4 letras).";
-			if (text.length > 16) return "Nome muito longo (máximo 16 caracteres).";
+			if (text.length < 4) return "Name too short (minimum 4 characters).";
+			if (text.length > 16) return "Name too long (maximum 16 characters).";
 			return null;
 		},
 	);
 	const name = capitalizeFirstLetter(rawName);
 
 	const email = await promptText(conversation, ctx, "Digite seu *e-mail*:", (text) => {
-		if (text.length > 48) return "E-mail muito longo (máximo 48 caracteres).";
-		return emailSchema.safeParse(text).success ? null : "E-mail inválido.";
+		if (text.length > 48) return "Email too long (maximum 48 characters).";
+		return emailSchema.safeParse(text).success ? null : "Invalid email.";
 	});
 
 	await ctx.reply(
-		["Agora crie uma senha forte, com:", ...PASSWORD_RULES.map((rule) => `• ${rule.label}`)].join("\n"),
+		["Now create a strong password with:", ...PASSWORD_RULES.map((rule) => `• ${rule.label}`)].join("\n"),
 	);
-	const password = await promptPassword(conversation, ctx, "Digite sua senha:", (text) => {
+	const password = await promptPassword(conversation, ctx, "Enter your password:", (text) => {
 		const failing = failingPasswordRules(text);
 		return failing.length === 0 ? null : `Ainda falta: ${failing.join(", ")}.`;
 	});
@@ -192,20 +186,20 @@ async function handleSignup(conversation: BotConversation, ctx: Context, chatId:
 	);
 
 	if (!result.ok) {
-		await ctx.reply(`❌ ${translateAuthError(result.code, "Não foi possível criar sua conta")}`);
+		await ctx.reply(`❌ ${translateAuthError(result.code, "Could not create your account")}`);
 		return null;
 	}
 
 	if (result.data.token === null) {
 		await ctx.reply(
-			"📧 Quase lá! Enviamos um link de confirmação para o seu e-mail. Confirme e depois volte aqui e escolha 'Entrar com e-mail e senha'.",
+			"📧 Almost there! We sent a confirmation link to your email. Confirm it, then come back and choose 'Sign in with email and password'.",
 		);
 		return null;
 	}
 
 	const userId = result.data.user.id;
-	await conversation.external(() => linkChatToUser(chatId, userId));
-	await ctx.reply(`✅ Conta criada e vinculada! Bem-vindo(a), ${result.data.user.name}.`);
+	await conversation.external(() => botLinkChatToUser(chatId, userId));
+	await ctx.reply(`✅ Account created and linked! Welcome, ${result.data.user.name}.`);
 	return userId;
 }
 
@@ -213,8 +207,8 @@ async function handleForgotPassword(conversation: BotConversation, ctx: Context)
 	const email = await promptText(
 		conversation,
 		ctx,
-		"Digite o *e-mail* da sua conta para receber o link de redefinição:",
-		(text) => (emailSchema.safeParse(text).success ? null : "E-mail inválido."),
+		"Enter the *email* for your account to receive the reset link:",
+		(text) => (emailSchema.safeParse(text).success ? null : "Invalid email."),
 	);
 
 	await conversation.external(() =>
@@ -224,7 +218,7 @@ async function handleForgotPassword(conversation: BotConversation, ctx: Context)
 	);
 
 	await ctx.reply(
-		"📧 Se esse e-mail estiver cadastrado, enviamos um link para redefinir a senha. Abra o link no navegador, defina a nova senha e volte aqui para escolher 'Entrar com e-mail e senha'.",
+		"📧 If that email is registered, we sent a password reset link. Open it in the browser, set a new password, then come back and choose 'Sign in with email and password'.",
 	);
 	return null;
 }
@@ -232,47 +226,45 @@ async function handleForgotPassword(conversation: BotConversation, ctx: Context)
 /** Links through the browser: works for Google and for accounts with 2FA. */
 async function handleWebLink(conversation: BotConversation, ctx: Context, chatId: number): Promise<string | null> {
 	const { url } = await conversation.external(async () => {
-		const { token } = await createLinkToken(chatId);
+		const { token } = await botCreateLinkToken(chatId);
 		return { url: `${apiEnv.FRONTEND_URL}/telegram-vincular?token=${encodeURIComponent(token)}` };
 	});
 
 	const keyboard = new InlineKeyboard()
 		.url("🌐 Abrir no navegador", url)
 		.row()
-		.text("🔄 Já entrei, verificar vínculo", "weblink:check")
+		.text("🔄 I signed in, verify link", "weblink:check")
 		.row()
 		.text("❌ Cancelar", "weblink:cancel");
 
 	await ctx.reply(
-		"Toque no botão abaixo para entrar pelo navegador (Google ou e-mail e senha). O link vale por 15 minutos. Depois, volte aqui e toque em *Já entrei, verificar vínculo*.",
+		"Tap the button below to sign in via browser (Google or email and password). The link is valid for 15 minutes. Then return here and tap *I signed in, verify link*.",
 		{ parse_mode: "Markdown", reply_markup: keyboard },
 	);
 
 	for (;;) {
 		const action = await conversation.waitFor("callback_query:data", {
-			otherwise: (otherCtx) => otherCtx.reply("Use os botões acima."),
+			otherwise: (otherCtx) => otherCtx.reply("Use the buttons above."),
 		});
 		const data = action.callbackQuery.data;
 		await action.answerCallbackQuery();
 
 		if (data === "weblink:cancel") {
-			await action.reply("Operação cancelada.");
+			await action.reply("Operation cancelled.");
 			return null;
 		}
 
 		if (data === "weblink:check") {
 			const linked = await conversation.external(async () => {
-				const userId = await findUserIdByChatId(chatId);
+				const userId = await botFindUserIdByChatId(chatId);
 				const user = userId ? await userRepository.findById(userId) : null;
 				return user ? { userId: user.id, name: user.name } : null;
 			});
 			if (!linked) {
-				await action.reply(
-					"Ainda não encontrei o vínculo. Conclua o login no navegador e toque em verificar de novo.",
-				);
+				await action.reply("Link not found yet. Finish signing in in the browser and tap verify again.");
 				continue;
 			}
-			await action.reply(`✅ Conta vinculada! Olá, ${linked.name}.`);
+			await action.reply(`✅ Account linked! Hello, ${linked.name}.`);
 			return linked.userId;
 		}
 	}
@@ -299,16 +291,16 @@ export async function ensureLinked(conversation: BotConversation, ctx: Context):
 	const chatId = ctx.chat?.id;
 	if (chatId === undefined) return null;
 
-	const linkedUserId = await conversation.external(() => findUserIdByChatId(chatId));
+	const linkedUserId = await conversation.external(() => botFindUserIdByChatId(chatId));
 	if (linkedUserId) return linkedUserId;
 
 	for (;;) {
-		await ctx.reply("👋 Para começar, escolha como você quer acessar sua conta:", {
+		await ctx.reply("👋 To get started, choose how you want to access your account:", {
 			reply_markup: authMenuKeyboard(),
 		});
 
 		const choice = await conversation.waitFor("callback_query:data", {
-			otherwise: (otherCtx) => otherCtx.reply("Toque em uma das opções acima."),
+			otherwise: (otherCtx) => otherCtx.reply("Tap one of the options above."),
 		});
 		await choice.answerCallbackQuery();
 

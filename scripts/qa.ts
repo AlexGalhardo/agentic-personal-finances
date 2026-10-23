@@ -648,7 +648,7 @@ await group("web", async () => {
 	}
 	await app.goto(`${WEB}/minha-conta`);
 	await app.waitForLoadState("networkidle");
-	check(g, "account page shows the free plan", await appears(app.getByText("Gratuito").first()));
+	check(g, "account page shows the free plan", await appears(app.getByText("Free").first()));
 	await shot(app, "web_account");
 
 	await app.goto(`${WEB}/dashboard`);

@@ -1,4 +1,4 @@
-import { defineConfig, env } from "prisma/config";
+import { defineConfig, env } from "@prisma/prisma7/config";
 
 // Unlike the Bun runtime, Prisma 7's config loader doesn't read .env on its
 // own — without this, `prisma generate`/`migrate` fail with "Cannot resolve

@@ -80,12 +80,12 @@ export function PixCheckoutModal({
 
 	async function handleSimulate(): Promise<void> {
 		setSimulating(true);
-		setSimulateMessage("Esse PIX será pago em 10 segundos...");
+		setSimulateMessage("This PIX will be paid in 10 seconds...");
 
 		try {
 			await simulatePixPayment(charge.id);
 		} catch {
-			setSimulateMessage("Não foi possível simular o pagamento");
+			setSimulateMessage("Could not simulate payment");
 			setSimulating(false);
 			return;
 		}
@@ -122,37 +122,32 @@ export function PixCheckoutModal({
 		: `data:image/png;base64,${charge.brCodeBase64}`;
 
 	return (
-		<Modal title="Pagamento via PIX" onClose={handleClose}>
+		<Modal title="PIX payment" onClose={handleClose}>
 			{status === "paid" ? (
 				<div className="flex flex-col items-center gap-2 text-center">
 					<p className="text-sm text-brand-600" role="status">
-						PIX pago com sucesso! Você assinou {paidMonths} {paidMonths === 1 ? "mês" : "meses"} do Plano
-						PRO!
+						PIX paid successfully! You subscribed to {paidMonths} {paidMonths === 1 ? "month" : "months"} of
+						the PRO plan!
 					</p>
 					<p className="text-xs text-(--color-fg-muted)">
-						Redirecionando para o dashboard em {redirectCooldown} segundo{redirectCooldown === 1 ? "" : "s"}
+						Redirecting to the dashboard in {redirectCooldown} second{redirectCooldown === 1 ? "" : "s"}
 						...
 					</p>
 				</div>
 			) : status === "expired" ? (
 				<p className="text-sm text-red-500" role="status">
-					Esse PIX expirou. Feche esta janela e gere um novo código.
+					This PIX expired. Close this window and generate a new code.
 				</p>
 			) : (
 				<div className="flex flex-col items-center gap-4">
 					<p className="text-center text-sm text-(--color-fg-muted)" role="status">
-						Você tem {minutes}:{seconds.toString().padStart(2, "0")} minutos para pagar esse PIX. Aguardando
-						pagamento...
+						You have {minutes}:{seconds.toString().padStart(2, "0")} to pay this PIX. Waiting for payment...
 					</p>
 
-					<img
-						src={qrSrc}
-						alt="QR code do PIX"
-						className="size-56 rounded-lg border border-(--color-border)"
-					/>
+					<img src={qrSrc} alt="PIX QR code" className="size-56 rounded-lg border border-(--color-border)" />
 
 					<div className="w-full">
-						<p className="text-xs font-medium text-(--color-fg-muted)">PIX copia e cola</p>
+						<p className="text-xs font-medium text-(--color-fg-muted)">PIX copy and paste</p>
 						<div className="mt-1 flex items-center gap-2">
 							<code className="flex-1 truncate rounded-lg border border-(--color-border) bg-(--color-bg-subtle) px-3 py-2 text-xs">
 								{charge.brCode}
@@ -162,7 +157,7 @@ export function PixCheckoutModal({
 								onClick={handleCopy}
 								className="shrink-0 rounded-lg border border-(--color-border) px-3 py-2 text-xs font-medium hover:bg-brand-500/10"
 							>
-								{copied ? "Copiado!" : "Copiar"}
+								{copied ? "Copied!" : "Copy"}
 							</button>
 						</div>
 					</div>
@@ -175,7 +170,7 @@ export function PixCheckoutModal({
 								disabled={simulating}
 								className="w-full rounded-lg border border-brand-500 px-4 py-2 text-sm font-semibold text-brand-600 hover:bg-brand-500/10 disabled:opacity-60"
 							>
-								Pagar PIX Teste Mode
+								Pay PIX (test mode)
 							</button>
 							{simulateMessage && (
 								<p className="mt-2 text-center text-xs text-(--color-fg-muted)">{simulateMessage}</p>
@@ -192,10 +187,10 @@ export function PixCheckoutModal({
 				className="mt-6 w-full rounded-lg border border-(--color-border) px-4 py-2 text-sm font-semibold disabled:opacity-40"
 			>
 				{status === "pending" && closeCooldown > 0
-					? `Você pode fechar essa aba em ${closeCooldown} segundos...`
+					? `You can close this tab in ${closeCooldown} seconds...`
 					: status === "paid"
-						? "Redirecionando..."
-						: "Fechar"}
+						? "Redirecting..."
+						: "Close"}
 			</button>
 		</Modal>
 	);

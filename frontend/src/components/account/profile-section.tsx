@@ -23,7 +23,7 @@ export function ProfileSection({ name, email }: { name: string; email: string })
 
 		const { error: requestError } = await authClient.updateUser({ name: result.data.name });
 		if (requestError) {
-			setError(translateAuthError(requestError, "Não foi possível atualizar seu nome"));
+			setError(translateAuthError(requestError, "Could not update your name"));
 			return;
 		}
 
