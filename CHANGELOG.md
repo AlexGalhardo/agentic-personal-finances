@@ -8,6 +8,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- `APP_MODE` (`local` default, offline-first/SQLite; `hosted` for the
+  multi-user production deploy, which requires PostgreSQL). The Railway image
+  sets `hosted`.
+- README tour with five GIFs (`docs/assets/gifs/`) and the
+  `scripts/readme-gifs.ts` recorder.
 - Landing, sign-in and sign-up redesigned around green "money" branding: a
   viewport-fit landing page with only a **Login** button in the navbar and an
   animated balance card in the second grid column; split-screen auth pages.
@@ -18,6 +23,12 @@ All notable changes to this project are documented here. The format follows
 - Desktop app embeds the standalone server (API + web + SQLite) and runs
   fully offline; `DESKTOP_APP_URL` / `--url` still point it at a remote one.
 - `setups/setup-standalone.sh` and `deploy-android-apk.sh --gradle`.
+
+### Fixed
+
+- Railway deploys failed since the dashboard started importing
+  `@agentic-personal-finances/core`: the Docker images now copy
+  `packages/core` and every workspace manifest the lockfile expects.
 
 ### Changed
 

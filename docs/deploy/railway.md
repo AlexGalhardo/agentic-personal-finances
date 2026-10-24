@@ -96,6 +96,7 @@ not understand `RAILWAY_SERVICE_TARGET`.
 ```bash
 RAILWAY_SERVICE_TARGET=backend
 NODE_ENV=production
+APP_MODE=hosted
 DATABASE_PROVIDER=postgresql
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 BETTER_AUTH_SECRET=<generated>
@@ -138,6 +139,7 @@ backend domain later requires **redeploying the frontend**.
 ```bash
 RAILWAY_SERVICE_TARGET=bot
 NODE_ENV=production
+APP_MODE=hosted
 DATABASE_PROVIDER=postgresql
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 BETTER_AUTH_SECRET=<same as backend>

@@ -7,6 +7,9 @@ COPY package.json bun.lock ./
 COPY backend/package.json ./backend/package.json
 COPY frontend/package.json ./frontend/package.json
 COPY bot/package.json ./bot/package.json
+COPY mobile/package.json ./mobile/package.json
+COPY desktop/package.json ./desktop/package.json
+COPY packages/core/package.json ./packages/core/package.json
 # The root package.json's patchedDependencies (nativewind, used only by
 # mobile/) apply to every `bun install` in the workspace — without the patch
 # file, install fails with "Couldn't find patch file".
@@ -15,6 +18,7 @@ RUN bun install --frozen-lockfile
 
 FROM install AS runtime
 COPY --chown=bun:bun backend ./backend
+COPY --chown=bun:bun packages/core ./packages/core
 WORKDIR /repo/backend
 RUN chmod +x docker-entrypoint.sh && mkdir -p /data && chown bun:bun /data
 USER bun

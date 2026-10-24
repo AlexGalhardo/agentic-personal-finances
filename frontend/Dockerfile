@@ -7,6 +7,9 @@ COPY package.json bun.lock ./
 COPY backend/package.json ./backend/package.json
 COPY frontend/package.json ./frontend/package.json
 COPY bot/package.json ./bot/package.json
+COPY mobile/package.json ./mobile/package.json
+COPY desktop/package.json ./desktop/package.json
+COPY packages/core/package.json ./packages/core/package.json
 # The root package.json's patchedDependencies (nativewind, used only by
 # mobile/) apply to every `bun install` in the workspace — without the patch
 # file, install fails with "Couldn't find patch file".
@@ -19,6 +22,8 @@ FROM install AS build
 # during the build — the final image doesn't include the API code.
 COPY backend/src ./backend/src
 COPY backend/tsconfig.json ./backend/tsconfig.json
+# The dashboard imports the shared core (backup format, plans).
+COPY packages/core ./packages/core
 COPY frontend ./frontend
 WORKDIR /repo/frontend
 ARG VITE_API_URL=http://localhost:4000

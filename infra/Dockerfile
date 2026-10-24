@@ -53,6 +53,8 @@ FROM install AS frontend-build
 # RAILWAY_SERVICE_TARGET=backend.
 COPY backend/src ./backend/src
 COPY backend/tsconfig.json ./backend/tsconfig.json
+# The dashboard imports the shared core (backup format, plans).
+COPY packages/core ./packages/core
 COPY frontend ./frontend
 WORKDIR /repo/frontend
 ARG VITE_API_URL=http://localhost:4000
@@ -60,6 +62,9 @@ ENV VITE_API_URL=$VITE_API_URL
 RUN bunx tsr generate && bun run build
 
 FROM install AS runtime
+# Hosted production: PostgreSQL is required (the backend refuses to boot on
+# SQLite). Everything else - local runs, desktop, mobile - is offline-first.
+ENV APP_MODE=hosted
 COPY --chown=bun:bun backend ./backend
 COPY --chown=bun:bun bot ./bot
 COPY --chown=bun:bun packages/core ./packages/core

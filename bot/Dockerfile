@@ -7,6 +7,9 @@ COPY package.json bun.lock ./
 COPY backend/package.json ./backend/package.json
 COPY frontend/package.json ./frontend/package.json
 COPY bot/package.json ./bot/package.json
+COPY mobile/package.json ./mobile/package.json
+COPY desktop/package.json ./desktop/package.json
+COPY packages/core/package.json ./packages/core/package.json
 # The root package.json's patchedDependencies (nativewind, used only by
 # mobile/) apply to every `bun install` in the workspace — without the patch
 # file, install fails with "Couldn't find patch file".
@@ -23,6 +26,7 @@ COPY --chown=bun:bun backend/prisma7.config.ts ./backend/prisma7.config.ts
 COPY --chown=bun:bun backend/prisma.config.ts ./backend/prisma.config.ts
 COPY --chown=bun:bun backend/tsconfig.json ./backend/tsconfig.json
 COPY --chown=bun:bun bot ./bot
+COPY --chown=bun:bun packages/core ./packages/core
 WORKDIR /repo/bot
 RUN chmod +x docker-entrypoint.sh
 USER bun

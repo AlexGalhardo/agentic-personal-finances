@@ -38,6 +38,7 @@ const frontendPublic = `https://\${{frontend.RAILWAY_PUBLIC_DOMAIN}}`;
 
 setVars("backend", {
 	RAILWAY_SERVICE_TARGET: "backend",
+	APP_MODE: "hosted",
 	NODE_ENV: "production",
 	DATABASE_PROVIDER: "postgresql",
 	DATABASE_URL: pgUrl,
@@ -59,6 +60,7 @@ setVars("frontend", {
 
 setVars("bot", {
 	RAILWAY_SERVICE_TARGET: "bot",
+	APP_MODE: "hosted",
 	NODE_ENV: "production",
 	DATABASE_PROVIDER: "postgresql",
 	DATABASE_URL: pgUrl,
