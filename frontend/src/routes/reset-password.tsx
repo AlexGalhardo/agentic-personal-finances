@@ -9,7 +9,7 @@ import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 const searchSchema = z.object({ token: z.string().optional() });
 const passwordSchema = z.object({ password: z.string().min(8, "Password must be at least 8 characters") });
 
-export const Route = createFileRoute("/resetar-senha")({
+export const Route = createFileRoute("/reset-password")({
 	head: () => ({ meta: [{ title: "Reset password — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	validateSearch: searchSchema,
@@ -48,7 +48,7 @@ function ResetPasswordPage() {
 			return;
 		}
 
-		await navigate({ to: "/entrar" });
+		await navigate({ to: "/login" });
 	}
 
 	return (

@@ -7,18 +7,18 @@ test("landing page shows the hero and links to institutional pages", async ({ pa
 	await expect(page.getByRole("link", { name: "Login" })).toBeVisible();
 
 	await page.getByRole("link", { name: "Terms of use" }).click();
-	await expect(page).toHaveURL(/\/termos-de-uso/);
+	await expect(page).toHaveURL(/\/terms/);
 	await expect(page.getByRole("heading", { name: "Terms of use" })).toBeVisible();
 
-	await page.goto("/politica-de-privacidade");
+	await page.goto("/privacy");
 	await expect(page.getByRole("heading", { name: "Privacy policy" })).toBeVisible();
 
-	await page.goto("/contato");
+	await page.goto("/contact");
 	await expect(page.getByRole("heading", { name: "Contact us" })).toBeVisible();
 });
 
 test("contact form validates required fields before submitting", async ({ page }) => {
-	await page.goto("/contato");
+	await page.goto("/contact");
 	await page.waitForLoadState("networkidle");
 
 	await page.getByRole("button", { name: "Send message" }).click();
@@ -29,7 +29,7 @@ test("contact form validates required fields before submitting", async ({ page }
 });
 
 test("contact form shows a live character counter capped at 512 and submits successfully", async ({ page }) => {
-	await page.goto("/contato");
+	await page.goto("/contact");
 	await page.waitForLoadState("networkidle");
 
 	await expect(page.getByText("0/512")).toBeVisible();
@@ -47,14 +47,14 @@ test("contact form shows a live character counter capped at 512 and submits succ
 });
 
 test("pre-fills and disables name/email for a logged-in user", async ({ page }) => {
-	await page.goto("/entrar");
+	await page.goto("/login");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Email").fill("admin@gmail.com");
 	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");
 	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 	await page.waitForURL(/\/dashboard/);
 
-	await page.goto("/contato");
+	await page.goto("/contact");
 	await expect(page.getByLabel("Name")).toHaveValue("Admin");
 	await expect(page.getByLabel("Name")).toHaveAttribute("readonly", "");
 	await expect(page.getByLabel("Email")).toHaveValue("admin@gmail.com");

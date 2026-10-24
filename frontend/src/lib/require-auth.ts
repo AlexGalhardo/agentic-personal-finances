@@ -5,7 +5,7 @@ export async function requireAuth() {
 	const session = await getServerSession();
 
 	if (!session) {
-		throw redirect({ to: "/entrar" });
+		throw redirect({ to: "/login" });
 	}
 
 	return { session };

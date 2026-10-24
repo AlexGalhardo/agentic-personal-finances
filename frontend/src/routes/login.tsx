@@ -9,7 +9,7 @@ import { authClient, signIn } from "../lib/auth-client";
 import { translateAuthError } from "../lib/auth-errors";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
-export const Route = createFileRoute("/entrar")({
+export const Route = createFileRoute("/login")({
 	head: () => ({ meta: [{ title: "Sign in — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	component: LoginPage,
@@ -76,7 +76,7 @@ function LoginPage() {
 	async function handleResendVerification(): Promise<void> {
 		if (!unverifiedEmail) return;
 		setResendState("sending");
-		await authClient.sendVerificationEmail({ email: unverifiedEmail, callbackURL: "/entrar" });
+		await authClient.sendVerificationEmail({ email: unverifiedEmail, callbackURL: "/login" });
 		setResendState("sent");
 	}
 
@@ -148,7 +148,7 @@ function LoginPage() {
 						<PasswordInput id="password" name="password" value={password} onChange={setPassword} />
 					</FormField>
 
-					<Link to="/esqueci-senha" className="text-right text-sm text-brand-600 hover:underline">
+					<Link to="/forgot-password" className="text-right text-sm text-brand-600 hover:underline">
 						Forgot my password
 					</Link>
 
@@ -163,7 +163,7 @@ function LoginPage() {
 
 				<p className="text-center text-sm text-(--color-fg-muted)">
 					Don't have an account?{" "}
-					<Link to="/criar-conta" className="font-medium text-brand-600 hover:underline">
+					<Link to="/signup" className="font-medium text-brand-600 hover:underline">
 						Create account
 					</Link>
 				</p>

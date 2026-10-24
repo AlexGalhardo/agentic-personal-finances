@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageLayout } from "../components/page-layout";
 
-export const Route = createFileRoute("/politica-de-privacidade")({
+export const Route = createFileRoute("/privacy")({
 	head: () => ({
 		meta: [{ title: "Privacy policy — Money" }, { name: "description", content: "Money privacy policy." }],
 	}),

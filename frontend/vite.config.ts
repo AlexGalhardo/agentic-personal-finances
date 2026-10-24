@@ -37,7 +37,7 @@ const config = defineConfig({
 		// so the session cookie behaves the same in both. A key starting with "^"
 		// becomes a RegExp in Vite — needed to match only `path`, `path/...` or
 		// `path?...` like the production matcher: a plain prefix "/telegram" would
-		// also proxy pages like "/telegram-vincular". Vite matches against
+		// also proxy pages like "/telegram-link". Vite matches against
 		// path+query, so without "|\\?" a call like "/transactions?page=1" fell
 		// through to Vite's SPA fallback (404) and never reached the backend.
 		proxy: Object.fromEntries(

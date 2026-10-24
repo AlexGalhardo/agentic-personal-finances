@@ -88,7 +88,7 @@ mobile/google-play-service-account.json
 # runtime metadata from EnterWorktree, never meant to be committed.
 .claude/worktrees/
 
-# personal bank statement exports (ex: Nubank .csv import via /minha-conta)
+# personal bank statement exports (ex: Nubank .csv import via /account)
 # — real personal financial data, never meant to be committed (see the
 # 2026-09-20 incident: paa.csv had leaked real PIX transaction data with
 # third-party names and partial document numbers). No .csv is otherwise

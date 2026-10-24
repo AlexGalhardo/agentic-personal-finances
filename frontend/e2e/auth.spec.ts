@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("a new user can sign up and lands on the dashboard", async ({ page }) => {
 	const email = `e2e-${Date.now()}@example.com`;
 
-	await page.goto("/criar-conta");
+	await page.goto("/signup");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Name").fill("E2E Test User");
 	await page.getByLabel("Email").fill(email);
@@ -15,18 +15,18 @@ test("a new user can sign up and lands on the dashboard", async ({ page }) => {
 });
 
 test("shows an error for invalid login credentials", async ({ page }) => {
-	await page.goto("/entrar");
+	await page.goto("/login");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Email").fill("nobody@example.com");
 	await page.getByLabel("Password", { exact: true }).fill("wrong-password");
 	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
 	await expect(page.getByRole("alert")).toBeVisible();
-	await expect(page).toHaveURL(/\/entrar/);
+	await expect(page).toHaveURL(/\/login/);
 });
 
 test("the seeded admin can log in and log out", async ({ page }) => {
-	await page.goto("/entrar");
+	await page.goto("/login");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Email").fill("admin@gmail.com");
 	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");
@@ -41,24 +41,24 @@ test("the seeded admin can log in and log out", async ({ page }) => {
 
 test("protected routes redirect to login when signed out", async ({ page }) => {
 	await page.goto("/dashboard");
-	await expect(page).toHaveURL(/\/entrar/);
+	await expect(page).toHaveURL(/\/login/);
 
-	await page.goto("/minha-conta");
-	await expect(page).toHaveURL(/\/entrar/);
+	await page.goto("/account");
+	await expect(page).toHaveURL(/\/login/);
 
 	await page.goto("/checkout");
-	await expect(page).toHaveURL(/\/entrar/);
+	await expect(page).toHaveURL(/\/login/);
 });
 
 test("public-only routes redirect an authenticated user to the dashboard", async ({ page }) => {
-	await page.goto("/entrar");
+	await page.goto("/login");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Email").fill("admin@gmail.com");
 	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");
 	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 	await expect(page).toHaveURL(/\/dashboard/);
 
-	for (const path of ["/", "/entrar", "/criar-conta", "/esqueci-senha", "/resetar-senha"]) {
+	for (const path of ["/", "/login", "/signup", "/forgot-password", "/reset-password"]) {
 		await page.goto(path);
 		await expect(page).toHaveURL(/\/dashboard/);
 	}

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 async function signUp(page: import("@playwright/test").Page): Promise<string> {
 	const email = `e2e-account-${Date.now()}@example.com`;
-	await page.goto("/criar-conta");
+	await page.goto("/signup");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Name").fill("Conta E2E");
 	await page.getByLabel("Email").fill(email);
@@ -15,7 +15,7 @@ async function signUp(page: import("@playwright/test").Page): Promise<string> {
 test("a free account shows the Gratuito plan and usage counter", async ({ page }) => {
 	await signUp(page);
 
-	await page.goto("/minha-conta");
+	await page.goto("/account");
 	await expect(page.getByText("Free")).toBeVisible();
 	await expect(page.getByText("0/10 transactions used")).toBeVisible();
 });
@@ -23,7 +23,7 @@ test("a free account shows the Gratuito plan and usage counter", async ({ page }
 test("never offers a Telegram chat ID field — linking only happens from the bot", async ({ page }) => {
 	await signUp(page);
 
-	await page.goto("/minha-conta");
+	await page.goto("/account");
 	await expect(page.getByText("No chat linked.", { exact: false })).toBeVisible();
 	await expect(page.getByLabel("Chat ID do Telegram")).toHaveCount(0);
 });
@@ -31,7 +31,7 @@ test("never offers a Telegram chat ID field — linking only happens from the bo
 test("delete account modal shows the 10 second cooldown for free plan users", async ({ page }) => {
 	await signUp(page);
 
-	await page.goto("/minha-conta");
+	await page.goto("/account");
 	await page.getByRole("button", { name: "Delete my account" }).click();
 
 	await expect(page.getByRole("button", { name: /seconds to confirm account deletion/ })).toBeDisabled();

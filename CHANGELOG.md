@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Web routes translated to English: `/login`, `/signup`, `/forgot-password`,
+  `/reset-password`, `/account`, `/contact`, `/terms`, `/privacy`,
+  `/telegram-link` (old Portuguese URLs no longer exist).
+- Signed-out pages (landing, login, sign-up, contact, terms, privacy) are
+  always dark and their navbar only has a **Login** button; the theme can only
+  be changed from the user menu once logged in.
+
 ## [1.1.0] - 2026-10-24
 
 ### Added

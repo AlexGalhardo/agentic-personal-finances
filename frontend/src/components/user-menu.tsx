@@ -1,11 +1,12 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "../lib/auth-client";
-import { ThemeToggle } from "./theme-toggle";
+import { isPublicPath, ThemeToggle } from "./theme-toggle";
 
 export function UserMenu({ name }: { name: string }) {
 	const navigate = useNavigate();
+	const pathname = useRouterState({ select: (state) => state.location.pathname });
 	const [open, setOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +48,7 @@ export function UserMenu({ name }: { name: string }) {
 					className="absolute right-0 z-10 mt-2 w-48 rounded-lg border border-(--color-border) bg-(--color-surface) py-1 shadow-lg"
 				>
 					<Link
-						to="/minha-conta"
+						to="/account"
 						role="menuitem"
 						onClick={() => setOpen(false)}
 						className="block px-4 py-2 text-sm hover:bg-brand-500/10"
@@ -62,10 +63,12 @@ export function UserMenu({ name }: { name: string }) {
 					>
 						API
 					</Link>
-					<div className="flex items-center justify-between px-4 py-2 text-sm">
-						<span>Theme</span>
-						<ThemeToggle />
-					</div>
+					{!isPublicPath(pathname) && (
+						<div className="flex items-center justify-between px-4 py-2 text-sm">
+							<span>Theme</span>
+							<ThemeToggle />
+						</div>
+					)}
 					<hr className="my-1 border-(--color-border)" />
 					<button
 						type="button"

@@ -3,7 +3,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { themeInitScript } from "../components/theme-toggle";
+import { ThemeGuard, themeInitScript } from "../components/theme-toggle";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
 import appCss from "../styles.css?url";
@@ -48,7 +48,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
 			</head>
 			<body suppressHydrationWarning>
-				<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+				<QueryClientProvider client={queryClient}>
+					<ThemeGuard />
+					{children}
+				</QueryClientProvider>
 				{import.meta.env.DEV && (
 					<TanStackDevtools
 						config={{ position: "bottom-left" }}

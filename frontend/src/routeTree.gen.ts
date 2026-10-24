@@ -10,22 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as ApiRouteImport } from './routes/api'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as CriarContaRouteImport } from './routes/criar-conta'
-import { Route as EntrarRouteImport } from './routes/entrar'
-import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
-import { Route as MinhaContaRouteImport } from './routes/minha-conta'
-import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
-import { Route as ResetarSenhaRouteImport } from './routes/resetar-senha'
-import { Route as TelegramVincularRouteImport } from './routes/telegram-vincular'
-import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TelegramLinkRouteImport } from './routes/telegram-link'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRoute = ApiRouteImport.update({
@@ -38,49 +43,44 @@ const CheckoutRoute = CheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContatoRoute = ContatoRouteImport.update({
-  id: '/contato',
-  path: '/contato',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CriarContaRoute = CriarContaRouteImport.update({
-  id: '/criar-conta',
-  path: '/criar-conta',
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EntrarRoute = EntrarRouteImport.update({
-  id: '/entrar',
-  path: '/entrar',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
-  id: '/esqueci-senha',
-  path: '/esqueci-senha',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MinhaContaRoute = MinhaContaRouteImport.update({
-  id: '/minha-conta',
-  path: '/minha-conta',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
-  id: '/politica-de-privacidade',
-  path: '/politica-de-privacidade',
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResetarSenhaRoute = ResetarSenhaRouteImport.update({
-  id: '/resetar-senha',
-  path: '/resetar-senha',
+const TelegramLinkRoute = TelegramLinkRouteImport.update({
+  id: '/telegram-link',
+  path: '/telegram-link',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TelegramVincularRoute = TelegramVincularRouteImport.update({
-  id: '/telegram-vincular',
-  path: '/telegram-vincular',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
-  id: '/termos-de-uso',
-  path: '/termos-de-uso',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -91,111 +91,111 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/api': typeof ApiRoute
   '/checkout': typeof CheckoutRoute
-  '/contato': typeof ContatoRoute
-  '/criar-conta': typeof CriarContaRoute
-  '/entrar': typeof EntrarRoute
-  '/esqueci-senha': typeof EsqueciSenhaRoute
-  '/minha-conta': typeof MinhaContaRoute
-  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
-  '/resetar-senha': typeof ResetarSenhaRoute
-  '/telegram-vincular': typeof TelegramVincularRoute
-  '/termos-de-uso': typeof TermosDeUsoRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/telegram-link': typeof TelegramLinkRoute
+  '/terms': typeof TermsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/api': typeof ApiRoute
   '/checkout': typeof CheckoutRoute
-  '/contato': typeof ContatoRoute
-  '/criar-conta': typeof CriarContaRoute
-  '/entrar': typeof EntrarRoute
-  '/esqueci-senha': typeof EsqueciSenhaRoute
-  '/minha-conta': typeof MinhaContaRoute
-  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
-  '/resetar-senha': typeof ResetarSenhaRoute
-  '/telegram-vincular': typeof TelegramVincularRoute
-  '/termos-de-uso': typeof TermosDeUsoRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/telegram-link': typeof TelegramLinkRoute
+  '/terms': typeof TermsRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/api': typeof ApiRoute
   '/checkout': typeof CheckoutRoute
-  '/contato': typeof ContatoRoute
-  '/criar-conta': typeof CriarContaRoute
-  '/entrar': typeof EntrarRoute
-  '/esqueci-senha': typeof EsqueciSenhaRoute
-  '/minha-conta': typeof MinhaContaRoute
-  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
-  '/resetar-senha': typeof ResetarSenhaRoute
-  '/telegram-vincular': typeof TelegramVincularRoute
-  '/termos-de-uso': typeof TermosDeUsoRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/telegram-link': typeof TelegramLinkRoute
+  '/terms': typeof TermsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/api'
     | '/checkout'
-    | '/contato'
-    | '/criar-conta'
-    | '/entrar'
-    | '/esqueci-senha'
-    | '/minha-conta'
-    | '/politica-de-privacidade'
-    | '/resetar-senha'
-    | '/telegram-vincular'
-    | '/termos-de-uso'
+    | '/contact'
+    | '/forgot-password'
+    | '/login'
+    | '/privacy'
+    | '/reset-password'
+    | '/signup'
+    | '/telegram-link'
+    | '/terms'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/api'
     | '/checkout'
-    | '/contato'
-    | '/criar-conta'
-    | '/entrar'
-    | '/esqueci-senha'
-    | '/minha-conta'
-    | '/politica-de-privacidade'
-    | '/resetar-senha'
-    | '/telegram-vincular'
-    | '/termos-de-uso'
+    | '/contact'
+    | '/forgot-password'
+    | '/login'
+    | '/privacy'
+    | '/reset-password'
+    | '/signup'
+    | '/telegram-link'
+    | '/terms'
     | '/dashboard'
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/api'
     | '/checkout'
-    | '/contato'
-    | '/criar-conta'
-    | '/entrar'
-    | '/esqueci-senha'
-    | '/minha-conta'
-    | '/politica-de-privacidade'
-    | '/resetar-senha'
-    | '/telegram-vincular'
-    | '/termos-de-uso'
+    | '/contact'
+    | '/forgot-password'
+    | '/login'
+    | '/privacy'
+    | '/reset-password'
+    | '/signup'
+    | '/telegram-link'
+    | '/terms'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   ApiRoute: typeof ApiRoute
   CheckoutRoute: typeof CheckoutRoute
-  ContatoRoute: typeof ContatoRoute
-  CriarContaRoute: typeof CriarContaRoute
-  EntrarRoute: typeof EntrarRoute
-  EsqueciSenhaRoute: typeof EsqueciSenhaRoute
-  MinhaContaRoute: typeof MinhaContaRoute
-  PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
-  ResetarSenhaRoute: typeof ResetarSenhaRoute
-  TelegramVincularRoute: typeof TelegramVincularRoute
-  TermosDeUsoRoute: typeof TermosDeUsoRoute
+  ContactRoute: typeof ContactRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
+  TelegramLinkRoute: typeof TelegramLinkRoute
+  TermsRoute: typeof TermsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -206,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api': {
@@ -222,67 +229,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/contato': {
-      id: '/contato'
-      path: '/contato'
-      fullPath: '/contato'
-      preLoaderRoute: typeof ContatoRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/criar-conta': {
-      id: '/criar-conta'
-      path: '/criar-conta'
-      fullPath: '/criar-conta'
-      preLoaderRoute: typeof CriarContaRouteImport
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entrar': {
-      id: '/entrar'
-      path: '/entrar'
-      fullPath: '/entrar'
-      preLoaderRoute: typeof EntrarRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/esqueci-senha': {
-      id: '/esqueci-senha'
-      path: '/esqueci-senha'
-      fullPath: '/esqueci-senha'
-      preLoaderRoute: typeof EsqueciSenhaRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/minha-conta': {
-      id: '/minha-conta'
-      path: '/minha-conta'
-      fullPath: '/minha-conta'
-      preLoaderRoute: typeof MinhaContaRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/politica-de-privacidade': {
-      id: '/politica-de-privacidade'
-      path: '/politica-de-privacidade'
-      fullPath: '/politica-de-privacidade'
-      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/resetar-senha': {
-      id: '/resetar-senha'
-      path: '/resetar-senha'
-      fullPath: '/resetar-senha'
-      preLoaderRoute: typeof ResetarSenhaRouteImport
+    '/telegram-link': {
+      id: '/telegram-link'
+      path: '/telegram-link'
+      fullPath: '/telegram-link'
+      preLoaderRoute: typeof TelegramLinkRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/telegram-vincular': {
-      id: '/telegram-vincular'
-      path: '/telegram-vincular'
-      fullPath: '/telegram-vincular'
-      preLoaderRoute: typeof TelegramVincularRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/termos-de-uso': {
-      id: '/termos-de-uso'
-      path: '/termos-de-uso'
-      fullPath: '/termos-de-uso'
-      preLoaderRoute: typeof TermosDeUsoRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -297,17 +297,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   ApiRoute: ApiRoute,
   CheckoutRoute: CheckoutRoute,
-  ContatoRoute: ContatoRoute,
-  CriarContaRoute: CriarContaRoute,
-  EntrarRoute: EntrarRoute,
-  EsqueciSenhaRoute: EsqueciSenhaRoute,
-  MinhaContaRoute: MinhaContaRoute,
-  PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
-  ResetarSenhaRoute: ResetarSenhaRoute,
-  TelegramVincularRoute: TelegramVincularRoute,
-  TermosDeUsoRoute: TermosDeUsoRoute,
+  ContactRoute: ContactRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SignupRoute: SignupRoute,
+  TelegramLinkRoute: TelegramLinkRoute,
+  TermsRoute: TermsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport

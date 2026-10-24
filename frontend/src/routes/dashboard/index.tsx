@@ -138,7 +138,7 @@ function DashboardPage() {
 				{freeLimitReached && (
 					<p className="text-sm text-red-500">
 						Free plan limit of {FREE_TRANSACTION_LIMIT} transactions reached —{" "}
-						<a href="/minha-conta" className="underline">
+						<a href="/account" className="underline">
 							assine um plano
 						</a>{" "}
 						to keep adding, importing, or exporting transactions.

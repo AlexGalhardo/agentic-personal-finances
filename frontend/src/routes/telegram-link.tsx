@@ -10,7 +10,7 @@ import { useSession } from "../lib/auth-client";
 
 const searchSchema = z.object({ token: z.string().optional() });
 
-export const Route = createFileRoute("/telegram-vincular")({
+export const Route = createFileRoute("/telegram-link")({
 	head: () => ({ meta: [{ title: "Link Telegram — Money" }] }),
 	validateSearch: searchSchema,
 	component: TelegramLinkPage,
@@ -61,7 +61,7 @@ function TelegramLinkPage() {
 			<AuthCard title="Sign in to link Telegram" subtitle="Sign in to finish linking the bot." centerHeader>
 				<GoogleButton
 					label="Sign in with Google"
-					callbackURL={`/telegram-vincular?token=${encodeURIComponent(token)}`}
+					callbackURL={`/telegram-link?token=${encodeURIComponent(token)}`}
 				/>
 			</AuthCard>
 		);

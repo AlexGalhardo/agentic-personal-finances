@@ -151,7 +151,7 @@ End-to-end types: frontend and mobile import `type App` from
 
 A chat links only by proving account control: bot e-mail/password login
 (rate-limited per chat), or a single-use 15-minute token redeemed on the
-web (`/telegram-vincular`). Linking by pasting an account ID was removed
+web (`/telegram-link`). Linking by pasting an account ID was removed
 (ADR 0003). Unlink: `DELETE /telegram/link` or the bot’s switch-account flow.
 
 ## Stack (current pins)

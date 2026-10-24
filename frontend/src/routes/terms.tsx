@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageLayout } from "../components/page-layout";
 
-export const Route = createFileRoute("/termos-de-uso")({
+export const Route = createFileRoute("/terms")({
 	head: () => ({
 		meta: [{ title: "Terms of use — Money" }, { name: "description", content: "Money terms of use." }],
 	}),

@@ -29,7 +29,7 @@ async function type(page: Page, label: string, value: string): Promise<void> {
 }
 
 async function signUp(page: Page, name: string, email: string): Promise<void> {
-	await page.goto(`${BASE_URL}/criar-conta`);
+	await page.goto(`${BASE_URL}/signup`);
 	await page.waitForLoadState("networkidle");
 	await type(page, "Name", name);
 	await type(page, "Email", email);

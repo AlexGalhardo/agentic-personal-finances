@@ -10,7 +10,7 @@ export async function requireNoActivePlan() {
 	const plan = await getServerPlan();
 
 	if (plan && hasActivePlan(plan)) {
-		throw redirect({ to: "/minha-conta" });
+		throw redirect({ to: "/account" });
 	}
 
 	return { session };

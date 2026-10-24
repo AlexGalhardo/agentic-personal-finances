@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-	await page.goto("/entrar");
+	await page.goto("/login");
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Email").fill("admin@gmail.com");
 	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");

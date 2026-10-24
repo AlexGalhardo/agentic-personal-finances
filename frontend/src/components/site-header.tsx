@@ -27,20 +27,12 @@ export function SiteHeader({ actions, titleBadge }: { actions?: ReactNode; title
 							<UserMenu name={session.user.name} />
 						) : (
 							!isPending && (
-								<>
-									<Link
-										to="/entrar"
-										className="rounded-lg px-3 py-1.5 text-sm font-medium text-(--color-fg) hover:bg-brand-500/10"
-									>
-										Sign in
-									</Link>
-									<Link
-										to="/criar-conta"
-										className="rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-semibold text-black hover:bg-brand-600"
-									>
-										Create account
-									</Link>
-								</>
+								<Link
+									to="/login"
+									className="rounded-lg bg-brand-500 px-5 py-2 text-sm font-semibold text-black hover:bg-brand-400"
+								>
+									Login
+								</Link>
 							)
 						)}
 					</div>

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { PageLayout } from "../components/page-layout";
 import { useSession } from "../lib/auth-client";
 
-export const Route = createFileRoute("/contato")({
+export const Route = createFileRoute("/contact")({
 	head: () => ({
 		meta: [{ title: "Contact — Money" }, { name: "description", content: "Get in touch with the Money team." }],
 	}),

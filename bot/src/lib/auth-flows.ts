@@ -213,7 +213,7 @@ async function handleForgotPassword(conversation: BotConversation, ctx: Context)
 
 	await conversation.external(() =>
 		callAuth(() =>
-			auth.api.requestPasswordReset({ body: { email, redirectTo: `${apiEnv.FRONTEND_URL}/resetar-senha` } }),
+			auth.api.requestPasswordReset({ body: { email, redirectTo: `${apiEnv.FRONTEND_URL}/reset-password` } }),
 		),
 	);
 
@@ -227,7 +227,7 @@ async function handleForgotPassword(conversation: BotConversation, ctx: Context)
 async function handleWebLink(conversation: BotConversation, ctx: Context, chatId: number): Promise<string | null> {
 	const { url } = await conversation.external(async () => {
 		const { token } = await botCreateLinkToken(chatId);
-		return { url: `${apiEnv.FRONTEND_URL}/telegram-vincular?token=${encodeURIComponent(token)}` };
+		return { url: `${apiEnv.FRONTEND_URL}/telegram-link?token=${encodeURIComponent(token)}` };
 	});
 
 	const keyboard = new InlineKeyboard()

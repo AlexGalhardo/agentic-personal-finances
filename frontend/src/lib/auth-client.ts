@@ -11,7 +11,7 @@ import { createAuthClient } from "better-auth/react";
 // SSR) see the session. Pointing `baseURL` at the API breaks that SSR.
 //
 // No onTwoFactorRedirect/twoFactorPage on purpose: 2FA is resolved in a modal
-// on the login page itself (entrar.tsx), not by a full-page navigation.
+// on the login page itself (login.tsx), not by a full-page navigation.
 export const authClient = createAuthClient({
 	basePath: "/auth",
 	plugins: [twoFactorClient(), apiKeyClient()],

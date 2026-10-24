@@ -14,7 +14,7 @@ import { useMeQuery } from "../lib/queries";
 import { requireAuth } from "../lib/require-auth";
 import { useAppConfig } from "../lib/use-app-config";
 
-export const Route = createFileRoute("/minha-conta")({
+export const Route = createFileRoute("/account")({
 	head: () => ({ meta: [{ title: "My account — Money" }] }),
 	beforeLoad: requireAuth,
 	component: ProfilePage,

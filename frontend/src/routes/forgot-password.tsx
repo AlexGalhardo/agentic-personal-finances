@@ -5,7 +5,7 @@ import { AuthCard, FormField, inputClassName } from "../components/auth-card";
 import { requestPasswordReset } from "../lib/auth-client";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
-export const Route = createFileRoute("/esqueci-senha")({
+export const Route = createFileRoute("/forgot-password")({
 	head: () => ({ meta: [{ title: "Recover password — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	component: ForgetPasswordPage,
@@ -31,7 +31,7 @@ function ForgetPasswordPage() {
 		}
 
 		setLoading(true);
-		await requestPasswordReset({ email: result.data.email, redirectTo: "/resetar-senha" });
+		await requestPasswordReset({ email: result.data.email, redirectTo: "/reset-password" });
 		setLoading(false);
 		setSent(true);
 	}

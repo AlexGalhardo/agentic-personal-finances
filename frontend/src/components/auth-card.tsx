@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { ThemeToggle } from "./theme-toggle";
 
 export function AuthCard({
 	title,
@@ -33,9 +32,6 @@ export function AuthCard({
 					<div className="mt-6">{children}</div>
 				</div>
 			</section>
-			<footer className="flex items-center justify-center px-4 py-5">
-				<ThemeToggle />
-			</footer>
 		</div>
 	);
 }

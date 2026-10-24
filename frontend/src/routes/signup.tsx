@@ -8,7 +8,7 @@ import { signUp } from "../lib/auth-client";
 import { translateAuthError } from "../lib/auth-errors";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
-export const Route = createFileRoute("/criar-conta")({
+export const Route = createFileRoute("/signup")({
 	head: () => ({ meta: [{ title: "Create account — Money" }] }),
 	beforeLoad: redirectIfAuthenticated,
 	component: SignupPage,
@@ -82,7 +82,7 @@ function SignupPage() {
 					before accessing your account.
 				</p>
 				<p className="mt-4 text-center text-sm text-(--color-fg-muted)">
-					<Link to="/entrar" className="font-medium text-brand-600 hover:underline">
+					<Link to="/login" className="font-medium text-brand-600 hover:underline">
 						Back to sign in
 					</Link>
 				</p>
@@ -155,7 +155,7 @@ function SignupPage() {
 
 				<p className="text-center text-sm text-(--color-fg-muted)">
 					Already have an account?{" "}
-					<Link to="/entrar" className="font-medium text-brand-600 hover:underline">
+					<Link to="/login" className="font-medium text-brand-600 hover:underline">
 						Sign in
 					</Link>
 				</p>

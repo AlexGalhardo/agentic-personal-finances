@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Send, ShieldCheck, Smartphone } from "lucide-react";
 import { MoneyShowcase } from "../components/money-showcase";
 import { SiteFooter } from "../components/site-footer";
-import { useIsDarkTheme } from "../components/theme-toggle";
 import { redirectIfAuthenticated } from "../lib/redirect-if-authenticated";
 
 export const Route = createFileRoute("/")({
@@ -26,14 +25,8 @@ const HIGHLIGHTS = [
 ];
 
 function Home() {
-	// only mirrors the current state (a past bug hardcoded "dark" on the div,
-	// so the toggle had no visual effect).
-	const isDark = useIsDarkTheme();
-
 	return (
-		<div
-			className={`${isDark ? "dark" : ""} relative flex h-dvh w-dvw flex-col overflow-hidden bg-(--color-bg) text-(--color-fg)`}
-		>
+		<div className="dark relative flex h-dvh w-dvw flex-col overflow-hidden bg-(--color-bg) text-(--color-fg)">
 			<div className="pointer-events-none absolute -top-40 left-1/2 size-[42rem] -translate-x-1/2 rounded-full bg-brand-500/10 blur-3xl" />
 
 			<header className="relative px-6 py-5 sm:px-10">
@@ -43,7 +36,7 @@ function Home() {
 						Money
 					</span>
 					<Link
-						to="/entrar"
+						to="/login"
 						className="rounded-lg bg-brand-500 px-5 py-2 text-sm font-semibold text-black hover:bg-brand-400"
 					>
 						Login
@@ -64,7 +57,7 @@ function Home() {
 						and always in sync.
 					</p>
 					<Link
-						to="/criar-conta"
+						to="/signup"
 						className="mt-7 inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 font-semibold text-black shadow-lg shadow-brand-500/30 hover:bg-brand-400"
 					>
 						Get started free

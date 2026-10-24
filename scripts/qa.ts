@@ -454,17 +454,8 @@ await group("api", async () => {
 
 // ── web (browser) ────────────────────────────────────────────────────────────
 
-const PUBLIC_ROUTES = [
-	"/",
-	"/entrar",
-	"/criar-conta",
-	"/esqueci-senha",
-	"/contato",
-	"/termos-de-uso",
-	"/politica-de-privacidade",
-	"/api",
-];
-const PROTECTED_ROUTES = ["/dashboard", "/minha-conta", "/checkout"];
+const PUBLIC_ROUTES = ["/", "/login", "/signup", "/forgot-password", "/contact", "/terms", "/privacy", "/api"];
+const PROTECTED_ROUTES = ["/dashboard", "/account", "/checkout"];
 // Never clicked by the crawler: they leave the app, end the session or
 // destroy data (covered by explicit flows instead).
 const RISKY_CONTROL = /sair|excluir|apagar|deletar|google|telegram|github|logout/i;
@@ -488,7 +479,7 @@ function appears(locator: Locator, state: "visible" | "detached" = "visible", ti
 }
 
 async function webLogIn(page: Page, base: string, email: string, password: string): Promise<void> {
-	await page.goto(`${base}/entrar`);
+	await page.goto(`${base}/login`);
 	await page.waitForLoadState("networkidle");
 	await page.getByLabel("Email").fill(email);
 	await page.getByLabel("Password", { exact: true }).fill(password);
@@ -559,8 +550,8 @@ await group("web", async () => {
 		await page.waitForLoadState("networkidle");
 		check(
 			g,
-			`${route} redirects anonymous visitors to /entrar`,
-			new URL(page.url()).pathname === "/entrar",
+			`${route} redirects anonymous visitors to /login`,
+			new URL(page.url()).pathname === "/login",
 			page.url(),
 		);
 	}
@@ -579,7 +570,7 @@ await group("web", async () => {
 
 	// Reflected XSS through query strings
 	await page.goto(
-		`${WEB}/entrar?redirect=${encodeURIComponent("javascript:alert(1)")}&q=<script>window.__qaXss=1</script>`,
+		`${WEB}/login?redirect=${encodeURIComponent("javascript:alert(1)")}&q=<script>window.__qaXss=1</script>`,
 	);
 	await page.waitForLoadState("networkidle");
 	check(g, "reflected XSS in the query string does not execute", !(await page.evaluate(() => "__qaXss" in window)));
@@ -589,7 +580,7 @@ await group("web", async () => {
 	const app = await user.newPage();
 	const appErrors = trackErrors(app);
 	const email = `qa-web-${RUN_ID}@example.com`;
-	await app.goto(`${WEB}/criar-conta`);
+	await app.goto(`${WEB}/signup`);
 	await app.waitForLoadState("networkidle");
 	await app.getByLabel("Name").fill("Web QA");
 	await app.getByLabel("Email").fill(email);
@@ -636,7 +627,7 @@ await group("web", async () => {
 		check(g, `${name} downloads ${file}`, (await download)?.suggestedFilename() === file);
 	}
 
-	for (const route of ["/dashboard", "/minha-conta", "/api", "/checkout"]) {
+	for (const route of ["/dashboard", "/account", "/api", "/checkout"]) {
 		appErrors.length = 0;
 		const clicked = await crawlControls(app, `${WEB}${route}`, appErrors);
 		check(
@@ -646,7 +637,7 @@ await group("web", async () => {
 			appErrors.join("; ").slice(0, 300),
 		);
 	}
-	await app.goto(`${WEB}/minha-conta`);
+	await app.goto(`${WEB}/account`);
 	await app.waitForLoadState("networkidle");
 	check(g, "account page shows the free plan", await appears(app.getByText("Free").first()));
 	await shot(app, "web_account");
@@ -667,8 +658,8 @@ await group("web", async () => {
 	await app.waitForLoadState("networkidle");
 	check(
 		g,
-		"logout ends the session (dashboard redirects to /entrar)",
-		new URL(app.url()).pathname === "/entrar",
+		"logout ends the session (dashboard redirects to /login)",
+		new URL(app.url()).pathname === "/login",
 		app.url(),
 	);
 
@@ -676,8 +667,8 @@ await group("web", async () => {
 	const guest = await (await browser.newContext()).newPage();
 	await webLogIn(guest, WEB, ADMIN.email, "wrong-password");
 	await guest.waitForTimeout(1500);
-	check(g, "wrong password keeps the user on /entrar", new URL(guest.url()).pathname === "/entrar");
-	await guest.goto(`${WEB}/entrar?redirect=${encodeURIComponent("https://evil.example")}`);
+	check(g, "wrong password keeps the user on /login", new URL(guest.url()).pathname === "/login");
+	await guest.goto(`${WEB}/login?redirect=${encodeURIComponent("https://evil.example")}`);
 	await webLogIn(guest, WEB, ADMIN.email, ADMIN.password);
 	await guest.waitForTimeout(3000);
 	check(
