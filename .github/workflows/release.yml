@@ -279,7 +279,7 @@ jobs:
             ver="${GITHUB_REF_NAME#v}"
             awk -v ver="$ver" '
               $0 ~ "^## \\[" ver "\\]" {p=1; next}
-              p && $0 ~ /^## \\[/ {exit}
+              p && $0 ~ /^## \[/ {exit}
               p {print}
             ' CHANGELOG.md > "$notes_file"
           fi
