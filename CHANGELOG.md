@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-24
+
 ### Added
 
 - `APP_MODE` (`local` default, offline-first/SQLite; `hosted` for the
@@ -280,7 +282,7 @@ recorded from the commit history.
 - Initial application: auth, dashboard, transactions, PIX payments, Telegram
   bot.
 
-[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.1.0...HEAD
 [0.10.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.9.0...v0.10.0
 [0.6.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.5.0...v0.6.0
 [0.1.0]: https://github.com/AlexGalhardo/agentic-personal-finances/releases/tag/v0.1.0
