@@ -551,7 +551,7 @@ await group("web", async () => {
 	check(
 		g,
 		"unknown page shows the not-found screen",
-		(notFound?.status() ?? 0) === 404 || (await page.getByText(/não encontrad/i).count()) > 0,
+		(notFound?.status() ?? 0) === 404 || (await page.getByText(/não encontrad|does not exist/i).count()) > 0,
 	);
 
 	for (const route of PROTECTED_ROUTES) {
@@ -620,8 +620,8 @@ await group("web", async () => {
 		await app.getByLabel("Valor").fill("56.78");
 		await app.getByRole("button", { name: "Save changes" }).click();
 		check(g, "edit the transaction through the UI", await appears(row.getByText("R$ 56,78")));
-		await row.getByRole("button", { name: "Excluir" }).click();
-		await app.getByRole("button", { name: "Confirmar exclusão" }).click();
+		await row.getByRole("button", { name: "Delete" }).click();
+		await app.getByRole("button", { name: "Confirm delete" }).click();
 		check(g, "delete the transaction through the UI", await appears(row.first(), "detached"));
 	}
 
@@ -659,7 +659,7 @@ await group("web", async () => {
 		.click()
 		.catch(() => undefined);
 	await app
-		.getByText("Sair", { exact: true })
+		.getByText("Sign out", { exact: true })
 		.click({ timeout: 5000 })
 		.catch(() => undefined);
 	await app.waitForTimeout(1500);

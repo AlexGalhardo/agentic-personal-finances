@@ -9,7 +9,8 @@
 	"scripts": {
 		"dev": "bun run --watch src/server.ts",
 		"start": "bun run src/server.ts",
-		"build": "bun run db:generate:postgres && bun build --compile --minify ./src/server.ts --outfile server",
+		"build": "bun run db:generate && bun build --compile --minify ./src/server.ts --outfile server",
+		"build:postgres": "bun run db:generate:postgres && bun build --compile --minify ./src/server.ts --outfile server",
 		"pretest": "bun run test:setup",
 		"test": "bun test",
 		"test:setup": "bun run scripts/reset-test-db.ts && DATABASE_URL=file:./test.db DATABASE_PROVIDER=sqlite prisma7 migrate deploy && DATABASE_URL=file:./test.db DATABASE_PROVIDER=sqlite prisma7 generate",

@@ -14,7 +14,6 @@
 #      linked to the Play Console (Settings > API access), its JSON key
 #      saved at mobile/google-play-service-account.json (sensitive — NEVER
 #      commit it; already covered by .gitignore).
-#   4. mobile/.env with EXPO_PUBLIC_API_URL pointing at the production API.
 #
 # Usage:
 #   ./setups/deploy-android-play-store.sh              # build the .aab only
@@ -30,11 +29,6 @@ fi
 
 echo "==> Installing dependencies (bun install)"
 bun install
-
-if [ ! -f .env ]; then
-	echo "mobile/.env not found. Copy mobile/.env.example to mobile/.env and set EXPO_PUBLIC_API_URL (pointing at the production API) before continuing." >&2
-	exit 1
-fi
 
 # Pinned version (not "@latest") — see deploy-android-apk.sh for why.
 echo "==> Checking Expo login (eas whoami)"

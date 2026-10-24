@@ -31,6 +31,7 @@
 		"desktop:smoke": "bun run --cwd desktop smoke",
 		"desktop:dist": "bun run --cwd desktop dist",
 		"dev:all": "bun scripts/dev.ts",
+		"build": "bun scripts/standalone/build.ts",
 		"build:standalone": "bun scripts/standalone/build.ts",
 		"qa": "bun scripts/qa.ts --start",
 		"lint": "biome check . && bun run lint:md && bun run check:deps",

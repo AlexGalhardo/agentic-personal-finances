@@ -7,12 +7,14 @@
 #
 # Prerequisites:
 #   - Expo account (https://expo.dev) — `eas login` the first time.
-#   - mobile/.env with EXPO_PUBLIC_API_URL pointing at an API the phone can
-#     reach (not localhost — see mobile/.env.example).
+#
+# The app is offline-first (data lives in a local SQLite file on the phone),
+# so the APK needs no API address or .env file.
 #
 # Usage:
 #   ./setups/deploy-android-apk.sh            # build on Expo's cloud (EAS), no local Android SDK needed
-#   ./setups/deploy-android-apk.sh --local    # local build (needs Android SDK + JDK installed)
+#   ./setups/deploy-android-apk.sh --local    # local EAS build (needs Android SDK + JDK installed)
+#   ./setups/deploy-android-apk.sh --gradle   # plain Gradle build, no Expo account (what the release workflow does)
 
 set -e
 cd "$(dirname "$0")/../mobile"
@@ -25,9 +27,13 @@ fi
 echo "==> Installing dependencies (bun install)"
 bun install
 
-if [ ! -f .env ]; then
-	echo "mobile/.env not found. Copy mobile/.env.example to mobile/.env and set EXPO_PUBLIC_API_URL before continuing." >&2
-	exit 1
+if [ "$1" = "--gradle" ]; then
+	echo "==> Gradle APK build (needs Android SDK + JDK 17; release variant signed with the debug keystore)"
+	bunx expo prebuild --platform android --no-install
+	(cd android && ./gradlew assembleRelease)
+	echo ""
+	echo "APK: mobile/android/app/build/outputs/apk/release/app-release.apk"
+	exit 0
 fi
 
 # Pinned version (not "@latest"): Expo recommends not making eas-cli a

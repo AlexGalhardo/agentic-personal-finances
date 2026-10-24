@@ -1,12 +1,10 @@
 // Local dev stack in one terminal: backend (:4000), web frontend (:4001),
 // Expo (Metro + QR code for Expo Go) and the Electron desktop app.
-//   bun run dev:all [--skip mobile,desktop] [--host 192.168.0.10]
-// Expo gets EXPO_PUBLIC_API_URL=http://<LAN IP>:4000: a phone resolves
-// "localhost" to itself, never to this computer. Expo keeps the terminal
-// (stdin + QR code); the other services print with a [name] prefix.
+//   bun run dev:all [--skip mobile,desktop]
+// Expo keeps the terminal (stdin + QR code); the other services print with
+// a [name] prefix.
 // Ctrl+C stops everything.
 import { existsSync } from "node:fs";
-import { networkInterfaces } from "node:os";
 import { join } from "node:path";
 import type { Subprocess } from "bun";
 
@@ -20,23 +18,6 @@ const argValue = (name: string): string | undefined => {
 	return index >= 0 ? args[index + 1] : undefined;
 };
 const skip = new Set((argValue("--skip") ?? "").split(",").filter(Boolean));
-
-// Virtual adapters (WSL, Hyper-V, Docker, VMs) also have private IPv4s that
-// a phone on the Wi-Fi cannot reach.
-const VIRTUAL_ADAPTER = /vethernet|wsl|hyper-v|virtualbox|vmware|docker|br-|veth|utun|tailscale|zerotier/i;
-
-function lanIp(): string | undefined {
-	const candidates = Object.entries(networkInterfaces()).flatMap(([name, addresses]) =>
-		(addresses ?? [])
-			.filter((address) => address.family === "IPv4" && !address.internal)
-			.map((address) => ({ name, ip: address.address })),
-	);
-	const isPrivate = (ip: string): boolean => /^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(ip);
-	return (
-		candidates.find((c) => isPrivate(c.ip) && !VIRTUAL_ADAPTER.test(c.name)) ??
-		candidates.find((c) => isPrivate(c.ip))
-	)?.ip;
-}
 
 async function waitFor(url: string, timeoutMs = 120_000): Promise<boolean> {
 	const deadline = Date.now() + timeoutMs;
@@ -119,19 +100,6 @@ if (!skip.has("desktop")) {
 }
 
 if (!skip.has("mobile")) {
-	const host = argValue("--host") ?? lanIp();
-	if (!host) {
-		console.error("[dev] no LAN IPv4 found; pass --host <this computer's IP> for Expo Go.");
-		stopAll();
-	}
-	const apiUrl = `http://${host}:4000`;
-	console.log(`[dev] Expo → EXPO_PUBLIC_API_URL=${apiUrl} (phone and computer must share the Wi-Fi;`);
-	console.log("[dev] on Windows allow Bun through the firewall for private networks if the phone cannot connect)");
-	// --clear: EXPO_PUBLIC_* values are inlined at transform time; a cached
-	// bundle from another IP would keep calling the old address.
-	start("mobile", ["bunx", "expo", "start", "--lan", "--clear"], {
-		cwd: "mobile",
-		env: { EXPO_PUBLIC_API_URL: apiUrl },
-		tty: true,
-	});
+	// The app is offline-first (local SQLite): Expo needs no API address.
+	start("mobile", ["bunx", "expo", "start", "--lan"], { cwd: "mobile", tty: true });
 }

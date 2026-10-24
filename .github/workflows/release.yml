@@ -14,10 +14,9 @@ permissions:
   contents: read
 
 env:
-  # Baked into the desktop and mobile builds; override with repository
-  # variables (Settings > Secrets and variables > Actions > Variables).
+  # Only used to run the desktop app against a remote server instead of its
+  # embedded SQLite one (repository variable DESKTOP_APP_URL).
   DESKTOP_APP_URL: ${{ vars.DESKTOP_APP_URL || 'https://moneyzin-frontend.up.railway.app' }}
-  EXPO_PUBLIC_API_URL: ${{ vars.MOBILE_API_URL || 'https://moneyzin-backend.up.railway.app' }}
 
 jobs:
   # Each target compiles on its own OS: @libsql/client ships a per-platform
@@ -76,6 +75,8 @@ jobs:
 
   electron:
     runs-on: ${{ matrix.os }}
+    # A hung smoke test once held a runner for 6 hours.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -92,6 +93,9 @@ jobs:
         with:
           bun-version: 1.4.4
       - run: bun install --frozen-lockfile
+      # Bundled as the desktop app's embedded server (SQLite, offline).
+      - name: Build standalone server
+        run: bun run build:standalone
       - name: Package
         working-directory: desktop
         shell: bash
@@ -116,6 +120,7 @@ jobs:
       - name: Smoke test the packaged app
         working-directory: desktop
         shell: bash
+        timeout-minutes: 3
         run: ${{ matrix.smoke }} --smoke
       - name: Collect
         shell: bash
@@ -139,6 +144,7 @@ jobs:
   # see mobile-build.yml and docs/deploy/android.md).
   android:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -149,11 +155,6 @@ jobs:
           distribution: temurin
           java-version: 17
       - run: bun install --frozen-lockfile
-      - name: Generate Prisma Client
-        working-directory: backend
-        run: bun run db:generate
-        env:
-          DATABASE_URL: file:./ci.db
       - name: Prebuild
         working-directory: mobile
         run: bunx expo prebuild --platform android --no-install
@@ -230,11 +231,6 @@ jobs:
         with:
           bun-version: 1.4.4
       - run: bun install --frozen-lockfile
-      - name: Generate Prisma Client
-        working-directory: backend
-        run: bun run db:generate
-        env:
-          DATABASE_URL: file:./ci.db
       - name: Prebuild (runs pod install)
         working-directory: mobile
         run: bunx expo prebuild --platform ios
