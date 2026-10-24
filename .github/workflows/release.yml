@@ -67,7 +67,7 @@ jobs:
           "./dist-bin/agent-money-backend-${{ matrix.name }}${{ matrix.ext }}" &
           for i in $(seq 30); do curl -sf http://localhost:4999/ && exit 0; sleep 1; done
           exit 1
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: binaries-${{ matrix.name }}
           path: dist-bin/*
@@ -132,7 +132,7 @@ jobs:
             Linux) cp *.AppImage ../../dist-desktop/agent-money-desktop-linux-x64.AppImage ;;
             macOS) cp agent-money-desktop-macos-arm64.zip ../../dist-desktop/ ;;
           esac
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: desktop-${{ runner.os }}
           path: dist-desktop/*
@@ -165,7 +165,7 @@ jobs:
         run: |
           mkdir -p dist-mobile
           cp mobile/android/app/build/outputs/apk/release/app-release.apk dist-mobile/agent-money-android.apk
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: android-apk
           path: dist-mobile/*
@@ -245,7 +245,7 @@ jobs:
         run: |
           mkdir -p dist-mobile
           ditto -c -k --keepParent mobile/ios/build/Build/Products/Release-iphonesimulator/Money.app dist-mobile/agent-money-ios-simulator.zip
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: ios-simulator
           path: dist-mobile/*
