@@ -28,6 +28,22 @@ built for personal use, open-source practice, and agent-assisted development.
 SQLite is the default everywhere. PostgreSQL is only used by the hosted
 deploy (Railway) and is opt-in locally (`setups/setup-docker.sh postgres`).
 
+## Tour
+
+<!-- Regenerate with `bun scripts/readme-gifs.ts` (see the header of that file). -->
+
+| Landing, sign-up and first look           | Add, search and filter transactions                  |
+| ----------------------------------------- | ---------------------------------------------------- |
+| ![Sign-up](./docs/assets/gifs/signup.gif) | ![Transactions](./docs/assets/gifs/transactions.gif) |
+
+| API documentation (OpenAPI)                  | Light / dark theme                     |
+| -------------------------------------------- | -------------------------------------- |
+| ![API docs](./docs/assets/gifs/api-docs.gif) | ![Theme](./docs/assets/gifs/theme.gif) |
+
+| JSON backup: export, then import anywhere |
+| ----------------------------------------- |
+| ![Backup](./docs/assets/gifs/backup.gif)  |
+
 ## Download and try it (no setup)
 
 Every `vX.Y.Z` tag publishes a GitHub Release with ready-made builds:
