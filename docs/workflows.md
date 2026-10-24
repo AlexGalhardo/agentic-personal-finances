@@ -98,13 +98,9 @@ Skill: `agent-money-sync-points`.
 1. Follow [`design-system.md`](./design-system.md) (tokens, components, patterns).
 2. `bun run typecheck:mobile && bun run mobile:test`.
 3. Prove the native bundle compiles:
-   `cd mobile && EXPO_PUBLIC_API_URL=http://localhost:4200 npx expo export --platform android --clear`.
-4. **Visual review without a device**: `cd mobile && bun run test:e2e:web`
-   leaves the Expo web export in `mobile/dist-e2e/`; serve it with
-   `bun scripts/serve-web-export.ts dist-e2e 4301` next to the E2E backend
-   and screenshot it with Playwright at a phone viewport (390×844). Check
-   hierarchy, spacing rhythm, empty/loading states — then keep the testIDs
-   in the design system's list intact.
+   `cd mobile && npx expo export --platform android --clear`.
+4. Data lives in local SQLite (`mobile/src/adapters/sqlite/`), so there is
+   no API to start: run `bun run mobile:dev` and open it in Expo Go.
 5. Native-only behavior (alerts, secure storage, deep links) needs Maestro
    on an emulator/device.
 

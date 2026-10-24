@@ -35,16 +35,13 @@ With Bun and a filled `backend/.env` (copy `backend/.env.example`):
 ```bash
 bun run dev:all                       # API :4000, web :4001, Expo, desktop app
 bun run dev:all --skip mobile,desktop # only API + web
-bun run dev:all --host 192.168.0.10   # force the LAN IP handed to Expo
 ```
 
 `scripts/dev.ts` starts the backend and the web dashboard, waits for the
 API, opens the Electron desktop app once the dashboard answers, and runs
-Expo with `EXPO_PUBLIC_API_URL=http://<this computer's LAN IP>:4000` so
-Expo Go on a phone (same Wi-Fi) reaches the local API. Expo keeps the
-terminal (QR code, `a` for the Android emulator); the other services print
-with a `[name]` prefix; Ctrl+C stops everything. On Windows, allow Bun
-through the firewall for private networks if the phone cannot connect.
+Expo (the mobile app is offline-first, so it needs no API address). Expo
+keeps the terminal (QR code, `a` for the Android emulator); the other
+services print with a `[name]` prefix; Ctrl+C stops everything.
 
 ## Run with Docker or PM2
 

@@ -6,6 +6,37 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Landing, sign-in and sign-up redesigned around green "money" branding: a
+  viewport-fit landing page with only a **Login** button in the navbar and an
+  animated balance card in the second grid column; split-screen auth pages.
+- Whole-account JSON backup (`account-backup` in
+  `@agentic-personal-finances/core`): **Export .json** on the web/desktop
+  dashboard and **Settings > Export all data** on mobile; the web **Import**
+  dialog and the mobile **Import backup** screen accept it.
+- Desktop app embeds the standalone server (API + web + SQLite) and runs
+  fully offline; `DESKTOP_APP_URL` / `--url` still point it at a remote one.
+- `setups/setup-standalone.sh` and `deploy-android-apk.sh --gradle`.
+
+### Changed
+
+- **Mobile is offline-first**: transactions live in local SQLite
+  (`expo-sqlite`); login, sign-up, API client, subscription and 2FA screens
+  and the Playwright web E2E were removed. Maestro flow updated.
+- Root `bun run build` and `backend` `bun run build` now target SQLite
+  (`build:postgres` keeps the production binary).
+- Release workflow: 30/60-minute job timeouts (a hung Electron smoke test held
+  a runner for 6 h), standalone server built before packaging the desktop app,
+  no API URL baked into the APK.
+- Setup scripts no longer require `mobile/.env`; README documents testing
+  every workspace and downloading release builds.
+
+- Remaining Portuguese UI copy, aria-labels, validation/error messages, bot
+  replies and PDF/export labels translated to English (frontend, bot,
+  backend payment route). Nubank CSV sample data and `Salário` fixtures are
+  unchanged.
+
 ## [0.10.0] - 2026-10-22
 
 ### Added

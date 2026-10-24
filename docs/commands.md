@@ -25,7 +25,7 @@ bun run typecheck:core      # packages/core only
 bun check --no-script -p backend   # Bun's built-in typechecker (one workspace)
 bun run test                # backend + bot + frontend + mobile unit/integration tests
 cd frontend && bunx playwright test      # web E2E
-cd mobile && bun run test:e2e:web        # mobile E2E on the Expo web build
+cd mobile && maestro test maestro/      # mobile E2E (emulator/device)
 cd mobile && maestro test maestro/       # native E2E (emulator/device)
 bun run qa                               # QA/pentest pass: API, web, desktop, bot, Android emulator
 bun scripts/qa.ts --only api,web --report qa-report.md --shots qa-shots   # against running servers
@@ -63,7 +63,7 @@ curl localhost:4000/openapi/json      # generated OpenAPI spec
 cd mobile
 bun run test                                                    # Jest
 bun check --no-script                                           # typecheck
-EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo export --platform android --clear   # prove the native bundle compiles
+npx expo export --platform android --clear   # prove the native bundle compiles
 bun run build:apk | build:aab | submit:play-store               # EAS (paid/quota) — see docs/deploy/android.md
 ```
 

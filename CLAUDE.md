@@ -36,8 +36,9 @@ Guide for Claude Code (and any AI agent) working in this repository.
 **Agentic Personal Finances** — a forkable personal finance monorepo: one
 ElysiaJS backend consumed by a TanStack Start web dashboard, a Telegram
 bot, an Expo mobile app and an Electron desktop app, all sharing one
-auth/database (web, bot and mobile typed end-to-end via Eden; the desktop
-app wraps the web dashboard).
+auth/database (web and bot typed end-to-end via Eden). The desktop app embeds
+the SQLite standalone server; mobile is offline-first (local `expo-sqlite`, no
+login/API). Both exchange a JSON backup (`packages/core/src/account-backup.ts`).
 
 ```text
 /packages/core/ — shared hexagonal core (@agentic-personal-finances/core)
@@ -87,7 +88,8 @@ audit, mobile design system, ADRs (`docs/decisions/`) and deploy guides
 ## Key commands
 
 ```bash
-bun run dev:all      # backend + web + Expo (LAN IP injected) + desktop app
+bun run dev:all      # backend + web + Expo + desktop app
+bun run build        # all-in-one SQLite executable (frontend + backend) at the repo root
 bun run qa           # QA/pentest pass on a seeded throwaway stack (Android emulator included)
 bun run check        # lint + bun check (typecheck) + unit tests  — requires Bun ≥ 1.4.4
 bun run typecheck:core  # packages/core only

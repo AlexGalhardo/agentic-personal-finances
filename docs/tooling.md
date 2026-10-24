@@ -93,7 +93,6 @@ client bundles.
 | frontend   | `bun:test`       | `bun run frontend:test`               | Pure `lib/` helpers                           |
 | mobile     | Jest (jest-expo) | `bun run mobile:test`                 | `src/**/*.test.ts(x)`                         |
 | web E2E    | Playwright       | `cd frontend && bunx playwright test` | Backend `:4200`, Vite `:4201`, reseeded DB    |
-| mobile E2E | Playwright       | `cd mobile && bun run test:e2e:web`   | Backend `:4210`, Expo web export `:4301`      |
 | native E2E | Maestro          | `cd mobile && maestro test maestro/`  | Emulator/device required                      |
 | desktop    | Electron smoke   | `bun run desktop:smoke`               | Boots the window, exits 0 once a page renders |
 | QA/pentest | `scripts/qa.ts`  | `bun run qa`                          | API `:4400`, web `:4401`, Metro `:8091`       |
