@@ -31,5 +31,5 @@ export async function reportConversation(conversation: BotConversation, ctx: Con
 		buildPeriodReportPdf(userId, range, `Report — last ${days} days`),
 	);
 
-	await choice.replyWithDocument(new InputFile(pdfBuffer, `relatorio-${days}-dias.pdf`));
+	await choice.replyWithDocument(new InputFile(pdfBuffer, `report-${days}-days.pdf`));
 }

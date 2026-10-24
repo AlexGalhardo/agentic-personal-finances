@@ -89,7 +89,7 @@ export async function buildPeriodReportPdf(
 	doc.fontSize(11);
 	doc.text(`Income: ${formatCurrencyCents(incomeTotal)}`);
 	doc.text(`Expenses: ${formatCurrencyCents(expenseTotal)}`);
-	doc.text(`Saldo: ${formatCurrencyCents(incomeTotal - expenseTotal)}`);
+	doc.text(`Balance: ${formatCurrencyCents(incomeTotal - expenseTotal)}`);
 	doc.text(`Transactions in period: ${result.total}`);
 	doc.moveDown();
 

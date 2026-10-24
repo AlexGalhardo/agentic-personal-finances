@@ -23,7 +23,7 @@ function authMenuKeyboard(): InlineKeyboard {
 		.row()
 		.text("🆕 Create account", "authmenu:signup")
 		.row()
-		.text("🌐 Entrar pelo navegador (Google ou e-mail)", "authmenu:web")
+		.text("🌐 Sign in through the browser (Google or email)", "authmenu:web")
 		.row()
 		.text("❓ Forgot my password", "authmenu:forgot");
 }
@@ -43,12 +43,12 @@ async function promptText(
 
 	for (;;) {
 		const replyCtx = await conversation.waitFor("message:text", {
-			otherwise: (otherCtx) => otherCtx.reply("Responda em texto:"),
+			otherwise: (otherCtx) => otherCtx.reply("Reply with text:"),
 		});
 		const text = replyCtx.message.text.trim();
 		const error = validate(text);
 		if (error) {
-			await replyCtx.reply(`${error} Tente novamente:`);
+			await replyCtx.reply(`${error} Try again:`);
 			continue;
 		}
 		return text;
@@ -73,7 +73,7 @@ async function promptPassword(
 
 		const error = validate(text);
 		if (error) {
-			await replyCtx.reply(`${error} Tente novamente:`);
+			await replyCtx.reply(`${error} Try again:`);
 			continue;
 		}
 		return text;
@@ -126,7 +126,7 @@ async function attemptLogin(chatId: number, email: string, password: string): Pr
 }
 
 async function handleLogin(conversation: BotConversation, ctx: Context, chatId: number): Promise<string | null> {
-	const email = await promptText(conversation, ctx, "Digite seu *e-mail*:", (text) =>
+	const email = await promptText(conversation, ctx, "Enter your *email*:", (text) =>
 		emailSchema.safeParse(text).success ? null : "Invalid email.",
 	);
 	const password = await promptPassword(conversation, ctx, "🔒 Enter your password:", () => null);
@@ -135,7 +135,7 @@ async function handleLogin(conversation: BotConversation, ctx: Context, chatId: 
 
 	switch (attempt.outcome) {
 		case "locked":
-			await ctx.reply(`🚫 Muitas tentativas incorretas. Tente novamente em ${attempt.minutes} min.`);
+			await ctx.reply(`🚫 Too many incorrect attempts. Try again in ${attempt.minutes} min.`);
 			return null;
 		case "failed":
 			if (attempt.code === "EMAIL_NOT_VERIFIED") {
@@ -159,7 +159,7 @@ async function handleSignup(conversation: BotConversation, ctx: Context, chatId:
 	const rawName = await promptText(
 		conversation,
 		ctx,
-		"Como podemos te chamar? Digite seu *nome* (4 a 16 letras):",
+		"What should we call you? Enter your *name* (4 to 16 letters):",
 		(text) => {
 			if (text.length < 4) return "Name too short (minimum 4 characters).";
 			if (text.length > 16) return "Name too long (maximum 16 characters).";
@@ -168,7 +168,7 @@ async function handleSignup(conversation: BotConversation, ctx: Context, chatId:
 	);
 	const name = capitalizeFirstLetter(rawName);
 
-	const email = await promptText(conversation, ctx, "Digite seu *e-mail*:", (text) => {
+	const email = await promptText(conversation, ctx, "Enter your *email*:", (text) => {
 		if (text.length > 48) return "Email too long (maximum 48 characters).";
 		return emailSchema.safeParse(text).success ? null : "Invalid email.";
 	});
@@ -178,7 +178,7 @@ async function handleSignup(conversation: BotConversation, ctx: Context, chatId:
 	);
 	const password = await promptPassword(conversation, ctx, "Enter your password:", (text) => {
 		const failing = failingPasswordRules(text);
-		return failing.length === 0 ? null : `Ainda falta: ${failing.join(", ")}.`;
+		return failing.length === 0 ? null : `Still missing: ${failing.join(", ")}.`;
 	});
 
 	const result = await conversation.external(() =>
@@ -231,11 +231,11 @@ async function handleWebLink(conversation: BotConversation, ctx: Context, chatId
 	});
 
 	const keyboard = new InlineKeyboard()
-		.url("🌐 Abrir no navegador", url)
+		.url("🌐 Open in browser", url)
 		.row()
 		.text("🔄 I signed in, verify link", "weblink:check")
 		.row()
-		.text("❌ Cancelar", "weblink:cancel");
+		.text("❌ Cancel", "weblink:cancel");
 
 	await ctx.reply(
 		"Tap the button below to sign in via browser (Google or email and password). The link is valid for 15 minutes. Then return here and tap *I signed in, verify link*.",

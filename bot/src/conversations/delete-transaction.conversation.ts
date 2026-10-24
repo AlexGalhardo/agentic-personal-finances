@@ -20,11 +20,11 @@ export async function deleteTransactionConversation(
 	let candidates: Candidate[] = [];
 	for (;;) {
 		const reply = await conversation.waitFor("message:text", {
-			otherwise: (otherCtx) => otherCtx.reply("Digite um texto para buscar:"),
+			otherwise: (otherCtx) => otherCtx.reply("Enter text to search for:"),
 		});
 		const text = reply.message.text.trim();
 		if (!text) {
-			await reply.reply("Digite um texto para buscar:");
+			await reply.reply("Enter text to search for:");
 			continue;
 		}
 
@@ -64,10 +64,10 @@ export async function deleteTransactionConversation(
 	}
 	await picked.answerCallbackQuery();
 
-	const confirmKeyboard = new InlineKeyboard()
-		.text("✅ Sim, apagar", "confirm:yes")
-		.text("❌ Cancelar", "confirm:no");
-	await picked.reply(`Tem certeza que deseja apagar?\n\n${summarize(candidate)}`, { reply_markup: confirmKeyboard });
+	const confirmKeyboard = new InlineKeyboard().text("✅ Yes, delete", "confirm:yes").text("❌ Cancel", "confirm:no");
+	await picked.reply(`Are you sure you want to delete?\n\n${summarize(candidate)}`, {
+		reply_markup: confirmKeyboard,
+	});
 
 	const confirmation = await conversation.waitFor("callback_query:data", {
 		otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to confirm or cancel."),

@@ -15,16 +15,16 @@ export async function listTransactionsConversation(
 	ctx: Context,
 	userId: string,
 ): Promise<void> {
-	await ctx.reply(`📃 How many transactions do you want to see? (${MIN_LIMIT} a ${MAX_LIMIT})`);
+	await ctx.reply(`📃 How many transactions do you want to see? (${MIN_LIMIT} to ${MAX_LIMIT})`);
 
 	let limit: number | null = null;
 	while (limit === null) {
 		const reply = await conversation.waitFor("message:text", {
-			otherwise: (otherCtx) => otherCtx.reply(`Enter a number from ${MIN_LIMIT} a ${MAX_LIMIT}:`),
+			otherwise: (otherCtx) => otherCtx.reply(`Enter a number from ${MIN_LIMIT} to ${MAX_LIMIT}:`),
 		});
 		const parsed = Number(reply.message.text.trim());
 		if (!Number.isInteger(parsed) || parsed < MIN_LIMIT || parsed > MAX_LIMIT) {
-			await reply.reply(`Invalid number. Enter a value from ${MIN_LIMIT} a ${MAX_LIMIT}:`);
+			await reply.reply(`Invalid number. Enter a value from ${MIN_LIMIT} to ${MAX_LIMIT}:`);
 			continue;
 		}
 		limit = parsed;
@@ -35,7 +35,7 @@ export async function listTransactionsConversation(
 	const header =
 		result.total === 0
 			? "No transactions found."
-			: `Mostrando ${Math.min(limit, result.total)} de ${result.total} transaction(s):`;
+			: `Showing ${Math.min(limit, result.total)} of ${result.total} transaction(s):`;
 	const body = formatTransactionList(result.transactions);
 
 	await ctx.reply(result.total === 0 ? header : `${header}\n\n${body}`);

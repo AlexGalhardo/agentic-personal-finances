@@ -20,13 +20,13 @@ const PER_PAGE = 20;
 function filterMenuKeyboard(): InlineKeyboard {
 	const keyboard = new InlineKeyboard();
 	const options: [string, string][] = [
-		["Categoria", "filter:category"],
+		["Category", "filter:category"],
 		["Transaction name", "filter:name"],
 		["Period (start/end date)", "filter:range"],
-		["Ano", "filter:year"],
+		["Year", "filter:year"],
 		["Month", "filter:month"],
-		["Última semana", "filter:lastweek"],
-		["Últimos 30 dias", "filter:last30"],
+		["Last week", "filter:lastweek"],
+		["Last 30 days", "filter:last30"],
 	];
 	for (const row of chunk(options, 2)) {
 		for (const [label, data] of row) keyboard.text(label, data);
@@ -74,7 +74,7 @@ export async function searchConversation(conversation: BotConversation, ctx: Con
 	}
 
 	if (kind === "category") {
-		await choice.reply("Escolha a categoria:", { reply_markup: categoryKeyboard() });
+		await choice.reply("Choose a category:", { reply_markup: categoryKeyboard() });
 		const categoryChoice = await conversation.waitFor("callback_query:data", {
 			otherwise: (otherCtx) => otherCtx.reply("Use the buttons above to choose a category."),
 		});
@@ -90,8 +90,8 @@ export async function searchConversation(conversation: BotConversation, ctx: Con
 
 	const prompts: Record<string, string> = {
 		name: "Enter the name (or part of the name) of the transaction:",
-		range: "Digite a data inicial e final no formato dd/mm/aaaa dd/mm/aaaa (ex: 01/08/2026 15/08/2026):",
-		year: "Digite o ano no formato aaaa (ex: 2026):",
+		range: "Enter the start and end dates as dd/mm/yyyy dd/mm/yyyy (e.g. 01/08/2026 15/08/2026):",
+		year: "Enter the year as yyyy (e.g. 2026):",
 		month: "Enter the month as mm/yyyy (e.g. 08/2026):",
 	};
 
@@ -118,7 +118,7 @@ export async function searchConversation(conversation: BotConversation, ctx: Con
 			} else if (kind === "range") {
 				const [fromText, toText] = text.split(/\s+/);
 				if (!fromText || !toText) {
-					throw new InvalidDateRangeError("Envie as duas datas separadas por espaço: dd/mm/aaaa dd/mm/aaaa");
+					throw new InvalidDateRangeError("Send both dates separated by a space: dd/mm/yyyy dd/mm/yyyy");
 				}
 				const range = customRange(fromText, toText);
 				await runSearch(reply, conversation, userId, {
@@ -140,7 +140,7 @@ export async function searchConversation(conversation: BotConversation, ctx: Con
 			}
 		} catch (error) {
 			if (error instanceof InvalidDateRangeError) {
-				await reply.reply(`${error.message}. Tente novamente:`);
+				await reply.reply(`${error.message}. Try again:`);
 				continue;
 			}
 			throw error;

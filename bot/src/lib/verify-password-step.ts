@@ -62,14 +62,12 @@ export async function requirePassword(conversation: BotConversation, ctx: Contex
 		const result = await conversation.external(() => evaluatePasswordAttempt(chatId, text));
 
 		if (result.outcome === "locked") {
-			await replyCtx.reply(
-				`🚫 Bloqueado por tentativas incorretas. Tente novamente em ${result.remainingMinutes} min.`,
-			);
+			await replyCtx.reply(`🚫 Too many incorrect attempts. Try again in ${result.remainingMinutes} min.`);
 			return false;
 		}
 
 		if (result.outcome === "incorrect") {
-			await replyCtx.reply("❌ Senha incorreta. Digite novamente:");
+			await replyCtx.reply("❌ Incorrect password. Enter it again:");
 			continue;
 		}
 

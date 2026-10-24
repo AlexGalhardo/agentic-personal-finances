@@ -20,12 +20,12 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 		ctx: Context,
 		userId: string,
 	): Promise<void> {
-		await ctx.reply(`💰 Qual o valor da ${label}? (ex: 49.90)`);
+		await ctx.reply(`💰 Enter the ${label} amount (e.g. 49.90):`);
 
 		let amountCents: number | null = null;
 		while (amountCents === null) {
 			const reply = await conversation.waitFor("message:text", {
-				otherwise: (otherCtx) => otherCtx.reply("Digite o valor em texto, ex: 49.90"),
+				otherwise: (otherCtx) => otherCtx.reply("Enter the amount as text, e.g. 49.90"),
 			});
 			const parsed = amountSchema.safeParse(parseAmountToCents(reply.message.text));
 			if (parsed.success) {
@@ -35,7 +35,7 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 			}
 		}
 
-		await ctx.reply("📂 Escolha a categoria:", { reply_markup: categoryKeyboard() });
+		await ctx.reply("📂 Choose a category:", { reply_markup: categoryKeyboard() });
 
 		let category: TransactionCategory | null = null;
 		while (category === null) {
@@ -62,16 +62,14 @@ export function createAddTransactionConversation(type: TransactionType, label: s
 		}
 
 		const summary = [
-			`Confirma ${type === "expense" ? "a despesa" : "a receita"} abaixo?`,
+			`Confirm the ${label} below?`,
 			"",
-			`Valor: ${formatCurrencyCents(amountCents)}`,
-			`Categoria: ${categoryLabels[category]}`,
+			`Amount: ${formatCurrencyCents(amountCents)}`,
+			`Category: ${categoryLabels[category]}`,
 			`Description: ${description}`,
 		].join("\n");
 
-		const confirmKeyboard = new InlineKeyboard()
-			.text("✅ Confirm", "confirm:yes")
-			.text("❌ Cancelar", "confirm:no");
+		const confirmKeyboard = new InlineKeyboard().text("✅ Confirm", "confirm:yes").text("❌ Cancel", "confirm:no");
 		await ctx.reply(summary, { reply_markup: confirmKeyboard });
 
 		const confirmation = await conversation.waitFor("callback_query:data", {

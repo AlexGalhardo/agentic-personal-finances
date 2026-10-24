@@ -58,13 +58,13 @@ function isAuthorizedCron(authorization: string | undefined): boolean {
 export const cronRoutes = new Elysia()
 	.get("/cron/check-expired-plans", async ({ headers, status }) => {
 		if (!isAuthorizedCron(headers.authorization)) {
-			return status(401, { success: false, message: "Não autorizado" });
+			return status(401, { success: false, message: "Unauthorized" });
 		}
 		return { success: true, updated: await paymentService.checkExpiredPlans() };
 	})
 	.get("/cron/delete-pending-accounts", async ({ headers, status }) => {
 		if (!isAuthorizedCron(headers.authorization)) {
-			return status(401, { success: false, message: "Não autorizado" });
+			return status(401, { success: false, message: "Unauthorized" });
 		}
 		return { success: true, deleted: await userService.purgePendingDeletions() };
 	});

@@ -18,7 +18,7 @@ import { telegramLogger } from "./lib/telegram-logger";
 import type { BotContext } from "./types";
 
 function confirmLogoutKeyboard(): InlineKeyboard {
-	return new InlineKeyboard().text("✅ Sim, desconectar", "logout:confirm").text("❌ Cancelar", "logout:cancel");
+	return new InlineKeyboard().text("✅ Yes, disconnect", "logout:confirm").text("❌ Cancel", "logout:cancel");
 }
 
 // "login" isn't a conversation of its own — it re-enters "start", which runs
@@ -45,7 +45,7 @@ export function createBot(): Bot<BotContext> {
 	// Escape hatch — works even mid-conversation. It must be registered before
 	// the createConversation() middlewares: an active conversation consumes
 	// every update that reaches it, so "/cancelar" registered after them was
-	// read as an answer ("Número inválido") instead of leaving the flow.
+	// read as an answer ("Invalid number") instead of leaving the flow.
 	bot.command("cancelar", async (ctx) => {
 		await ctx.conversation.exitAll();
 		const { text, keyboard } = await buildMenu(ctx.chat?.id);
@@ -53,8 +53,8 @@ export function createBot(): Bot<BotContext> {
 	});
 
 	const authorizedConversations = {
-		"add-expense": createAddTransactionConversation("expense", "despesa"),
-		"add-income": createAddTransactionConversation("income", "receita"),
+		"add-expense": createAddTransactionConversation("expense", "expense"),
+		"add-income": createAddTransactionConversation("income", "income"),
 		"list-transactions": listTransactionsConversation,
 		balance: balanceConversation,
 		search: searchConversation,

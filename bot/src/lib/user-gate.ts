@@ -44,7 +44,7 @@ function planKeyboard(): InlineKeyboard {
 		const plan = PLAN_DEFINITIONS[id];
 		keyboard.text(`${plan.label} — R$ ${(plan.amount / 100).toFixed(2)}`, `plan:${id}`).row();
 	}
-	keyboard.text("❌ Cancelar", "plan:cancel");
+	keyboard.text("❌ Cancel", "plan:cancel");
 	return keyboard;
 }
 
@@ -68,7 +68,7 @@ async function runPaymentLoop(conversation: BotConversation, userId: string): Pr
 		const paid = await offerPixCheckout(conversation, chosen, userId, plan);
 		if (paid) return userId;
 		// cancelled or the PIX expired — let the user pick a plan again
-		await chosen.reply("Escolha um plano para continuar:", { reply_markup: planKeyboard() });
+		await chosen.reply("Choose a plan to continue:", { reply_markup: planKeyboard() });
 	}
 }
 
@@ -111,8 +111,8 @@ async function offerPixCheckout(
 
 	const testMode = apiEnv.ABACATEPAY_PIX_TEST_MODE;
 	const keyboard = new InlineKeyboard().text("🔄 Check payment", "pix:check").row();
-	if (testMode) keyboard.text("🧪 Pagar PIX Teste Mode", "pix:simulate").row();
-	keyboard.text("❌ Cancelar", "pix:cancel");
+	if (testMode) keyboard.text("🧪 Pay PIX (test mode)", "pix:simulate").row();
+	keyboard.text("❌ Cancel", "pix:cancel");
 
 	await ctx.reply("Waiting for payment...", { reply_markup: keyboard });
 
