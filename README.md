@@ -66,7 +66,7 @@ Use a Git Bash or WSL2 terminal on Windows.
 
 `bun run build` builds the all-in-one executable (frontend + backend +
 SQLite) at the repo root; run it with `./agentic-personal-finances` and open
-<http://localhost:8787>. For the PostgreSQL production binary use
+<http://localhost:8787> (loopback only; set `HOST=0.0.0.0` to share it on the LAN). For the PostgreSQL production binary use
 `bun run --cwd backend build:postgres`.
 
 ## Testing each workspace

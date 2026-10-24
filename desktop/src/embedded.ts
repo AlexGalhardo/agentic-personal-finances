@@ -41,7 +41,10 @@ async function waitUntilHealthy(url: URL, child: ChildProcess): Promise<void> {
 	while (Date.now() < deadline) {
 		if (child.exitCode !== null) throw new Error(`embedded server exited with code ${child.exitCode}`);
 		try {
-			if ((await fetch(new URL("/health", url))).ok) return;
+			const response = await fetch(new URL("/health", url));
+			// Anything else squatting on the port would not answer as the standalone server.
+			const body: unknown = response.ok ? await response.json() : null;
+			if (typeof body === "object" && body !== null && "mode" in body && body.mode === "standalone") return;
 		} catch {
 			// not listening yet
 		}
@@ -56,10 +59,10 @@ async function waitUntilHealthy(url: URL, child: ChildProcess): Promise<void> {
 export async function startEmbeddedServer(binary: string, userDataDir: string): Promise<EmbeddedServer> {
 	mkdirSync(userDataDir, { recursive: true });
 	const port = await pickPort();
-	const url = new URL(`http://localhost:${port}`);
+	const url = new URL(`http://127.0.0.1:${port}`);
 	const child = spawn(binary, [], {
 		cwd: userDataDir,
-		env: { ...process.env, PORT: String(port), STANDALONE_URL: url.origin },
+		env: { ...process.env, PORT: String(port), HOST: "127.0.0.1", STANDALONE_URL: url.origin },
 		stdio: "inherit",
 		windowsHide: true,
 	});

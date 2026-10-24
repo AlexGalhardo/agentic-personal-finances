@@ -111,6 +111,8 @@ async function handle(request: Request): Promise<Response> {
 }
 
 Bun.serve({
+	// Loopback by default: this binary holds one person's finances. Set HOST=0.0.0.0 to share it on the LAN.
+	hostname: Bun.env.HOST ?? "127.0.0.1",
 	port,
 	async fetch(request) {
 		try {
@@ -122,6 +124,6 @@ Bun.serve({
 	},
 });
 
-console.log(`Agentic Personal Finances (standalone) on http://localhost:${port}`);
+console.log(`Agentic Personal Finances (standalone) on http://${Bun.env.HOST ?? "127.0.0.1"}:${port}`);
 console.log(`SQLite data directory: ${dataDir}`);
 console.log(`Frontend client assets: ${clientDir}`);
