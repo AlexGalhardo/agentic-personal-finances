@@ -277,9 +277,9 @@ jobs:
           if [[ -f CHANGELOG.md ]]; then
             # Extract ## [x.y.z] section matching the tag (without leading v).
             ver="${GITHUB_REF_NAME#v}"
-            awk -v ver="$ver" '
-              $0 ~ "^## \\[" ver "\\]" {p=1; next}
-              p && $0 ~ /^## \[/ {exit}
+            awk -v header="## [$ver]" '
+              index($0, header) == 1 {p=1; next}
+              p && index($0, "## [") == 1 {exit}
               p {print}
             ' CHANGELOG.md > "$notes_file"
           fi
