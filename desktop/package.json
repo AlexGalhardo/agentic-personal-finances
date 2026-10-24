@@ -6,10 +6,10 @@
 	"private": true,
 	"type": "module",
 	"version": "0.10.0",
-	"main": "dist/main.js",
+	"main": "dist/main.cjs",
 	"appUrl": "http://localhost:4001",
 	"scripts": {
-		"build": "bun build src/main.ts --outfile dist/main.js --target node --format cjs --external electron",
+		"build": "bun build src/main.ts --outfile dist/main.cjs --target node --format cjs --external electron",
 		"start": "bun run build && electron .",
 		"smoke": "bun run build && electron . --smoke",
 		"dist": "bun run build && electron-builder",

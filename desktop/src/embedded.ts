@@ -1,7 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import { createServer } from "node:net";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 // Fixed first choice keeps the origin (and so the session cookie) stable
 // between launches; a random port is only the fallback when it is taken.
@@ -62,7 +62,13 @@ export async function startEmbeddedServer(binary: string, userDataDir: string): 
 	const url = new URL(`http://127.0.0.1:${port}`);
 	const child = spawn(binary, [], {
 		cwd: userDataDir,
-		env: { ...process.env, PORT: String(port), HOST: "127.0.0.1", STANDALONE_URL: url.origin },
+		env: {
+			...process.env,
+			PORT: String(port),
+			HOST: "127.0.0.1",
+			STANDALONE_URL: url.origin,
+			NODE_PATH: join(dirname(binary), ".standalone", "native-modules"),
+		},
 		stdio: "inherit",
 		windowsHide: true,
 	});

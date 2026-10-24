@@ -8,11 +8,37 @@ import { existsSync } from "node:fs";
 import { dirname, extname, join, normalize } from "node:path";
 import { z } from "zod";
 import { PROXIED_API_PATHS } from "../../frontend/proxy-paths";
-import { assetRoot, bootstrapStandaloneEnv } from "./env";
+import { assetRoot, BAKED_API_ORIGIN, bootstrapStandaloneEnv } from "./env";
 
 type SsrHandler = { fetch: (request: Request) => Promise<Response> };
 
-const { port, dataDir, dbFingerprint } = bootstrapStandaloneEnv();
+// Bun resolves externals only from NODE_PATH/cwd, not from the binary's folder,
+// so a binary run elsewhere would not find the libsql addon shipped in the
+// sidecar. Re-run ourselves once with NODE_PATH set (the desktop app and
+// `bun run` already pass it, which skips this).
+const sidecarModules = join(dirname(process.execPath), ".standalone", "native-modules");
+if (!process.env.NODE_PATH && existsSync(sidecarModules)) {
+	const child = Bun.spawn([process.execPath, ...process.argv.slice(1)], {
+		env: { ...process.env, NODE_PATH: sidecarModules },
+		stdio: ["inherit", "inherit", "inherit"],
+	});
+	for (const signal of ["SIGINT", "SIGTERM"] as const) process.on(signal, () => child.kill());
+	process.exit(await child.exited);
+}
+
+const { port, origin, dataDir, dbFingerprint } = bootstrapStandaloneEnv();
+
+// The SSR bundle fetches the API at BAKED_API_ORIGIN (e.g. for the session).
+// Point those calls at the origin this process actually listens on, so a
+// custom PORT or the desktop app's port keeps working.
+if (origin !== BAKED_API_ORIGIN) {
+	const realFetch = globalThis.fetch;
+	globalThis.fetch = Object.assign(
+		(input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) =>
+			realFetch(typeof input === "string" ? input.replace(BAKED_API_ORIGIN, origin) : input, init),
+		realFetch,
+	);
+}
 
 function resolveClientDir(): string {
 	const candidates = [

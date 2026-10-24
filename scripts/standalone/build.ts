@@ -1,7 +1,9 @@
 // Builds the root-level standalone binary (frontend + backend + SQLite).
 // Output: ./agentic-personal-finances(.exe) — gitignored.
-import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+
+import { BAKED_API_ORIGIN } from "./env";
 
 const root = join(import.meta.dir, "../..");
 const standaloneDir = import.meta.dir;
@@ -43,7 +45,7 @@ if (!existsSync(templateDb)) {
 
 run(["bunx", "tsr", "generate"], join(root, "frontend"));
 run(["bun", "run", "build"], join(root, "frontend"), {
-	VITE_API_URL: "http://localhost:8787",
+	VITE_API_URL: BAKED_API_ORIGIN,
 });
 
 const distClient = join(root, "frontend", "dist", "client");
@@ -61,6 +63,15 @@ const sidecar = join(root, ".standalone");
 rmSync(sidecar, { recursive: true, force: true });
 mkdirSync(sidecar, { recursive: true });
 cpSync(assetsDir, sidecar, { recursive: true });
+
+// libsql picks its platform addon (@libsql/<os>-<arch>-<abi>) with a dynamic
+// require, which `bun build --compile` cannot embed: ship it in the sidecar
+// (server.ts points NODE_PATH at it; not named node_modules because electron-builder drops those).
+const libsqlScope = join(root, "node_modules", "@libsql");
+for (const name of readdirSync(libsqlScope)) {
+	if (!/^(win32|linux|darwin)-/.test(name)) continue;
+	cpSync(join(libsqlScope, name), join(sidecar, "native-modules", "@libsql", name), { recursive: true });
+}
 
 console.log("Compiling standalone binary…");
 run(

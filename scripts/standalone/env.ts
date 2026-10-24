@@ -3,6 +3,9 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { dirname, join } from "node:path";
 import { z } from "zod";
 
+/** API origin baked into the SSR bundle at build time (VITE_API_URL in build.ts). */
+export const BAKED_API_ORIGIN = "http://localhost:8787";
+
 const assetRoot = join(import.meta.dir, "assets");
 const dataDir = join(process.cwd(), ".standalone-data");
 
