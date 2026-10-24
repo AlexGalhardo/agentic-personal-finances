@@ -18,7 +18,7 @@ export default function ApiReference({ token }: { token: string | null }) {
 			configuration={{
 				url: OPENAPI_SPEC_PATH,
 				// "Test request" goes through this frontend's proxy.
-				servers: [{ url: window.location.origin, description: "Esta instância" }],
+				servers: [{ url: window.location.origin, description: "This instance" }],
 				authentication: {
 					preferredSecurityScheme: "apiKey",
 					...(token ? { securitySchemes: { apiKey: { value: token } } } : {}),

@@ -35,7 +35,7 @@ export function TelegramLinkSection({ telegramChatId }: { telegramChatId: string
 			{telegramChatId ? (
 				<>
 					<p className="mt-2 text-sm text-(--color-fg-muted)">
-						Your account is linked to a Telegram chat. Transactions from the bot appear in this conta.
+						Your account is linked to a Telegram chat. Transactions from the bot appear in this account.
 					</p>
 					{error && <p className="mt-3 text-sm text-red-500">{error}</p>}
 					<button
@@ -49,8 +49,8 @@ export function TelegramLinkSection({ telegramChatId }: { telegramChatId: string
 				</>
 			) : (
 				<p className="mt-2 text-sm text-(--color-fg-muted)">
-					No chat linked. Abra o bot no Telegram e entre com seu e-mail e senha — ou escolha “Entrar pelo
-					navegador” para usar o Google.
+					No chat linked. Open the bot on Telegram and sign in with your email and password — or choose “Sign
+					in through the browser” to use Google.
 				</p>
 			)}
 		</div>

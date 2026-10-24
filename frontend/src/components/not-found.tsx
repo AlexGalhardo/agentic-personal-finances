@@ -23,16 +23,16 @@ export function NotFoundPage() {
 		<PageLayout>
 			<section className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
 				<h1 className="text-6xl font-bold text-brand-500">404</h1>
-				<p className="mt-4 text-xl font-semibold">Essa página não existe.</p>
+				<p className="mt-4 text-xl font-semibold">This page does not exist.</p>
 				<p className="mt-2 text-(--color-fg-muted)">
-					Você será redirecionado para a página inicial em {secondsLeft} segundo{secondsLeft === 1 ? "" : "s"}
+					You will be redirected to the home page in {secondsLeft} second{secondsLeft === 1 ? "" : "s"}
 					...
 				</p>
 				<Link
 					to="/"
 					className="mt-6 rounded-lg bg-brand-500 px-6 py-3 font-semibold text-black hover:bg-brand-400"
 				>
-					Ir para a página inicial agora
+					Go to the home page now
 				</Link>
 			</section>
 		</PageLayout>

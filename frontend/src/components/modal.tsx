@@ -28,7 +28,7 @@ export function Modal({
 			<button
 				type="button"
 				onClick={onClose}
-				aria-label="Fechar modal"
+				aria-label="Close dialog"
 				className="absolute inset-0 cursor-default"
 			/>
 			<div
@@ -46,7 +46,7 @@ export function Modal({
 					<button
 						type="button"
 						onClick={onClose}
-						aria-label="Fechar"
+						aria-label="Close"
 						className="rounded-lg p-1 text-(--color-fg-muted) hover:bg-brand-500/10"
 					>
 						✕

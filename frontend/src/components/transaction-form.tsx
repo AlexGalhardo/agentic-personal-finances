@@ -129,7 +129,7 @@ export function TransactionForm({
 	return (
 		<form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
 			{!fixedType && (
-				<FormField label="Tipo" id="type" error={errors.type}>
+				<FormField label="Type" id="type" error={errors.type}>
 					<select
 						id="type"
 						value={type}
@@ -141,8 +141,8 @@ export function TransactionForm({
 						}}
 						className={inputClassName}
 					>
-						<option value="expense">Despesa</option>
-						<option value="income">Receita</option>
+						<option value="expense">Expense</option>
+						<option value="income">Income</option>
 					</select>
 				</FormField>
 			)}
@@ -173,7 +173,7 @@ export function TransactionForm({
 				)}
 			</FormField>
 
-			<FormField label="Valor" id="amount" error={errors.amount}>
+			<FormField label="Amount" id="amount" error={errors.amount}>
 				<div className="flex items-stretch gap-2">
 					<span
 						className={`flex w-9 shrink-0 items-center justify-center rounded-lg font-bold ${scheme.badge}`}
@@ -185,7 +185,7 @@ export function TransactionForm({
 						type="text"
 						disabled
 						value="R$"
-						aria-label="Reais"
+						aria-label="Brazilian reais"
 						className="w-12 shrink-0 rounded-lg border border-(--color-border) bg-(--color-bg-subtle) text-center text-sm text-(--color-fg-muted)"
 					/>
 					<input
@@ -199,7 +199,7 @@ export function TransactionForm({
 				</div>
 			</FormField>
 
-			<FormField label="Categoria" id="category" error={errors.category}>
+			<FormField label="Category" id="category" error={errors.category}>
 				<CategorySelect
 					id="category"
 					value={category}

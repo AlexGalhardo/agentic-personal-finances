@@ -64,3 +64,38 @@ body {
 .toast-in {
 	animation: toast-in 0.2s ease-out;
 }
+
+@keyframes money-rise {
+	from {
+		transform: scaleY(0.15);
+	}
+	to {
+		transform: scaleY(1);
+	}
+}
+
+@keyframes money-float {
+	0%,
+	100% {
+		transform: translateY(0) rotate(var(--tilt, 0deg));
+	}
+	50% {
+		transform: translateY(-10px) rotate(var(--tilt, 0deg));
+	}
+}
+
+@keyframes money-glow {
+	0%,
+	100% {
+		opacity: 0.35;
+	}
+	50% {
+		opacity: 0.6;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.money-anim {
+		animation: none !important;
+	}
+}

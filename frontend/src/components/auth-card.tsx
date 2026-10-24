@@ -15,13 +15,14 @@ export function AuthCard({
 }) {
 	return (
 		<div className="relative flex min-h-screen flex-col">
-			<div className="flex items-center px-4 py-4">
-				<Link to="/" className="flex items-center gap-2 text-sm font-bold tracking-tight">
-					<img src="/favicon.svg" alt="" aria-hidden="true" className="size-4" />
+			<section className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-8">
+				<Link
+					to="/"
+					className="mb-6 flex items-center justify-center gap-2 text-2xl font-bold tracking-tight hover:text-brand-600"
+				>
+					<img src="/favicon.svg" alt="" aria-hidden="true" className="size-6" />
 					Money
 				</Link>
-			</div>
-			<section className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-8">
 				<div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-8">
 					<h1 className={`text-2xl font-bold ${centerHeader ? "text-center" : ""}`}>{title}</h1>
 					{subtitle && (

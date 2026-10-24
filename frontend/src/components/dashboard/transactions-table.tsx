@@ -33,14 +33,14 @@ export function TransactionsTable({ transactions, loading, onEdit, onDelete }: P
 			<table className="w-full min-w-[560px] text-left text-sm">
 				<thead className="border-b border-(--color-border) text-(--color-fg-muted)">
 					<tr>
-						<th className="px-4 py-3 font-medium">Descrição</th>
-						<th className="px-4 py-3 font-medium">Data</th>
-						<th className="min-w-[110px] px-4 py-3 text-right font-medium">Valor</th>
-						<th className="px-4 py-3 text-right font-medium">Ações</th>
+						<th className="px-4 py-3 font-medium">Description</th>
+						<th className="px-4 py-3 font-medium">Date</th>
+						<th className="min-w-[110px] px-4 py-3 text-right font-medium">Amount</th>
+						<th className="px-4 py-3 text-right font-medium">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					{loading && <EmptyRow>Carregando...</EmptyRow>}
+					{loading && <EmptyRow>Loading...</EmptyRow>}
 					{!loading && transactions.length === 0 && <EmptyRow>No transactions found.</EmptyRow>}
 
 					{transactions.map((transaction) => (
@@ -79,8 +79,8 @@ export function TransactionsTable({ transactions, loading, onEdit, onDelete }: P
 									<button
 										type="button"
 										onClick={() => onEdit(transaction)}
-										aria-label="Editar"
-										title="Editar"
+										aria-label="Edit"
+										title="Edit"
 										className="rounded-lg border border-orange-500/40 p-1.5 text-orange-600 hover:bg-orange-500/10"
 									>
 										<Pencil className="size-4" aria-hidden="true" />
@@ -88,8 +88,8 @@ export function TransactionsTable({ transactions, loading, onEdit, onDelete }: P
 									<button
 										type="button"
 										onClick={() => onDelete(transaction)}
-										aria-label="Excluir"
-										title="Excluir"
+										aria-label="Delete"
+										title="Delete"
 										className="rounded-lg border border-red-500/40 p-1.5 text-red-500 hover:bg-red-500/10"
 									>
 										<Trash2 className="size-4" aria-hidden="true" />
@@ -123,10 +123,10 @@ export function Pagination({
 				onClick={() => onChange(page - 1)}
 				className="rounded-lg border border-(--color-border) px-3 py-1.5 disabled:opacity-40"
 			>
-				Anterior
+				Previous
 			</button>
 			<span className="text-(--color-fg-muted)">
-				Página {page} de {totalPages}
+				Page {page} of {totalPages}
 			</span>
 			<button
 				type="button"
@@ -134,7 +134,7 @@ export function Pagination({
 				onClick={() => onChange(page + 1)}
 				className="rounded-lg border border-(--color-border) px-3 py-1.5 disabled:opacity-40"
 			>
-				Próxima
+				Next
 			</button>
 		</div>
 	);

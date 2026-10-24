@@ -1,3 +1,4 @@
+import { parseAccountExport } from "@agentic-personal-finances/core";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { confirmTransactionImport, previewTransactionImport } from "#/application/transactions";
@@ -74,16 +75,54 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 		},
 	});
 
+	// A JSON backup (exported from web, desktop or mobile) is already
+	// categorized, so it skips the CSV preview and goes straight to review.
+	function loadBackup(text: string): void {
+		let raw: unknown;
+		try {
+			raw = JSON.parse(text);
+		} catch {
+			setError("The selected file is not valid JSON");
+			return;
+		}
+		const parsed = parseAccountExport(raw);
+		if (!parsed.ok) {
+			setError(parsed.error);
+			return;
+		}
+		const imported = parsed.value.transactions.map((transaction, index) => ({
+			rowNumber: index + 1,
+			createdAt: transaction.date,
+			description: transaction.description,
+			amount: transaction.amount,
+			type: transaction.type,
+			category: (categoryOptions as string[]).includes(transaction.category)
+				? (transaction.category as TransactionCategory)
+				: "other",
+			needsReview: false,
+		}));
+		setError(null);
+		setRows(imported);
+		setSummary({
+			total: imported.length,
+			needsReview: 0,
+			income: imported.filter((row) => row.type === "income").length,
+			expense: imported.filter((row) => row.type === "expense").length,
+		});
+	}
+
 	function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
 		const file = event.target.files?.[0];
 		if (!file) return;
 		setFileName(file.name);
 		setResult(null);
 
+		const isJson = file.name.toLowerCase().endsWith(".json");
 		const reader = new FileReader();
 		reader.onload = () => {
-			const csv = typeof reader.result === "string" ? reader.result : "";
-			previewMutation.mutate(csv);
+			const text = typeof reader.result === "string" ? reader.result : "";
+			if (isJson) loadBackup(text);
+			else previewMutation.mutate(text);
 		};
 		reader.onerror = () => setError("Could not read the selected file");
 		reader.readAsText(file, "utf-8");
@@ -98,33 +137,34 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 	const needsReviewRows = rows?.filter((row) => row.needsReview) ?? [];
 
 	return (
-		<Modal title="Import Nubank transactions" onClose={onClose} maxWidth="max-w-4xl">
+		<Modal title="Import transactions" onClose={onClose} maxWidth="max-w-4xl">
 			<div className="flex flex-col gap-4">
 				{!rows && !result && (
 					<>
 						<p className="text-sm text-(--color-fg-muted)">
-							Selecione o arquivo .csv exportado do extrato do Nubank (colunas Data, Valor, Identificador,
-							Descrição). Valores negativos viram despesas e positivos viram receitas.
+							Select a .json backup exported from this app (web, desktop or mobile), or the .csv file
+							exported from your Nubank statement (columns Data, Valor, Identificador, Descrição).
+							Negative CSV amounts become expenses and positive amounts become income.
 						</p>
 						<input
 							ref={fileInputRef}
 							type="file"
-							accept=".csv,text/csv"
+							accept=".json,application/json,.csv,text/csv"
 							onChange={handleFileChange}
 							className="sr-only"
 						/>
 						<button
 							type="button"
 							onClick={() => fileInputRef.current?.click()}
-							className="flex w-fit items-center gap-2 rounded-lg bg-[#820AD1] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#9a1df0]"
+							className="flex w-fit items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-brand-400"
 						>
-							Import Nubank CSV
+							Choose file (.json or Nubank .csv)
 						</button>
 						{fileName && !previewMutation.isPending && !rows && (
-							<p className="text-sm text-(--color-fg-muted)">Arquivo selecionado: {fileName}</p>
+							<p className="text-sm text-(--color-fg-muted)">Selected file: {fileName}</p>
 						)}
 						{fileName && previewMutation.isPending && (
-							<p className="text-sm text-(--color-fg-muted)">Lendo {fileName}...</p>
+							<p className="text-sm text-(--color-fg-muted)">Reading {fileName}...</p>
 						)}
 					</>
 				)}
@@ -135,10 +175,10 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 					<>
 						<div className="grid grid-cols-2 gap-2 rounded-lg border border-(--color-border) p-3 text-sm sm:grid-cols-4">
 							<Stat label="Total" value={summary.total} />
-							<Stat label="Receitas" value={summary.income} />
-							<Stat label="Despesas" value={summary.expense} />
+							<Stat label="Income" value={summary.income} />
+							<Stat label="Expenses" value={summary.expense} />
 							<Stat
-								label="Revisar categoria"
+								label="Review category"
 								value={summary.needsReview}
 								highlight={summary.needsReview > 0}
 							/>
@@ -147,8 +187,8 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 						{needsReviewRows.length > 0 && (
 							<p className="text-sm text-amber-500">
 								Could not automatically categorize {needsReviewRows.length}{" "}
-								{needsReviewRows.length === 1 ? "transação" : "transações"} automatically. Review and
-								escolha a categoria correta abaixo antes de confirmar.
+								{needsReviewRows.length === 1 ? "transaction" : "transactions"}. Review and choose the
+								correct category below before confirming.
 							</p>
 						)}
 
@@ -156,10 +196,10 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 							<table className="w-full text-left text-sm">
 								<thead className="sticky top-0 border-b border-(--color-border) bg-(--color-surface) text-(--color-fg-muted)">
 									<tr>
-										<th className="px-3 py-2 font-medium">Descrição</th>
-										<th className="px-3 py-2 font-medium">Data</th>
-										<th className="px-3 py-2 text-right font-medium">Valor</th>
-										<th className="px-3 py-2 font-medium">Categoria</th>
+										<th className="px-3 py-2 font-medium">Description</th>
+										<th className="px-3 py-2 font-medium">Date</th>
+										<th className="px-3 py-2 text-right font-medium">Amount</th>
+										<th className="px-3 py-2 font-medium">Category</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -227,7 +267,7 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 								}}
 								className="rounded-lg border border-(--color-border) px-4 py-2.5 text-sm font-semibold"
 							>
-								Escolher outro arquivo
+								Choose another file
 							</button>
 						</div>
 					</>
@@ -237,16 +277,16 @@ export function ImportTransactionsModal({ onClose, onImported }: { onClose: () =
 					<div className="flex flex-col gap-3">
 						<p className="text-sm">
 							{result.created} {result.created === 1 ? "transaction imported" : "transactions imported"}{" "}
-							com sucesso.
+							successfully.
 							{result.skippedDuplicates > 0 &&
-								` ${result.skippedDuplicates} ${result.skippedDuplicates === 1 ? "já existia" : "já existiam"} e ${result.skippedDuplicates === 1 ? "foi ignorada" : "foram ignoradas"}.`}
+								` ${result.skippedDuplicates} ${result.skippedDuplicates === 1 ? "duplicate" : "duplicates"} ${result.skippedDuplicates === 1 ? "was" : "were"} skipped.`}
 						</p>
 						<button
 							type="button"
 							onClick={onClose}
 							className="rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400"
 						>
-							Fechar
+							Close
 						</button>
 					</div>
 				)}

@@ -99,7 +99,7 @@ function LoginPage() {
 						disabled={resendState === "sending"}
 						className="mt-4 font-medium text-brand-600 hover:underline disabled:opacity-60"
 					>
-						{resendState === "sending" ? "Reenviando..." : "Reenviar link para confirmar e-mail"}
+						{resendState === "sending" ? "Resending..." : "Resend confirmation link"}
 					</button>
 				)}
 
@@ -109,7 +109,7 @@ function LoginPage() {
 						onClick={() => setUnverifiedEmail(null)}
 						className="font-medium text-brand-600 hover:underline"
 					>
-						Voltar
+						Back
 					</button>
 				</p>
 			</AuthCard>
@@ -123,7 +123,7 @@ function LoginPage() {
 
 				<div className="flex items-center gap-3 text-xs text-(--color-fg-muted)">
 					<span className="h-px flex-1 bg-(--color-border)" />
-					ou
+					or
 					<span className="h-px flex-1 bg-(--color-border)" />
 				</div>
 

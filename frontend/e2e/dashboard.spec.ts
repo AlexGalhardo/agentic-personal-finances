@@ -3,21 +3,21 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
 	await page.goto("/entrar");
 	await page.waitForLoadState("networkidle");
-	await page.getByLabel("E-mail").fill("admin@gmail.com");
-	await page.getByLabel("Senha", { exact: true }).fill("adminBR@123");
-	await page.getByRole("button", { name: "Entrar", exact: true }).click();
+	await page.getByLabel("Email").fill("admin@gmail.com");
+	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");
+	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 	await expect(page).toHaveURL(/\/dashboard/);
 });
 
 test("dashboard shows the seeded transactions and charts", async ({ page }) => {
-	await expect(page.getByText("Despesas por categoria")).toBeVisible();
-	await expect(page.getByText("Receitas por categoria")).toBeVisible();
-	await expect(page.getByRole("columnheader", { name: "Ações" })).toBeVisible();
-	await expect(page.getByText(/Página 1 de \d+/)).toBeVisible();
+	await expect(page.getByText("Expenses by category")).toBeVisible();
+	await expect(page.getByText("Income by category")).toBeVisible();
+	await expect(page.getByRole("columnheader", { name: "Actions" })).toBeVisible();
+	await expect(page.getByText(/Page 1 of \d+/)).toBeVisible();
 });
 
 test("filters the transaction list by search term", async ({ page }) => {
-	const searchInput = page.getByLabel("Buscar por nome");
+	const searchInput = page.getByLabel("Search by name");
 	await searchInput.fill("Uber");
 
 	await expect(page.getByRole("row", { name: /Uber/ }).first()).toBeVisible();
@@ -25,55 +25,55 @@ test("filters the transaction list by search term", async ({ page }) => {
 });
 
 test("creates, edits and deletes a transaction end to end", async ({ page }) => {
-	await page.getByRole("button", { name: "Adicionar Despesa" }).click();
-	await page.getByLabel("Descrição").fill("Compra E2E Playwright");
-	await page.getByLabel("Valor").fill("77.50");
-	await page.getByRole("button", { name: "Criar transação" }).click();
+	await page.getByRole("button", { name: "Add expense" }).click();
+	await page.getByLabel("Description").fill("Compra E2E Playwright");
+	await page.getByLabel("Amount").fill("77.50");
+	await page.getByRole("button", { name: "Create transaction" }).click();
 
 	// Among 500 seeded transactions the new one may not land on page 1 by
 	// date — search by name to find it regardless of position.
-	await page.getByLabel("Buscar por nome").fill("Playwright");
+	await page.getByLabel("Search by name").fill("Playwright");
 
 	const row = page.getByRole("row", { name: /COMPRA E2E PLAYWRIGHT/ });
 	await expect(row).toBeVisible();
 	await expect(row).toContainText("R$ 77,50");
 
-	await row.getByRole("button", { name: "Editar" }).click();
-	await page.getByLabel("Valor").fill("99.90");
-	await page.getByRole("button", { name: "Salvar alterações" }).click();
+	await row.getByRole("button", { name: "Edit" }).click();
+	await page.getByLabel("Amount").fill("99.90");
+	await page.getByRole("button", { name: "Save changes" }).click();
 
 	await expect(row).toContainText("R$ 99,90");
 
-	await row.getByRole("button", { name: "Excluir" }).click();
-	await page.getByRole("button", { name: "Confirmar exclusão" }).click();
+	await row.getByRole("button", { name: "Delete" }).click();
+	await page.getByRole("button", { name: "Confirm delete" }).click();
 
 	await expect(page.getByRole("row", { name: /COMPRA E2E PLAYWRIGHT/ })).toHaveCount(0);
 });
 
 test("adding an income transaction shows it with a green plus sign", async ({ page }) => {
-	await page.getByRole("button", { name: "Adicionar Receita" }).click();
-	await page.getByLabel("Descrição").fill("Bonus E2E Playwright");
-	await page.getByLabel("Valor").fill("500.00");
-	await page.getByRole("button", { name: "Criar transação" }).click();
+	await page.getByRole("button", { name: "Add income" }).click();
+	await page.getByLabel("Description").fill("Bonus E2E Playwright");
+	await page.getByLabel("Amount").fill("500.00");
+	await page.getByRole("button", { name: "Create transaction" }).click();
 
-	await page.getByLabel("Buscar por nome").fill("Playwright");
+	await page.getByLabel("Search by name").fill("Playwright");
 
 	const row = page.getByRole("row", { name: /BONUS E2E PLAYWRIGHT/ });
 	await expect(row).toBeVisible();
 	await expect(row).toContainText("+");
 	await expect(row).toContainText("R$ 500,00");
 
-	await row.getByRole("button", { name: "Excluir" }).click();
-	await page.getByRole("button", { name: "Confirmar exclusão" }).click();
+	await row.getByRole("button", { name: "Delete" }).click();
+	await page.getByRole("button", { name: "Confirm delete" }).click();
 	await expect(page.getByRole("row", { name: /BONUS E2E PLAYWRIGHT/ })).toHaveCount(0);
 });
 
 test("exports the transaction list to xlsx and csv", async ({ page }) => {
 	const xlsxDownload = page.waitForEvent("download");
-	await page.getByRole("button", { name: "Exportar .xlsx" }).click();
-	expect((await xlsxDownload).suggestedFilename()).toBe("transacoes.xlsx");
+	await page.getByRole("button", { name: "Export .xlsx" }).click();
+	expect((await xlsxDownload).suggestedFilename()).toBe("transactions.xlsx");
 
 	const csvDownload = page.waitForEvent("download");
-	await page.getByRole("button", { name: "Exportar .csv" }).click();
-	expect((await csvDownload).suggestedFilename()).toBe("transacoes.csv");
+	await page.getByRole("button", { name: "Export .csv" }).click();
+	expect((await csvDownload).suggestedFilename()).toBe("transactions.csv");
 });

@@ -52,7 +52,7 @@ export function UserMenu({ name }: { name: string }) {
 						onClick={() => setOpen(false)}
 						className="block px-4 py-2 text-sm hover:bg-brand-500/10"
 					>
-						Minha Conta
+						My account
 					</Link>
 					<Link
 						to="/api"
@@ -63,7 +63,7 @@ export function UserMenu({ name }: { name: string }) {
 						API
 					</Link>
 					<div className="flex items-center justify-between px-4 py-2 text-sm">
-						<span>Tema</span>
+						<span>Theme</span>
 						<ThemeToggle />
 					</div>
 					<hr className="my-1 border-(--color-border)" />
@@ -73,7 +73,7 @@ export function UserMenu({ name }: { name: string }) {
 						onClick={handleSignOut}
 						className="block w-full px-4 py-2 text-left text-sm hover:bg-brand-500/10"
 					>
-						Sair
+						Sign out
 					</button>
 				</div>
 			)}

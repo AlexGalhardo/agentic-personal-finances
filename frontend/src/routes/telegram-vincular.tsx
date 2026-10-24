@@ -51,7 +51,7 @@ function TelegramLinkPage() {
 	if (isPending) {
 		return (
 			<AuthCard title="Link Telegram" subtitle="Checking your session...">
-				<p className="text-sm text-(--color-fg-muted)">Aguarde um instante.</p>
+				<p className="text-sm text-(--color-fg-muted)">Please wait a moment.</p>
 			</AuthCard>
 		);
 	}
@@ -60,7 +60,7 @@ function TelegramLinkPage() {
 		return (
 			<AuthCard title="Sign in to link Telegram" subtitle="Sign in to finish linking the bot." centerHeader>
 				<GoogleButton
-					label="Entrar com Google"
+					label="Sign in with Google"
 					callbackURL={`/telegram-vincular?token=${encodeURIComponent(token)}`}
 				/>
 			</AuthCard>
@@ -79,9 +79,9 @@ function TelegramLinkPage() {
 
 	if (linkMutation.isError) {
 		return (
-			<AuthCard title="Could not link" subtitle="Volte ao bot do Telegram e gere um novo link.">
+			<AuthCard title="Could not link" subtitle="Return to the Telegram bot and generate a new link.">
 				<p role="alert" className="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-500">
-					{apiErrorMessage(linkMutation.error, "Invalid link ou expirado")}
+					{apiErrorMessage(linkMutation.error, "Invalid or expired link")}
 				</p>
 			</AuthCard>
 		);
@@ -89,7 +89,7 @@ function TelegramLinkPage() {
 
 	return (
 		<AuthCard title="Link Telegram" subtitle="Finishing link with the bot...">
-			<p className="text-sm text-(--color-fg-muted)">Aguarde um instante.</p>
+			<p className="text-sm text-(--color-fg-muted)">Please wait a moment.</p>
 		</AuthCard>
 	);
 }

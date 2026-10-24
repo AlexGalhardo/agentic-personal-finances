@@ -19,11 +19,7 @@ function capitalizeFirstLetter(value: string): string {
 }
 
 const signupSchema = z.object({
-	name: z
-		.string()
-		.trim()
-		.min(4, "O nome precisa ter pelo menos 4 letras")
-		.max(16, "Name can be at most 16 characters"),
+	name: z.string().trim().min(4, "Name must be at least 4 letters").max(16, "Name can be at most 16 characters"),
 	email: z.email("Invalid email").max(48, "Email can be at most 48 characters"),
 	password: z.string().refine(isStrongPassword, "Password does not meet the requirements below"),
 });
@@ -83,11 +79,11 @@ function SignupPage() {
 			<AuthCard title="Confirm your email" subtitle="One more step to access your account.">
 				<p role="status" className="rounded-lg bg-brand-500/10 px-4 py-3 text-sm text-brand-600">
 					We sent a confirmation link to <strong>{pendingVerificationEmail}</strong>. Confirm your e-mail
-					antes de acessar sua conta.
+					before accessing your account.
 				</p>
 				<p className="mt-4 text-center text-sm text-(--color-fg-muted)">
 					<Link to="/entrar" className="font-medium text-brand-600 hover:underline">
-						Voltar para o login
+						Back to sign in
 					</Link>
 				</p>
 			</AuthCard>
@@ -101,7 +97,7 @@ function SignupPage() {
 
 				<div className="flex items-center gap-3 text-xs text-(--color-fg-muted)">
 					<span className="h-px flex-1 bg-(--color-border)" />
-					ou
+					or
 					<span className="h-px flex-1 bg-(--color-border)" />
 				</div>
 
@@ -119,7 +115,7 @@ function SignupPage() {
 							type="text"
 							value={name}
 							onChange={(event) => setName(capitalizeFirstLetter(event.target.value))}
-							placeholder="Digite seu nome"
+							placeholder="Enter your name"
 							maxLength={16}
 							className={inputClassName}
 							aria-invalid={Boolean(errors.name)}
@@ -131,7 +127,7 @@ function SignupPage() {
 							id="email"
 							name="email"
 							type="email"
-							placeholder="seu@email.com"
+							placeholder="you@email.com"
 							maxLength={48}
 							className={inputClassName}
 							aria-invalid={Boolean(errors.email)}

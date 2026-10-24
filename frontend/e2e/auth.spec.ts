@@ -5,21 +5,21 @@ test("a new user can sign up and lands on the dashboard", async ({ page }) => {
 
 	await page.goto("/criar-conta");
 	await page.waitForLoadState("networkidle");
-	await page.getByLabel("Nome").fill("E2E Test User");
-	await page.getByLabel("E-mail").fill(email);
-	await page.getByLabel("Senha", { exact: true }).fill("SenhaForte@123");
-	await page.getByRole("button", { name: "Criar conta", exact: true }).click();
+	await page.getByLabel("Name").fill("E2E Test User");
+	await page.getByLabel("Email").fill(email);
+	await page.getByLabel("Password", { exact: true }).fill("SenhaForte@123");
+	await page.getByRole("button", { name: "Create account", exact: true }).click();
 
 	await expect(page).toHaveURL(/\/dashboard/);
-	await expect(page.getByText("Despesas por categoria")).toBeVisible();
+	await expect(page.getByText("Expenses by category")).toBeVisible();
 });
 
 test("shows an error for invalid login credentials", async ({ page }) => {
 	await page.goto("/entrar");
 	await page.waitForLoadState("networkidle");
-	await page.getByLabel("E-mail").fill("nobody@example.com");
-	await page.getByLabel("Senha", { exact: true }).fill("wrong-password");
-	await page.getByRole("button", { name: "Entrar", exact: true }).click();
+	await page.getByLabel("Email").fill("nobody@example.com");
+	await page.getByLabel("Password", { exact: true }).fill("wrong-password");
+	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
 	await expect(page.getByRole("alert")).toBeVisible();
 	await expect(page).toHaveURL(/\/entrar/);
@@ -28,15 +28,15 @@ test("shows an error for invalid login credentials", async ({ page }) => {
 test("the seeded admin can log in and log out", async ({ page }) => {
 	await page.goto("/entrar");
 	await page.waitForLoadState("networkidle");
-	await page.getByLabel("E-mail").fill("admin@gmail.com");
-	await page.getByLabel("Senha", { exact: true }).fill("adminBR@123");
-	await page.getByRole("button", { name: "Entrar", exact: true }).click();
+	await page.getByLabel("Email").fill("admin@gmail.com");
+	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");
+	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
 	await expect(page).toHaveURL(/\/dashboard/);
 
 	await page.getByRole("button", { name: "Admin", exact: true }).click();
-	await page.getByRole("menuitem", { name: "Sair" }).click();
-	await expect(page.getByRole("link", { name: "Entrar" })).toBeVisible();
+	await page.getByRole("menuitem", { name: "Sign out" }).click();
+	await expect(page.getByRole("link", { name: "Login" })).toBeVisible();
 });
 
 test("protected routes redirect to login when signed out", async ({ page }) => {
@@ -53,9 +53,9 @@ test("protected routes redirect to login when signed out", async ({ page }) => {
 test("public-only routes redirect an authenticated user to the dashboard", async ({ page }) => {
 	await page.goto("/entrar");
 	await page.waitForLoadState("networkidle");
-	await page.getByLabel("E-mail").fill("admin@gmail.com");
-	await page.getByLabel("Senha", { exact: true }).fill("adminBR@123");
-	await page.getByRole("button", { name: "Entrar", exact: true }).click();
+	await page.getByLabel("Email").fill("admin@gmail.com");
+	await page.getByLabel("Password", { exact: true }).fill("adminBR@123");
+	await page.getByRole("button", { name: "Sign in", exact: true }).click();
 	await expect(page).toHaveURL(/\/dashboard/);
 
 	for (const path of ["/", "/entrar", "/criar-conta", "/esqueci-senha", "/resetar-senha"]) {

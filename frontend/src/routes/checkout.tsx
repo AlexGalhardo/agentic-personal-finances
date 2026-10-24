@@ -8,7 +8,7 @@ import { requireNoActivePlan } from "../lib/redirect-if-active-plan";
 import { useAppConfig } from "../lib/use-app-config";
 
 export const Route = createFileRoute("/checkout")({
-	head: () => ({ meta: [{ title: "Escolha seu plano — Money" }] }),
+	head: () => ({ meta: [{ title: "Choose your plan — Money" }] }),
 	beforeLoad: requireNoActivePlan,
 	component: CheckoutPage,
 });
@@ -65,7 +65,7 @@ function CheckoutPage() {
 	return (
 		<PageLayout>
 			<section className="mx-auto max-w-3xl px-4 py-16">
-				<h1 className="text-3xl font-bold">Escolha seu plano</h1>
+				<h1 className="text-3xl font-bold">Choose your plan</h1>
 				<p className="mt-2 text-(--color-fg-muted)">One-time PIX payment, no auto-renewal.</p>
 
 				{error && <p className="mt-4 text-sm text-red-500">{error}</p>}
@@ -86,7 +86,7 @@ function CheckoutPage() {
 								disabled={loadingPlan !== null}
 								className="mt-6 rounded-lg bg-brand-500 px-4 py-2.5 font-semibold text-black hover:bg-brand-400 disabled:opacity-60"
 							>
-								{loadingPlan === plan.id ? "Gerando PIX..." : "Pagar com PIX"}
+								{loadingPlan === plan.id ? "Generating PIX..." : "Pay with PIX"}
 							</button>
 						</div>
 					))}

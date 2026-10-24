@@ -3,7 +3,7 @@ import { api } from "#/adapters/http/api";
 export async function getCurrentUser() {
 	const { data, error } = await api.users.me.get();
 	if (error || !data || !("user" in data)) {
-		throw error ?? new Error("Falha ao carregar dados da conta");
+		throw error ?? new Error("Failed to load account data");
 	}
 	return data.user;
 }

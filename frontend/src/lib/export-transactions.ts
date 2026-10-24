@@ -1,3 +1,4 @@
+import { buildAccountExport } from "@agentic-personal-finances/core";
 import writeExcelFile from "write-excel-file/browser";
 import type { TransactionCategory } from "./categories";
 import { categoryLabels, formatCurrencyCents } from "./categories";
@@ -24,7 +25,7 @@ function toRow(transaction: ExportableTransaction): string[] {
 	return [
 		neutralizeFormula(transaction.description),
 		categoryLabels[transaction.category] ?? transaction.category,
-		transaction.type === "income" ? "Receita" : "Despesa",
+		transaction.type === "income" ? "Income" : "Expense",
 		new Date(transaction.date).toLocaleDateString("pt-BR"),
 		`${transaction.type === "income" ? "+" : "-"}${formatCurrencyCents(transaction.amount)}`,
 	];
@@ -48,10 +49,23 @@ function downloadBlob(blob: Blob, fileName: string): void {
 }
 
 export async function exportTransactionsToXlsx(transactions: ExportableTransaction[]): Promise<void> {
-	await writeExcelFile([HEADERS, ...transactions.map(toRow)]).toFile("transacoes.xlsx");
+	await writeExcelFile([HEADERS, ...transactions.map(toRow)]).toFile("transactions.xlsx");
+}
+
+// Full-account backup, importable on web, desktop and mobile (see
+// packages/core/src/account-backup.ts for the format).
+export function exportAccountToJson(
+	account: { name?: string | null; email?: string | null },
+	transactions: ExportableTransaction[],
+): void {
+	const file = buildAccountExport(account, transactions);
+	downloadBlob(
+		new Blob([JSON.stringify(file, null, 2)], { type: "application/json" }),
+		"agentic-finances-backup.json",
+	);
 }
 
 export function exportTransactionsToCsv(transactions: ExportableTransaction[]): void {
 	// The BOM makes Excel open the UTF-8 file with accents intact.
-	downloadBlob(new Blob([`﻿${toCsv(transactions)}`], { type: "text/csv;charset=utf-8" }), "transacoes.csv");
+	downloadBlob(new Blob([`﻿${toCsv(transactions)}`], { type: "text/csv;charset=utf-8" }), "transactions.csv");
 }

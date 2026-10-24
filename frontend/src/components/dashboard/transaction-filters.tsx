@@ -25,14 +25,14 @@ export function TransactionFilters({ values, onChange, searchSummary }: Props) {
 		<>
 			<div className="mt-4 flex flex-col gap-1">
 				<label htmlFor="search" className="text-xs font-medium text-(--color-fg-muted)">
-					Buscar por nome
+					Search by name
 				</label>
 				<input
 					id="search"
 					type="text"
 					value={values.search}
 					onChange={(event) => update({ search: event.target.value })}
-					placeholder="Digite pelo menos 3 caracteres..."
+					placeholder="Type at least 3 characters..."
 					className={`w-full ${fieldClassName}`}
 				/>
 			</div>
@@ -40,8 +40,7 @@ export function TransactionFilters({ values, onChange, searchSummary }: Props) {
 			{searchSummary && (
 				<div className="mt-3 flex w-full items-center justify-between gap-4 rounded-lg border border-(--color-border) bg-(--color-bg-subtle) px-3 py-2 text-sm">
 					<span className="text-(--color-fg-muted)">
-						{searchSummary.count} resultado{searchSummary.count === 1 ? "" : "s"} para "
-						{values.search.trim()}"
+						{searchSummary.count} result{searchSummary.count === 1 ? "" : "s"} for "{values.search.trim()}"
 					</span>
 					<span className="flex gap-4 tabular-nums">
 						<span className="text-emerald-600">+ {formatCurrencyCents(searchSummary.income)}</span>
@@ -53,20 +52,20 @@ export function TransactionFilters({ values, onChange, searchSummary }: Props) {
 			<div className="mt-3 flex flex-wrap items-end justify-between gap-3">
 				<div className="flex flex-col gap-1">
 					<label htmlFor="category-filter" className="text-xs font-medium text-(--color-fg-muted)">
-						Categoria
+						Category
 					</label>
 					<CategorySelect
 						id="category-filter"
 						value={values.category}
 						options={categoryOptions}
-						placeholder="Todas"
+						placeholder="All"
 						onChange={(category) => update({ category })}
 					/>
 				</div>
 
 				<div className="flex flex-col gap-1">
 					<label htmlFor="from" className="text-xs font-medium text-(--color-fg-muted)">
-						De
+						From
 					</label>
 					<input
 						id="from"

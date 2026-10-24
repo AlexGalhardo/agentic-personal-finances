@@ -27,7 +27,7 @@ function ResetPasswordPage() {
 		setError(null);
 
 		if (!token) {
-			setError("Invalid link ou expirado. Solicite uma nova redefinição de senha.");
+			setError("Invalid or expired link. Request a new password reset.");
 			return;
 		}
 

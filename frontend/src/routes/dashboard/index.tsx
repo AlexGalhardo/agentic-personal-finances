@@ -21,7 +21,7 @@ import { useSession } from "../../lib/auth-client";
 import type { TransactionCategory } from "../../lib/categories";
 import { expenseCategories, expenseCategoryColor, incomeCategories, incomeCategoryColor } from "../../lib/categories";
 import { exportSummaryToPdf } from "../../lib/export-summary-pdf";
-import { exportTransactionsToCsv, exportTransactionsToXlsx } from "../../lib/export-transactions";
+import { exportAccountToJson, exportTransactionsToCsv, exportTransactionsToXlsx } from "../../lib/export-transactions";
 import { FREE_TRANSACTION_LIMIT, hasActivePlan, planDaysRemaining } from "../../lib/plan";
 import type { Transaction } from "../../lib/queries";
 import { useInvalidateFinanceData, useMeQuery, useStatisticsQuery, useTransactionsQuery } from "../../lib/queries";
@@ -128,7 +128,7 @@ function DashboardPage() {
 			headerActions={
 				<DashboardActions
 					disabled={freeLimitReached}
-					userName={session?.user.name ?? "Conta"}
+					userName={session?.user.name ?? "Account"}
 					onImport={() => setImportOpen(true)}
 					onAdd={setAddType}
 				/>
@@ -151,18 +151,18 @@ function DashboardPage() {
 							incomeTotal={incomeData.reduce((sum, row) => sum + row.total, 0)}
 							expenseTotal={expenseData.reduce((sum, row) => sum + row.total, 0)}
 						/>
-						<AccordionCard title="Despesas por categoria" defaultOpen>
+						<AccordionCard title="Expenses by category" defaultOpen>
 							<CategoryPieChart
 								data={expenseData}
 								colors={expenseCategoryColor}
-								emptyLabel="Nenhuma despesa registrada ainda."
+								emptyLabel="No expenses recorded yet."
 							/>
 						</AccordionCard>
-						<AccordionCard title="Receitas por categoria" defaultOpen>
+						<AccordionCard title="Income by category" defaultOpen>
 							<CategoryPieChart
 								data={incomeData}
 								colors={incomeCategoryColor}
-								emptyLabel="Nenhuma receita registrada ainda."
+								emptyLabel="No income recorded yet."
 							/>
 						</AccordionCard>
 					</div>
@@ -175,6 +175,8 @@ function DashboardPage() {
 								exportingPdf={exportingPdf}
 								onXlsx={() => exportTransactionsToXlsx(searched)}
 								onCsv={() => exportTransactionsToCsv(searched)}
+								jsonDisabled={allTransactions.length === 0}
+								onJson={() => exportAccountToJson(session?.user ?? {}, allTransactions)}
 								onPdf={handleExportSummaryPdf}
 							/>
 						</div>

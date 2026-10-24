@@ -27,7 +27,7 @@ export function CategorySelect({
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	const selectedLabel = value ? categoryLabels[value] : (placeholder ?? "Selecione");
+	const selectedLabel = value ? categoryLabels[value] : (placeholder ?? "Select");
 
 	return (
 		<div ref={containerRef} className="relative">

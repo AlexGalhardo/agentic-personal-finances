@@ -5,7 +5,7 @@ test("toggling the theme switches to dark mode and persists across reload", asyn
 	await page.waitForLoadState("networkidle");
 
 	const html = page.locator("html");
-	const toggle = page.getByRole("button", { name: /ativar tema/i });
+	const toggle = page.getByRole("button", { name: /switch to (light|dark) theme/i });
 
 	const initiallyDark = await html.evaluate((el) => el.classList.contains("dark"));
 

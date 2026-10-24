@@ -41,7 +41,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	const { queryClient } = Route.useRouteContext();
 
 	return (
-		<html lang="pt-BR" suppressHydrationWarning>
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 				{/** biome-ignore lint/security/noDangerouslySetInnerHtml: static inline script (no user input) that prevents a wrong-theme flash before hydration */}
