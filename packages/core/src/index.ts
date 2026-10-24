@@ -1,4 +1,13 @@
 export {
+	ACCOUNT_EXPORT_FORMAT,
+	ACCOUNT_EXPORT_VERSION,
+	type AccountExport,
+	buildAccountExport,
+	type ExportedTransaction,
+	MAX_EXPORT_TRANSACTIONS,
+	parseAccountExport,
+} from "./account-backup";
+export {
 	ACCOUNT_DELETION_GRACE_DAYS,
 	TELEGRAM_LINK_TOKEN_TTL_MS,
 } from "./constants/identity";
