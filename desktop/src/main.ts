@@ -3,13 +3,15 @@
 // so login, the session cookie and every page behave exactly as in a
 // browser — no API client or UI is duplicated here.
 //   electron . [--url http://localhost:4001] [--smoke]
-// URL precedence: --url, DESKTOP_APP_URL, then package.json "appUrl" (set at
-// package time by the release workflow). --smoke: CI check, exits 0 once a
-// page (the app or the offline screen) has rendered.
+// Target precedence: --url, DESKTOP_APP_URL (remote server), then the
+// embedded standalone server (API + web + SQLite, bundled in packaged builds),
+// then package.json "appUrl" (dev fallback). --smoke: CI check, exits 0 once
+// a page (the app or the offline screen) has rendered.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { app, BrowserWindow, session, shell } from "electron";
 import { resolveAppUrl } from "./config/env";
+import { type EmbeddedServer, embeddedBinaryPath, startEmbeddedServer } from "./embedded";
 
 const SMOKE = process.argv.includes("--smoke");
 const SMOKE_TIMEOUT_MS = 30_000;
@@ -21,7 +23,8 @@ function argValue(name: string): string | undefined {
 }
 
 const { appUrl } = JSON.parse(readFileSync(join(app.getAppPath(), "package.json"), "utf8")) as { appUrl: string };
-const APP_URL = resolveAppUrl(appUrl, argValue("--url"));
+let APP_URL = resolveAppUrl(appUrl, argValue("--url"));
+let embedded: EmbeddedServer | null = null;
 
 function isAppUrl(url: string): boolean {
 	return URL.canParse(url) && new URL(url).origin === APP_URL.origin;
@@ -36,11 +39,11 @@ function openExternally(url: string): void {
 // A data: page needs no IPC: the meta refresh (and the link) navigate back to
 // APP_URL, which the will-navigate guard allows.
 function offlinePage(): string {
-	const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+	const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta http-equiv="refresh" content="${RETRY_SECONDS};url=${APP_URL.href}"><title>Agent Money</title>
 <style>body{margin:0;height:100vh;display:grid;place-items:center;background:#09090b;color:#fafafa;font:15px system-ui,sans-serif;text-align:center}a{color:#22c55e}</style>
-</head><body><main><h1>Sem conexão com o servidor</h1><p>${APP_URL.origin} não respondeu.</p>
-<p>Tentando de novo em ${RETRY_SECONDS} s… <a href="${APP_URL.href}">Tentar agora</a></p></main></body></html>`;
+</head><body><main><h1>Cannot reach the server</h1><p>${APP_URL.origin} did not respond.</p>
+<p>Retrying in ${RETRY_SECONDS} s… <a href="${APP_URL.href}">Retry now</a></p></main></body></html>`;
 	return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 }
 
@@ -112,13 +115,31 @@ app.on("second-instance", () => {
 	mainWindow.focus();
 });
 
-app.whenReady().then(() => {
+function usesRemoteServer(): boolean {
+	return argValue("--url") !== undefined || Boolean(process.env.DESKTOP_APP_URL);
+}
+
+app.whenReady().then(async () => {
 	// Deny camera, microphone, geolocation, notifications…; copying (API key,
 	// PIX code) only needs clipboard writes.
 	session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) =>
 		callback(permission === "clipboard-sanitized-write"),
 	);
+	const binary = app.isPackaged && !usesRemoteServer() ? embeddedBinaryPath(process.resourcesPath) : null;
+	if (binary) {
+		try {
+			embedded = await startEmbeddedServer(binary, join(app.getPath("userData"), "data"));
+			APP_URL = embedded.url;
+		} catch (error) {
+			console.error(`embedded server failed: ${String(error)}`);
+			app.exit(1);
+			return;
+		}
+	}
 	mainWindow = createWindow();
 });
+
+// app.exit() (smoke test, failures) skips will-quit but still ends the process.
+process.on("exit", () => embedded?.stop());
 
 app.on("window-all-closed", () => app.quit());

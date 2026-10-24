@@ -11,17 +11,31 @@ files:
   - dist/**
   - assets/icon.png
   - package.json
+# Embedded server: `bun run build:standalone` (repo root) must run first. The
+# binary and its `.standalone/` sidecar ship under resources/standalone/.
+extraResources:
+  - from: ../.standalone
+    to: standalone/.standalone
 win:
   target: nsis
+  extraResources:
+    - from: ../agentic-personal-finances.exe
+      to: standalone/agentic-personal-finances.exe
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
 linux:
   target: AppImage
   category: Finance
+  extraResources:
+    - from: ../agentic-personal-finances
+      to: standalone/agentic-personal-finances
 mac:
   # Unsigned: the workflow ad hoc signs the .app (Apple Silicon refuses
   # unsigned code) and zips it. A dmg/notarization needs a Developer ID.
   target: dir
   category: public.app-category.finance
   identity: null
+  extraResources:
+    - from: ../agentic-personal-finances
+      to: standalone/agentic-personal-finances
