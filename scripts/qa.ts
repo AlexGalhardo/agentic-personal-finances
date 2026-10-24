@@ -602,9 +602,9 @@ await group("web", async () => {
 	const payload = `<img src=x onerror="window.__qaXss=1"> QA web ${RUN_ID}`;
 	await app.getByRole("button", { name: "Add expense" }).click();
 	await app.getByLabel("Description").fill(payload);
-	await app.getByLabel("Valor").fill("12.34");
+	await app.getByLabel("Amount").fill("12.34");
 	await app.getByRole("button", { name: "Create transaction" }).click();
-	await app.getByLabel("Buscar por nome").fill(`QA web ${RUN_ID}`);
+	await app.getByLabel("Search by name").fill(`QA web ${RUN_ID}`);
 	const row = app.getByRole("row", { name: new RegExp(`QA WEB ${RUN_ID}`, "i") });
 	const rowVisible = await appears(row.first());
 	check(g, "create a transaction through the UI", rowVisible);
@@ -616,8 +616,8 @@ await group("web", async () => {
 	await shot(app, "web_transaction_created");
 
 	if (rowVisible) {
-		await row.getByRole("button", { name: "Editar" }).click();
-		await app.getByLabel("Valor").fill("56.78");
+		await row.getByRole("button", { name: "Edit" }).click();
+		await app.getByLabel("Amount").fill("56.78");
 		await app.getByRole("button", { name: "Save changes" }).click();
 		check(g, "edit the transaction through the UI", await appears(row.getByText("R$ 56,78")));
 		await row.getByRole("button", { name: "Delete" }).click();
@@ -747,7 +747,7 @@ await group("desktop", async () => {
 	const offlineApp = await launch("http://localhost:9");
 	const offlineWindow = await offlineApp.firstWindow();
 	const offline = await offlineWindow
-		.getByText("Sem conexão com o servidor")
+		.getByText("Cannot reach the server")
 		.waitFor({ timeout: 15_000 })
 		.then(() => true)
 		.catch(() => false);
@@ -858,7 +858,7 @@ await group("bot", async () => {
 		reply.slice(0, 80),
 	);
 	reply = await tap("authmenu:login");
-	check(g, "login option asks for the e-mail", /e-mail/i.test(reply));
+	check(g, "login option asks for the e-mail", /email/i.test(reply));
 	reply = await say(ADMIN.email);
 	check(g, "e-mail step asks for the password", /password/i.test(reply));
 	reply = await say("wrong-password");
@@ -1164,15 +1164,13 @@ await group("android", async () => {
 		return;
 	}
 
-	// 10.0.2.2 is the emulator's alias for this computer's localhost. --no-dev: a
-	// production bundle, as users get it — and no LogBox toasts, which float
-	// over the tab bar and are invisible to uiautomator.
-	const apiPort = new URL(API).port || "80";
+	// --no-dev: a production bundle, as users get it — and no LogBox toasts,
+	// which float over the tab bar and are invisible to uiautomator. The app is
+	// offline-first, so it needs no API address.
 	spawn(["bunx", "expo", "start", "--port", "8091", "--clear", "--no-dev", "--minify"], "mobile", {
 		CI: "1",
 		// The bot group loads backend/.env.e2e (NODE_ENV=test) into this process.
 		NODE_ENV: "development",
-		EXPO_PUBLIC_API_URL: `http://10.0.2.2:${apiPort}`,
 	});
 	if (!check(g, "Metro bundler starts", await waitForUrl("http://localhost:8091/status", 120_000))) return;
 
@@ -1185,7 +1183,7 @@ await group("android", async () => {
 	let reloads = 0;
 	while (!ready && Date.now() < deadline) {
 		const nodes = device.nodes();
-		if (nodes.some((n) => n.id === "field-E-mail")) ready = true;
+		if (nodes.some((n) => n.id === "nav-home")) ready = true;
 		// Expo Go gives up when the first (uncached) bundle is slow: reopen.
 		else if (nodes.some((n) => n.text === "Something went wrong.") && reloads++ < 2)
 			device.run("shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "exp://10.0.2.2:8091");
@@ -1194,20 +1192,10 @@ await group("android", async () => {
 			device.run("shell", "input", "keyevent", "4");
 		else await Bun.sleep(2000);
 	}
-	if (!check(g, "app boots to the login screen", ready)) {
+	if (!check(g, "app boots to the dashboard", ready)) {
 		await device.screenshot("android_boot_failed");
 		return;
 	}
-	await device.screenshot("android_login");
-
-	await device.fill("field-E-mail", ADMIN.email);
-	await device.fill("field-Senha", "wrong-password");
-	await device.tap(/^Entrar$/);
-	check(g, "wrong password shows an inline error", Boolean(await device.waitFor(/incorret/i, 15_000)));
-
-	await device.fill("field-Senha", ADMIN.password);
-	await device.tap(/^Entrar$/);
-	check(g, "login reaches the dashboard", Boolean(await device.waitFor(/Olá, Admin/, 20_000)));
 	await device.screenshot("android_dashboard");
 
 	for (const tab of ["nav-search", "nav-import", "nav-profile", "nav-home"]) {
@@ -1221,12 +1209,12 @@ await group("android", async () => {
 
 	const description = `QA android ${RUN_ID} <b>x</b>`;
 	await device.tap("nav-new-transaction");
-	check(g, "new transaction screen opens", Boolean(await device.waitFor("Nova transação")));
-	await device.fill("field-Valor", "4321");
-	await device.fill("field-Descrição", description);
-	await device.tap("Compras");
-	await device.tap(/^Adicionar$/);
-	check(g, "transaction is created", Boolean(await device.waitFor(/Olá, Admin/, 15_000)));
+	check(g, "new transaction screen opens", Boolean(await device.waitFor("New transaction")));
+	await device.fill("field-Amount", "4321");
+	await device.fill("field-Description", description);
+	await device.tap("Shopping");
+	await device.tap(/^Add$/);
+	check(g, "transaction is created", Boolean(await device.waitFor("nav-home", 15_000)));
 
 	await device.tap("nav-search");
 	await device.fill("search-input", `QA android ${RUN_ID}`);
@@ -1236,13 +1224,13 @@ await group("android", async () => {
 
 	if (found) {
 		await device.tap(description);
-		check(g, "edit screen opens", Boolean(await device.waitFor("Editar transação")));
-		await device.fill("field-Valor", "9999");
-		await device.tap("Salvar alterações");
+		check(g, "edit screen opens", Boolean(await device.waitFor("Edit transaction")));
+		await device.fill("field-Amount", "9999");
+		await device.tap("Save changes");
 		check(g, "edited amount is shown", Boolean(await device.waitFor(/R\$ 99,99/, 15_000)));
 		await device.tap(description);
-		await device.tap("Excluir transação");
-		await device.tap(/^(EXCLUIR|Excluir)$/, 5000);
+		await device.tap("Delete transaction");
+		await device.tap(/^(DELETE|Delete)$/, 5000);
 		await Bun.sleep(2000);
 		check(g, "transaction is deleted after the native confirmation", !device.find(description));
 	}
@@ -1257,12 +1245,8 @@ await group("android", async () => {
 	);
 
 	await device.tap("nav-profile");
-	check(g, "profile shows the account screen", Boolean(await device.waitFor("Minha Conta")));
-	await device.scrollTo("Sair da conta");
-	await device.tap("Sair da conta");
-	await device.tap(/^(SAIR|Sair)$/, 5000);
-	check(g, "logout returns to the login screen", Boolean(await device.waitFor("field-E-mail", 15_000)));
-	await device.screenshot("android_logged_out");
+	check(g, "settings screen shows the backup options", Boolean(await device.waitFor("Export all data (.json)")));
+	await device.screenshot("android_settings");
 });
 
 // ── report ───────────────────────────────────────────────────────────────────
