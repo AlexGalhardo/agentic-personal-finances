@@ -1,77 +1,59 @@
 appId: com.elysiagalhardofinances.money
 ---
-# Logs in as the seeded demo account (backend/prisma/seed.ts —
-# admin@gmail.com / adminBR@123, same as the web E2E suite) and runs the
-# full create -> find -> edit -> delete cycle for one transaction.
+# The app is offline-first (local SQLite), so there is no login: it opens
+# straight on the dashboard. Runs the full create -> find -> edit -> delete
+# cycle for one transaction.
 - launchApp:
     clearState: true
-- assertVisible: "Entrar"
-- tapOn:
-    id: "field-E-mail"
-- inputText: "admin@gmail.com"
-- tapOn:
-    id: "field-Senha"
-- inputText: "adminBR@123"
-- hideKeyboard
-- tapOn:
-    text: "Entrar"
-    index: 1
-- assertVisible: "Olá, Admin"
+- assertVisible: "Your money"
 
 # Create — the center "+" in the bottom bar opens /transaction/new.
 - tapOn:
     id: "nav-new-transaction"
-# Not "Nova transação": the "+" button's accessibilityLabel matches it too.
 - assertVisible:
-    id: "field-Valor"
-- tapOn: "Despesa"
+    id: "field-Amount"
+- tapOn: "Expense"
 - tapOn:
-    id: "field-Valor"
+    id: "field-Amount"
 - inputText: "4321"
 - tapOn:
-    id: "field-Descrição"
-- inputText: "Maestro E2E Compra"
+    id: "field-Description"
+- inputText: "Maestro E2E Purchase"
 - hideKeyboard
-- tapOn: "Compras"
-- tapOn: "Adicionar"
-- assertVisible: "Olá, Admin"
+- tapOn: "Shopping"
+- tapOn: "Add"
+- assertVisible: "Your money"
 
-# Find it through search — among 500 seeded rows it may not be on the first page.
+# Find it through search.
 - tapOn:
     id: "nav-search"
 - tapOn:
     id: "search-input"
-- inputText: "Maestro E2E Compra"
-- assertVisible: "Maestro E2E Compra"
+- inputText: "Maestro E2E Purchase"
+- assertVisible: "Maestro E2E Purchase"
 
 # Edit — tapping the row opens /transaction/[id] pre-filled.
-# `below`: the search input holds the same text.
 - tapOn:
-    text: "Maestro E2E Compra"
+    text: "Maestro E2E Purchase"
     below:
       id: "search-input"
-- assertVisible: "Editar transação"
 - tapOn:
-    id: "field-Valor"
+    id: "field-Amount"
 - eraseText
 - inputText: "9999"
 - hideKeyboard
-- tapOn: "Salvar alterações"
-# Saving goes back to the still-mounted search screen, which re-renders
-# with the new amount once the update invalidates the transactions query.
-- assertVisible: '.*R\$ 99,99'
+- tapOn: "Save changes"
+- assertVisible: '.*R\$ 99.99'
 
 # Delete — the form's own button, then the native confirmation.
-# `below`: the search input holds the same text.
 - tapOn:
-    text: "Maestro E2E Compra"
+    text: "Maestro E2E Purchase"
     below:
       id: "search-input"
-- assertVisible: "Editar transação"
 - scrollUntilVisible:
     element:
-      text: "Excluir transação"
-- tapOn: "Excluir transação"
+      text: "Delete transaction"
+- tapOn: "Delete transaction"
 - tapOn:
-    text: "^Excluir$"
-- assertVisible: "Nenhum resultado"
+    text: "^Delete$"
+- assertVisible: "No results"

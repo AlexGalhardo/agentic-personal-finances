@@ -33,7 +33,7 @@ export default function SearchScreen() {
 					<TextInput
 						value={query}
 						onChangeText={setQuery}
-						placeholder="Buscar pela descrição"
+						placeholder="Search by description"
 						placeholderTextColor={colors.subtle}
 						selectionColor={colors.brand}
 						autoCapitalize="none"
@@ -41,7 +41,7 @@ export default function SearchScreen() {
 						autoFocus
 						returnKeyType="search"
 						testID="search-input"
-						accessibilityLabel="Buscar transação"
+						accessibilityLabel="Search transactions"
 						className="h-full flex-1 text-body text-fg web:outline-none"
 					/>
 					{query ? (
@@ -76,12 +76,12 @@ export default function SearchScreen() {
 						<EmptyState
 							icon="search"
 							title="Search transactions"
-							description={`Digite pelo menos ${MIN_QUERY_LENGTH} caracteres da descrição.`}
+							description={`Type at least ${MIN_QUERY_LENGTH} characters of the description.`}
 						/>
 					) : transactionsQuery.isPending ? (
 						<LoadingState />
 					) : results.length === 0 ? (
-						<EmptyState icon="inbox" title="Nenhum resultado" description="Tente outro termo." />
+						<EmptyState icon="inbox" title="No results" description="Try another term." />
 					) : (
 						results.map((transaction, index) => (
 							<TransactionRow

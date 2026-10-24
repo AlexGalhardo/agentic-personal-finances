@@ -49,7 +49,6 @@ function useInvalidateTransactions() {
 	return () => {
 		queryClient.invalidateQueries({ queryKey: ["transactions"] });
 		queryClient.invalidateQueries({ queryKey: ["transactions-statistics"] });
-		queryClient.invalidateQueries({ queryKey: ["me"] });
 	};
 }
 

@@ -23,8 +23,8 @@ import { colors } from "@/theme";
 type TxType = "income" | "expense";
 
 const TYPE_OPTIONS = [
-	{ value: "expense", label: "Despesa", activeClassName: "text-expense" },
-	{ value: "income", label: "Receita", activeClassName: "text-income" },
+	{ value: "expense", label: "Expense", activeClassName: "text-expense" },
+	{ value: "income", label: "Income", activeClassName: "text-income" },
 ] as const;
 
 function categoriesForType(type: TxType): TransactionCategory[] {
@@ -78,8 +78,8 @@ export default function TransactionFormScreen() {
 
 	async function onSubmit(): Promise<void> {
 		setError(null);
-		if (amountCents < MIN_AMOUNT_CENTS) return setError("O valor mínimo é R$ 0,01.");
-		if (amountCents > MAX_AMOUNT_CENTS) return setError("O valor máximo é R$ 999.999,99.");
+		if (amountCents < MIN_AMOUNT_CENTS) return setError("The minimum amount is R$ 0.01.");
+		if (amountCents > MAX_AMOUNT_CENTS) return setError("The maximum amount is R$ 999,999.99.");
 		if (!description.trim()) return setError("Enter a description.");
 
 		const input = {
@@ -101,10 +101,10 @@ export default function TransactionFormScreen() {
 
 	// A native confirmation is right here: deleting is irreversible and rare.
 	function onDelete(): void {
-		Alert.alert("Delete transaction", "Esta ação não pode ser desfeita.", [
-			{ text: "Cancelar", style: "cancel" },
+		Alert.alert("Delete transaction", "This action cannot be undone.", [
+			{ text: "Cancel", style: "cancel" },
 			{
-				text: "Excluir",
+				text: "Delete",
 				style: "destructive",
 				onPress: async () => {
 					await deleteMut.mutateAsync(id);
@@ -120,7 +120,7 @@ export default function TransactionFormScreen() {
 				title: isNew ? "New transaction" : "Edit transaction",
 				headerLeft: () => (
 					<Pressable onPress={() => router.back()} hitSlop={10} className="active:opacity-60">
-						<Text className="text-body text-muted">Cancelar</Text>
+						<Text className="text-body text-muted">Cancel</Text>
 					</Pressable>
 				),
 			}}
@@ -143,7 +143,7 @@ export default function TransactionFormScreen() {
 			<SegmentedControl options={TYPE_OPTIONS} value={type} onChange={onChangeType} />
 
 			<View className="items-center gap-1 py-2">
-				<Text className="text-footnote text-subtle">Valor</Text>
+				<Text className="text-footnote text-subtle">Amount</Text>
 				<View className="flex-row items-center justify-center gap-2">
 					<Text className="text-title text-subtle">R$</Text>
 					<TextInput
@@ -157,8 +157,8 @@ export default function TransactionFormScreen() {
 						selectionColor={colors.brand}
 						keyboardType="number-pad"
 						inputMode="numeric"
-						testID="field-Valor"
-						accessibilityLabel="Valor"
+						testID="field-Amount"
+						accessibilityLabel="Amount"
 						className={`min-w-[120px] text-center text-[44px] font-bold web:outline-none ${type === "income" ? "text-income" : "text-fg"}`}
 					/>
 				</View>
@@ -166,7 +166,7 @@ export default function TransactionFormScreen() {
 			</View>
 
 			<TextField
-				label="Descrição"
+				label="Description"
 				value={description}
 				onChangeText={setDescription}
 				placeholder="Ex: Supermercado"
@@ -174,7 +174,7 @@ export default function TransactionFormScreen() {
 			/>
 
 			<View className="gap-2">
-				<Text className="text-footnote font-medium text-muted">Categoria</Text>
+				<Text className="text-footnote font-medium text-muted">Category</Text>
 				<View className="flex-row flex-wrap gap-2">
 					{categories.map((option) => (
 						<Chip
@@ -187,7 +187,7 @@ export default function TransactionFormScreen() {
 				</View>
 			</View>
 
-			<DateField label="Data" value={dateISO} onChange={setDateISO} />
+			<DateField label="Date" value={dateISO} onChange={setDateISO} />
 
 			<Notice kind="error" message={error} />
 

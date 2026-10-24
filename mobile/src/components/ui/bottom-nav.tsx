@@ -61,7 +61,7 @@ export function BottomNav({ active }: { active: Tab }) {
 				onPress={() => router.replace("/dashboard")}
 			/>
 			<NavItem
-				label="Buscar"
+				label="Search"
 				icon="search"
 				active={active === "search"}
 				accessibilityLabel="Search transactions"
@@ -80,18 +80,18 @@ export function BottomNav({ active }: { active: Tab }) {
 				</Pressable>
 			</View>
 			<NavItem
-				label="Importar"
+				label="Import"
 				icon="upload"
 				active={active === "import"}
-				accessibilityLabel="Importar extrato Nubank"
+				accessibilityLabel="Import backup"
 				testID="nav-import"
-				onPress={() => router.push("/import-nubank")}
+				onPress={() => router.push("/import-backup")}
 			/>
 			<NavItem
-				label="Conta"
-				icon="user"
+				label="Settings"
+				icon="settings"
 				active={active === "profile"}
-				accessibilityLabel="My account"
+				accessibilityLabel="Settings"
 				testID="nav-profile"
 				onPress={() => router.push("/profile")}
 			/>

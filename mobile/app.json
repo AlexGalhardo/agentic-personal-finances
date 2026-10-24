@@ -36,8 +36,7 @@
 				}
 			],
 			"@react-native-community/datetimepicker",
-			"expo-web-browser",
-			"expo-secure-store"
+			"expo-sqlite"
 		],
 		"experiments": {
 			"typedRoutes": false,

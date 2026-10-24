@@ -1,14 +1,8 @@
-import { Redirect, Stack } from "expo-router";
+import { Stack } from "expo-router";
 
-import { useSession } from "@/lib/auth-client";
 import { colors } from "@/theme";
 
 export default function AppLayout() {
-	const { data: session, isPending } = useSession();
-
-	if (isPending) return null;
-	if (!session) return <Redirect href="/login" />;
-
 	return (
 		<Stack
 			screenOptions={{
@@ -21,11 +15,9 @@ export default function AppLayout() {
 			}}
 		>
 			<Stack.Screen name="dashboard" options={{ headerShown: false }} />
-			<Stack.Screen name="search" options={{ title: "Buscar" }} />
-			<Stack.Screen name="profile" options={{ title: "Minha Conta" }} />
-			<Stack.Screen name="subscription" options={{ title: "Assinatura" }} />
-			<Stack.Screen name="two-factor" options={{ title: "Two-factor authentication" }} />
-			<Stack.Screen name="import-nubank" options={{ title: "Importar do Nubank", presentation: "modal" }} />
+			<Stack.Screen name="search" options={{ title: "Search" }} />
+			<Stack.Screen name="profile" options={{ title: "Settings" }} />
+			<Stack.Screen name="import-backup" options={{ title: "Import backup", presentation: "modal" }} />
 			<Stack.Screen name="transaction/[id]" options={{ presentation: "modal" }} />
 		</Stack>
 	);

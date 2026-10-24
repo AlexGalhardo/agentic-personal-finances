@@ -13,7 +13,6 @@ import { Screen } from "@/components/ui/screen";
 import { Section } from "@/components/ui/section";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { TransactionRow } from "@/components/ui/transaction-row";
-import { useSession } from "@/lib/auth-client";
 import {
 	categoryLabels,
 	categoryOptions,
@@ -36,7 +35,6 @@ type ChartType = "expense" | "income";
 
 export default function DashboardScreen() {
 	const router = useRouter();
-	const { data: session } = useSession();
 
 	const [category, setCategory] = useState<TransactionCategory | typeof ALL>(ALL);
 	const [startDate, setStartDate] = useState<string | null>(null);
@@ -83,8 +81,6 @@ export default function DashboardScreen() {
 		setVisibleCount(PAGE_SIZE);
 	}
 
-	const firstName = (session?.user.name ?? session?.user.email ?? "").split(" ")[0];
-
 	return (
 		<Screen>
 			<ScrollView
@@ -102,41 +98,41 @@ export default function DashboardScreen() {
 			>
 				<View className="flex-row items-center justify-between">
 					<View>
-						<Text className="text-footnote text-subtle">Bem-vindo de volta</Text>
-						<Text className="text-title text-fg">Hello, {firstName}</Text>
+						<Text className="text-footnote text-subtle">Welcome back</Text>
+						<Text className="text-title text-fg">Your money</Text>
 					</View>
 					<Pressable
 						onPress={() => router.push("/profile")}
 						accessibilityRole="button"
-						accessibilityLabel="Abrir minha conta"
+						accessibilityLabel="Open settings"
 						className="size-10 items-center justify-center rounded-full bg-raised active:opacity-70"
 					>
-						<Text className="text-headline text-fg">{firstName.charAt(0).toUpperCase()}</Text>
+						<Feather name="settings" size={18} color={colors.fg} />
 					</Pressable>
 				</View>
 
 				<View className="gap-5">
 					<View>
 						<Text className="text-footnote font-medium text-muted">
-							{category === ALL && !hasDateFilter ? "Saldo atual" : "Saldo no filtro"}
+							{category === ALL && !hasDateFilter ? "Current balance" : "Balance in filter"}
 						</Text>
 						<Text className={`mt-1 text-display ${summary.balance < 0 ? "text-expense" : "text-fg"}`}>
 							{formatBRL(summary.balance)}
 						</Text>
 					</View>
 					<View className="flex-row gap-3">
-						<Stat label="Receitas" value={summary.income} icon="arrow-down-left" color={colors.income} />
-						<Stat label="Despesas" value={summary.expense} icon="arrow-up-right" color={colors.expense} />
+						<Stat label="Income" value={summary.income} icon="arrow-down-left" color={colors.income} />
+						<Stat label="Expenses" value={summary.expense} icon="arrow-up-right" color={colors.expense} />
 					</View>
 				</View>
 
 				<View className="gap-3">
 					<View className="flex-row items-center justify-between">
-						<Text className="text-headline text-fg">Filtros</Text>
+						<Text className="text-headline text-fg">Filters</Text>
 						<Pressable
 							onPress={() => setShowDates((current) => !current)}
 							accessibilityRole="button"
-							accessibilityLabel="Filtrar por período"
+							accessibilityLabel="Filter by period"
 							accessibilityState={{ expanded: showDates }}
 							className="flex-row items-center gap-1.5 active:opacity-60"
 						>
@@ -144,7 +140,7 @@ export default function DashboardScreen() {
 							<Text
 								className={`text-footnote font-medium ${hasDateFilter ? "text-brand" : "text-muted"}`}
 							>
-								Período
+								Period
 							</Text>
 						</Pressable>
 					</View>
@@ -179,7 +175,7 @@ export default function DashboardScreen() {
 						className="-mx-5"
 						contentContainerStyle={{ paddingHorizontal: 20 }}
 					>
-						<Chip label="Todas" selected={category === ALL} onPress={() => applyCategory(ALL)} />
+						<Chip label="All" selected={category === ALL} onPress={() => applyCategory(ALL)} />
 						{categoryOptions.map((option) => (
 							<Chip
 								key={option}
@@ -195,8 +191,8 @@ export default function DashboardScreen() {
 					<View className="gap-5 p-4">
 						<SegmentedControl
 							options={[
-								{ value: "expense", label: "Despesas" },
-								{ value: "income", label: "Receitas" },
+								{ value: "expense", label: "Expenses" },
+								{ value: "income", label: "Income" },
 							]}
 							value={chartType}
 							onChange={setChartType}
@@ -207,9 +203,7 @@ export default function DashboardScreen() {
 							<CategoryPieChart
 								slices={slices}
 								emptyLabel={
-									chartType === "expense"
-										? "Nenhuma despesa registrada ainda."
-										: "Nenhuma receita registrada ainda."
+									chartType === "expense" ? "No expenses recorded yet." : "No income recorded yet."
 								}
 							/>
 						)}
