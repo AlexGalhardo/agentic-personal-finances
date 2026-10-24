@@ -6,15 +6,6 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-### Changed
-
-- Web routes translated to English: `/login`, `/signup`, `/forgot-password`,
-  `/reset-password`, `/account`, `/contact`, `/terms`, `/privacy`,
-  `/telegram-link` (old Portuguese URLs no longer exist).
-- Signed-out pages (landing, login, sign-up, contact, terms, privacy) are
-  always dark and their navbar only has a **Login** button; the theme can only
-  be changed from the user menu once logged in.
-
 ## [1.1.0] - 2026-10-24
 
 ### Added
@@ -43,6 +34,12 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Web routes translated to English: `/login`, `/signup`, `/forgot-password`,
+  `/reset-password`, `/account`, `/contact`, `/terms`, `/privacy`,
+  `/telegram-link` (old Portuguese URLs no longer exist).
+- Signed-out pages (landing, login, sign-up, contact, terms, privacy) are
+  always dark and their navbar only has a **Login** button; the theme can only
+  be changed from the user menu once logged in.
 - **Mobile is offline-first**: transactions live in local SQLite
   (`expo-sqlite`); login, sign-up, API client, subscription and 2FA screens
   and the Playwright web E2E were removed. Maestro flow updated.
