@@ -57,7 +57,8 @@ On `main`:
    notes from the CHANGELOG section (style reference:
    <https://github.com/AlexGalhardo/vukem/releases>). Run Actions →
    Release → Run workflow to build the same files as artifacts without
-   publishing a tag.
+   publishing; fill the `tag` input (e.g. `v1.2.0`) to also create the tag on
+   that commit and publish the GitHub Release from CI.
 
 ## QA / pentest pass
 

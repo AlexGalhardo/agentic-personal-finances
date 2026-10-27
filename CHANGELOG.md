@@ -6,19 +6,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-27
+
 ### Added
 
+- Release workflow: the manual run takes an optional `tag` input that creates
+  the tag and publishes the GitHub Release from CI.
 - `ENABLE_PAYWALL` feature flag (backend and bot, default `true`). Set it to
   `false` to switch the whole payment requirement off: no free-plan
   transaction limit, the Telegram bot no longer asks for a plan or offers PIX
   checkout, `/payments/*` and the AbacatePay webhook answer 404/503, and the
   web app hides the plan section and redirects `/checkout` to the account
   page. `/config` exposes it as `enablePaywall`.
-
-## [1.2.0] - 2026-10-27
-
-### Added
-
 - Mobile: on-device account. First launch shows **Create your account**
   (name, email, password; stored in the local SQLite `account` table, password
   hashed with PBKDF2-SHA256); later launches show **Sign in**. The app locks on
