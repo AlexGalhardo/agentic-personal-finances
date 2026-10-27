@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-27
+
+### Added
+
+- Mobile: on-device account. First launch shows **Create your account**
+  (name, email, password; stored in the local SQLite `account` table, password
+  hashed with PBKDF2-SHA256); later launches show **Sign in**. The app locks on
+  cold start and after 60 s in the background.
+- Mobile: **Settings > Biometric unlock** (fingerprint / face through the
+  Android system prompt, device PIN or pattern as fallback) and **Lock now**.
+- Mobile: unit tests for password hashing and sign-up validation.
+
 ## [1.1.0] - 2026-10-24
 
 ### Added
@@ -288,7 +300,8 @@ recorded from the commit history.
 - Initial application: auth, dashboard, transactions, PIX payments, Telegram
   bot.
 
-[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v1.1.0...v1.2.0
 [0.10.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.9.0...v0.10.0
 [0.6.0]: https://github.com/AlexGalhardo/agentic-personal-finances/compare/v0.5.0...v0.6.0
 [0.1.0]: https://github.com/AlexGalhardo/agentic-personal-finances/releases/tag/v0.1.0

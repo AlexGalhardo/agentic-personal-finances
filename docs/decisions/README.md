@@ -15,5 +15,6 @@ of editing an accepted one when a decision changes.
 | [0007](./0007-mobile-e2e-playwright-web-plus-maestro.md)   | Mobile E2E: Playwright on the Expo web build + Maestro | Accepted |
 | [0008](./0008-openapi-from-zod-rendered-by-scalar.md)      | OpenAPI generated from Zod, rendered by Scalar         | Accepted |
 | [0009](./0009-desktop-electron-wraps-web-dashboard.md)     | Desktop app: Electron shell around the web dashboard   | Accepted |
+| [0010](./0010-mobile-local-account-and-biometric-lock.md)  | Mobile: on-device account and biometric lock           | Accepted |
 
 Template: copy any record; sections are Context, Decision, Consequences.

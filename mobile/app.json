@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "Money",
 		"slug": "elysia-galhardo-finances-mobile",
-		"version": "1.1.0",
+		"version": "1.2.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
 		"scheme": "money",
@@ -36,7 +36,13 @@
 				}
 			],
 			"@react-native-community/datetimepicker",
-			"expo-sqlite"
+			"expo-sqlite",
+			[
+				"expo-local-authentication",
+				{
+					"faceIDPermission": "Allow Money to unlock with Face ID."
+				}
+			]
 		],
 		"experiments": {
 			"typedRoutes": false,

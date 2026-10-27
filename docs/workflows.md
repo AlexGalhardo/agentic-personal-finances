@@ -42,12 +42,13 @@ Skill: `agent-money-ship`.
 
 ## Releasing
 
-Versions follow [SemVer](https://semver.org/). Project is at `0.10.0`
-(0.x line). On `main`:
+Versions follow [SemVer](https://semver.org/). Project is at `1.2.0`.
+On `main`:
 
 1. Move `## [Unreleased]` in `CHANGELOG.md` to `## [x.y.z] - YYYY-MM-DD`,
    update the compare links at the bottom ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)).
-2. Bump `version` in the root and workspace `package.json` files.
+2. Bump `version` in the root and workspace `package.json` files and in
+   `mobile/app.json`.
 3. `chore(release): vX.Y.Z` commit on `main`, then
    `git tag vX.Y.Z && git push origin main && git push origin vX.Y.Z` —
    `release.yml` builds every downloadable (Bun executables, Electron

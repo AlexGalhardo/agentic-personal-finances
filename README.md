@@ -16,14 +16,14 @@ built for personal use, open-source practice, and agent-assisted development.
 
 ## Stack
 
-| Workspace       | Role                                                              |
-| --------------- | ----------------------------------------------------------------- |
-| `packages/core` | Shared hexagonal core (`@agentic-personal-finances/core`)         |
-| `backend`       | Bun + ElysiaJS API, Prisma, better-auth                           |
-| `frontend`      | TanStack Start web dashboard                                      |
-| `bot`           | Telegram bot (grammY)                                             |
-| `mobile`        | Expo + React Native, **offline-first** (local SQLite, no account) |
-| `desktop`       | Electron app with the API + web + SQLite embedded (works offline) |
+| Workspace       | Role                                                                                               |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| `packages/core` | Shared hexagonal core (`@agentic-personal-finances/core`)                                          |
+| `backend`       | Bun + ElysiaJS API, Prisma, better-auth                                                            |
+| `frontend`      | TanStack Start web dashboard                                                                       |
+| `bot`           | Telegram bot (grammY)                                                                              |
+| `mobile`        | Expo + React Native, **offline-first** (local SQLite, on-device account + fingerprint/face unlock) |
+| `desktop`       | Electron app with the API + web + SQLite embedded (works offline)                                  |
 
 SQLite is the default everywhere. PostgreSQL is only used by the hosted
 deploy (Railway) and is opt-in locally (`setups/setup-docker.sh postgres`).
@@ -63,7 +63,9 @@ installer is unsigned — choose "More info" then "Run anyway".
 
 Data stays on your device in a local SQLite file. Use **Export .json** in
 the web/desktop dashboard or **Settings > Export all data** on mobile to
-back up everything, and **Import** to restore it on any of them.
+back up everything, and **Import** to restore it on any of them. The mobile
+account is local: the backup does not carry it, so after reinstalling you
+create a new account and import the backup.
 
 ## Quick start (development)
 
@@ -119,8 +121,12 @@ server instead.
 
 ### Mobile (`mobile`)
 
-The app has no login and no API: transactions are stored in SQLite on the
-phone.
+The app has no API: transactions are stored in SQLite on the phone. On first
+launch you create an account that lives only on the device (name, email,
+password hashed with PBKDF2); afterwards the app asks for it again on every
+cold start and after 60 s in the background. **Settings > Biometric unlock**
+turns on the Android fingerprint / face prompt (with the device PIN or
+pattern as fallback). There is no password recovery — export a backup first.
 
 ```bash
 bun run mobile:dev             # Metro + QR code; open it with Expo Go on the same Wi-Fi

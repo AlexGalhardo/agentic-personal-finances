@@ -20,7 +20,7 @@
     },
     "backend": {
       "name": "@agentic-personal-finances/backend",
-      "version": "0.10.0",
+      "version": "1.1.0",
       "dependencies": {
         "@agentic-personal-finances/core": "workspace:*",
         "@better-auth/api-key": "1.7.5",
@@ -57,7 +57,7 @@
     },
     "bot": {
       "name": "@agentic-personal-finances/bot",
-      "version": "0.10.0",
+      "version": "1.1.0",
       "dependencies": {
         "@agentic-personal-finances/backend": "workspace:*",
         "@agentic-personal-finances/core": "workspace:*",
@@ -76,7 +76,7 @@
     },
     "desktop": {
       "name": "@agentic-personal-finances/desktop",
-      "version": "0.10.0",
+      "version": "1.1.0",
       "dependencies": {
         "zod": "4.6.2",
       },
@@ -88,7 +88,7 @@
     },
     "frontend": {
       "name": "@agentic-personal-finances/frontend",
-      "version": "0.10.0",
+      "version": "1.1.0",
       "dependencies": {
         "@agentic-personal-finances/backend": "workspace:*",
         "@agentic-personal-finances/core": "workspace:*",
@@ -131,20 +131,23 @@
     },
     "mobile": {
       "name": "@agentic-personal-finances/mobile",
-      "version": "0.10.0",
+      "version": "1.1.0",
       "dependencies": {
         "@agentic-personal-finances/core": "workspace:*",
         "@expo/vector-icons": "15.1.1",
+        "@noble/hashes": "2.4.0",
         "@react-native-community/datetimepicker": "9.1.0",
         "@tanstack/react-query": "5.102.8",
         "@testing-library/react-native": "13.3.3",
         "@types/jest": "29.5.14",
         "expo": "~57.0.20",
         "expo-constants": "~57.0.17",
+        "expo-crypto": "~57.0.4",
         "expo-document-picker": "~57.0.2",
         "expo-file-system": "~57.0.7",
         "expo-font": "~57.0.3",
         "expo-linking": "~57.0.9",
+        "expo-local-authentication": "~57.0.3",
         "expo-router": "~57.0.19",
         "expo-splash-screen": "~57.0.8",
         "expo-sqlite": "~57.0.4",
@@ -2278,6 +2281,8 @@
 
     "expo-constants": ["expo-constants@57.0.19", "", { "dependencies": { "@expo/env": "~2.4.3" }, "peerDependencies": { "expo": "*", "react-native": "*" } }, "sha512-3eK1kZRwCdMizQLlM/PPlPwjaPnB5qKvdRDMBMnB1ZxmvWJBf9TB4uEO4DMMfIPaFUxYFs29dsR5fPr1gh3FTQ=="],
 
+    "expo-crypto": ["expo-crypto@57.0.4", "", { "peerDependencies": { "expo": "*" } }, "sha512-LqMMs/N6wvwZyw4deVmcl3AgXgqMwCVQ9WyWf2eaWyrk99TXSKk5da3QspiLOOjnn5Qv9f8C50cDNuoyLThpdw=="],
+
     "expo-document-picker": ["expo-document-picker@57.0.2", "", { "peerDependencies": { "expo": "*" } }, "sha512-vVBbBNg0piMJUIxjB+DR6JaZZpcSl90ZUoywLA/EgNHTfRkZW+9axP97UxM2a0Zm0W6WfH3cLzzGAEfP9OKGwg=="],
 
     "expo-file-system": ["expo-file-system@57.0.7", "", { "peerDependencies": { "expo": "*", "react-native": "*" } }, "sha512-1vkZRadOsIputFDBcclqBa1pO3iXOO6iIsdqJipQWw4V5TSnWgmRTuOF7ro8IzrVue+PHbum++KCG3Tawem4cg=="],
@@ -2289,6 +2294,8 @@
     "expo-keep-awake": ["expo-keep-awake@57.0.2", "", { "peerDependencies": { "expo": "*", "react": "*" } }, "sha512-GqgH746wtJImmsbyHmCQoi7cOslKuWQBbJHXr53S35Bpf5UvxCAztvnitUEd7D0QvFN2rvkOhylbZpgZZfBLlQ=="],
 
     "expo-linking": ["expo-linking@57.0.10", "", { "dependencies": { "expo-constants": "~57.0.18", "invariant": "^2.2.4" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-RzRi4l4pIYzjgoCJKnqkO+lUI+M2YX6qgcMIQkIbLAXdcWrykBoKYwHGlmAkdFHQm89GaYcq329yfxG+c1hv8w=="],
+
+    "expo-local-authentication": ["expo-local-authentication@57.0.3", "", { "dependencies": { "invariant": "^2.2.4" }, "peerDependencies": { "expo": "*" } }, "sha512-1oQCBKz8JOpai+Zp+Z2RkBFIi2CHHWLSJk/pjvT9VEyf8nPFslo4kt1ZlQvtJ4rupbKNCmxqKfYr8Mlo8nJEug=="],
 
     "expo-modules-autolinking": ["expo-modules-autolinking@57.0.13", "", { "dependencies": { "@expo/require-utils": "^57.0.5", "@expo/spawn-async": "^1.8.0", "chalk": "^4.1.0", "commander": "^7.2.0" }, "bin": { "expo-modules-autolinking": "bin/expo-modules-autolinking.js" } }, "sha512-Hj5NjZRlfccazhKab+wK19leRVUr1Y/PUERaRvegIbUSkq4GVxKq6lU9QHlKQyC16MdD/VS4iwsiLivB4o7lvQ=="],
 

@@ -14,6 +14,10 @@ user input.
 | Paid plans                    | `user.planStatus`/`planExpiresAt`, activated only by a confirmed PIX charge          |
 | Telegram chat ↔ account link  | `user.telegramChatId` — whoever controls the chat reads/writes the account's data    |
 
+The offline mobile app keeps its own on-device account (PBKDF2 hash in local
+SQLite) plus an optional fingerprint/face lock — an access gate, not disk
+encryption; see [ADR 0010](./decisions/0010-mobile-local-account-and-biometric-lock.md).
+
 Trust boundaries: browser → frontend proxy → API; mobile app → API;
 Telegram → bot (in-process calls into backend services, **no HTTP layer, so no
 route validation or HTTP rate limiting** — the bot must validate and throttle

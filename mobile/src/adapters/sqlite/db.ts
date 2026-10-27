@@ -15,6 +15,17 @@ const MIGRATIONS = [
 		updated_at TEXT
 	);
 	CREATE INDEX transactions_date_idx ON transactions (date);`,
+	// One local account per device: it only gates access to this database.
+	`CREATE TABLE account (
+		id INTEGER PRIMARY KEY CHECK (id = 1),
+		name TEXT NOT NULL,
+		email TEXT NOT NULL,
+		password_hash TEXT NOT NULL,
+		password_salt TEXT NOT NULL,
+		password_iterations INTEGER NOT NULL,
+		biometric_enabled INTEGER NOT NULL DEFAULT 0,
+		created_at TEXT NOT NULL
+	);`,
 ];
 
 async function migrate(db: SQLiteDatabase): Promise<void> {
