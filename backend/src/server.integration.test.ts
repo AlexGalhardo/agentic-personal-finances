@@ -57,6 +57,7 @@ describe("API integration", () => {
 	it("GET /config exposes feature flags", async () => {
 		const response = await request("/config");
 		const body = (await response.json()) as {
+			enablePaywall: boolean;
 			config: {
 				enableConfirmEmail: boolean;
 				enable2FA: boolean;
