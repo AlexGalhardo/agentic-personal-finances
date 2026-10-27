@@ -66,6 +66,7 @@ describe("API integration", () => {
 		};
 		expect(response.status).toBe(200);
 		expect(body.config).toEqual({
+			enablePaywall: true,
 			enableConfirmEmail: false,
 			enable2FA: false,
 			enableAbacatepay: false,
