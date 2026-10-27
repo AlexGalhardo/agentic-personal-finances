@@ -203,7 +203,7 @@ jobs:
         env:
           CI: true
           ELECTRON_DISABLE_SANDBOX: 1
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         if: always()
         with:
           name: qa-report
