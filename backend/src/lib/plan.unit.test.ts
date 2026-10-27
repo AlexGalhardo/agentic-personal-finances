@@ -1,4 +1,5 @@
-import { describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it } from "bun:test";
+import { env } from "../config/env";
 import { FREE_TRANSACTION_LIMIT, hasActivePlan, transactionAllowance } from "./plan";
 
 const day = 24 * 60 * 60 * 1000;
@@ -24,5 +25,18 @@ describe("plan", () => {
 		expect(transactionAllowance({ planStatus: "active", planExpiresAt: null, freeTransactionCount: 99 })).toBe(
 			Number.POSITIVE_INFINITY,
 		);
+	});
+
+	describe("with the paywall disabled", () => {
+		afterEach(() => {
+			env.ENABLE_PAYWALL = true;
+		});
+
+		it("treats every user as subscribed with an unbounded allowance", () => {
+			env.ENABLE_PAYWALL = false;
+			const free = { planStatus: "inactive", planExpiresAt: null, freeTransactionCount: 99 };
+			expect(hasActivePlan(free)).toBe(true);
+			expect(transactionAllowance(free)).toBe(Number.POSITIVE_INFINITY);
+		});
 	});
 });

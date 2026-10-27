@@ -14,6 +14,9 @@ import { paymentService } from "./payment.service";
 export const paymentRoutes = new Elysia({ prefix: "/payments" })
 	.use(authPlugin)
 	.guard({ auth: true })
+	.onBeforeHandle(({ status }) => {
+		if (!env.ENABLE_PAYWALL) return status(404, { success: false, message: "Payments are disabled" });
+	})
 	.get("/status", async ({ user }) => ({ success: true, plan: await paymentService.getPlanStatus(user.id) }))
 	.get("/history", async ({ user }) => ({ success: true, logs: await paymentService.listHistory(user.id) }))
 	.post("/pix/checkout", { body: createPixCheckoutSchema }, async ({ user, body }) => ({
@@ -36,7 +39,7 @@ export const paymentWebhookRoutes = new Elysia().post(
 	"/webhook/abacatepay",
 	{ query: webhookQuerySchema, body: webhookEventSchema },
 	async ({ query, body, status }) => {
-		if (!env.ENABLE_ABACATEPAY || !env.ABACATEPAY_WEBHOOK_SECRET) {
+		if (!env.ENABLE_PAYWALL || !env.ENABLE_ABACATEPAY || !env.ABACATEPAY_WEBHOOK_SECRET) {
 			return status(503, { success: false, message: "Webhook is not configured" });
 		}
 

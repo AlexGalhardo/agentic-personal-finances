@@ -5,6 +5,12 @@ const boolFromString = z
 	.default("false")
 	.transform((value) => value === "true");
 
+// Feature flags that are ON unless explicitly turned off.
+const boolDefaultTrue = z
+	.enum(["true", "false"])
+	.default("true")
+	.transform((value) => value === "true");
+
 const envSchema = z
 	.object({
 		// "local" (default): offline-first — SQLite, single user. "hosted": the
@@ -26,6 +32,10 @@ const envSchema = z
 		ENABLE_CONFIRM_EMAIL: boolFromString,
 		ENABLE_2FA: boolFromString,
 		ENABLE_ABACATEPAY: boolFromString,
+		// false disables the whole paywall: no free-plan transaction limit, no
+		// plan gate on the Telegram bot, payment routes answer 404 and the web
+		// app hides plans/checkout. For testing and personal single-user setups.
+		ENABLE_PAYWALL: boolDefaultTrue,
 
 		GOOGLE_CLIENT_ID: z.string().optional(),
 		GOOGLE_CLIENT_SECRET: z.string().optional(),

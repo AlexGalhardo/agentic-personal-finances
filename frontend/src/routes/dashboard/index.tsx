@@ -27,6 +27,7 @@ import type { Transaction } from "../../lib/queries";
 import { useInvalidateFinanceData, useMeQuery, useStatisticsQuery, useTransactionsQuery } from "../../lib/queries";
 import { requireAuth } from "../../lib/require-auth";
 import { MIN_SEARCH_LENGTH, paginate, searchTransactions, sumByType } from "../../lib/transaction-search";
+import { useAppConfig } from "../../lib/use-app-config";
 
 export const Route = createFileRoute("/dashboard/")({
 	head: () => ({ meta: [{ title: "Money" }] }),
@@ -68,8 +69,11 @@ function DashboardPage() {
 	const meQuery = useMeQuery();
 
 	const me = meQuery.data;
-	const freeLimitReached = Boolean(me && !hasActivePlan(me) && me.freeTransactionCount >= FREE_TRANSACTION_LIMIT);
-	const daysRemaining = me ? planDaysRemaining(me) : null;
+	const { data: config } = useAppConfig();
+	const freeLimitReached = Boolean(
+		config?.enablePaywall && me && !hasActivePlan(me) && me.freeTransactionCount >= FREE_TRANSACTION_LIMIT,
+	);
+	const daysRemaining = me && config?.enablePaywall ? planDaysRemaining(me) : null;
 
 	const allTransactions = transactionsQuery.data ?? [];
 	const searched = searchTransactions(allTransactions, filters.search);

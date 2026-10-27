@@ -27,6 +27,8 @@ export async function ensureUserReady(conversation: BotConversation, ctx: Contex
 }
 
 async function ensureActivePlan(conversation: BotConversation, ctx: Context, userId: string): Promise<string | null> {
+	if (!apiEnv.ENABLE_PAYWALL) return userId;
+
 	const user = await conversation.external(() => userRepository.findById(userId));
 	if (user && hasActivePlan(user)) return userId;
 

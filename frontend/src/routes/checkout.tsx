@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { createPixCheckout } from "#/application/payments";
 import { PageLayout } from "../components/page-layout";
@@ -38,6 +38,8 @@ function CheckoutPage() {
 	const [loadingPlan, setLoadingPlan] = useState<PlanId | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [charge, setCharge] = useState<Charge | null>(null);
+
+	if (config && !config.enablePaywall) return <Navigate to="/account" />;
 
 	async function handlePay(plan: PlanId): Promise<void> {
 		setError(null);

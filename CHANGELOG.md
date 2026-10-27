@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `ENABLE_PAYWALL` feature flag (backend and bot, default `true`). Set it to
+  `false` to switch the whole payment requirement off: no free-plan
+  transaction limit, the Telegram bot no longer asks for a plan or offers PIX
+  checkout, `/payments/*` and the AbacatePay webhook answer 404/503, and the
+  web app hides the plan section and redirects `/checkout` to the account
+  page. `/config` exposes it as `enablePaywall`.
+
 ## [1.2.0] - 2026-10-27
 
 ### Added

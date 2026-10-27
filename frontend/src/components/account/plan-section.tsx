@@ -28,6 +28,7 @@ export function PlanSection({ planStatus, planExpiresAt, freeTransactionCount }:
 	const historyQuery = usePaymentHistory();
 	const history = (historyQuery.data ?? []).filter((log) => log.status in PAYMENT_EVENT_LABELS);
 	const active = hasActivePlan({ planStatus, planExpiresAt });
+	if (config && !config.enablePaywall) return null;
 
 	return (
 		<div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">

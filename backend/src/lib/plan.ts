@@ -1,3 +1,4 @@
+import { env } from "../config/env";
 import { AppError } from "./errors";
 
 export const FREE_TRANSACTION_LIMIT = 10;
@@ -5,6 +6,7 @@ export const FREE_TRANSACTION_LIMIT = 10;
 type PlanFields = { planStatus: string; planExpiresAt: Date | null };
 
 export function hasActivePlan(user: PlanFields): boolean {
+	if (!env.ENABLE_PAYWALL) return true;
 	return user.planStatus === "active" && (user.planExpiresAt === null || user.planExpiresAt > new Date());
 }
 

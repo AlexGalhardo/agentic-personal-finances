@@ -65,6 +65,7 @@ export const app = new Elysia()
 		config: {
 			enableConfirmEmail: env.ENABLE_CONFIRM_EMAIL,
 			enable2FA: env.ENABLE_2FA,
+			enablePaywall: env.ENABLE_PAYWALL,
 			enableAbacatepay: env.ENABLE_ABACATEPAY,
 			abacatepayPixTestMode: env.ABACATEPAY_PIX_TEST_MODE,
 		},
